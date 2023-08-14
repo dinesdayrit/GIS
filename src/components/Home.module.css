@@ -1,0 +1,25 @@
+/* Home.module.css */
+.home {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    position: relative;
+}
+  
+.logoutButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.mapWrapper {
+    width: 100%;
+    height: calc(100vh - 40px); /* Subtract padding from height to account for button and padding */
+    margin-top: 10px;
+}
