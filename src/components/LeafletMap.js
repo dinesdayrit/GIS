@@ -11,10 +11,7 @@ import ReactDOMServer from 'react-dom/server';
 
 class LeafletMap extends Component {
   componentDidMount() {
-    const map = new Map('leaflet-map', {
-      center: [7.1907, 125.4553],
-      zoom: 13,
-    });
+    const map = new Map('leaflet-map').setView([7.066, 125.568], 13);
 
     new TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -79,22 +76,9 @@ var editableLayers = new L.FeatureGroup();
         if (type === 'marker') {
             layer.bindPopup('A popup!');
         }
-    
-        editableLayers.addLayer(layer);
-
-
-    });
-   
-      map.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-          layer = e.layer;
-  
-        if (type === 'polygon') {
-          var latlngs = layer.getLatLngs()[0];  // Get the array of coordinates
-          var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);  // Extract coordinates
-  
-          var area = L.GeometryUtil.geodesicArea(coordinates); // Calculate the area
-
+      if (type === 'polygon') {
+          let latlngs = layer.getLatLngs()[0];  // Get the array of coordinates
+          let coordinates = latlngs.map(coord => [coord.lat, coord.lng]);  // Extract coordinates
   
           const popupContent = (
             ReactDOMServer.renderToString(<PopupForm 
@@ -107,9 +91,10 @@ var editableLayers = new L.FeatureGroup();
       
           layer.bindPopup(popupContent);
         }
-      
+  
         editableLayers.addLayer(layer);
-      });
+
+    });
 
 }
   
