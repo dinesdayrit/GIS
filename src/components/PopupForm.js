@@ -71,13 +71,17 @@ const PopupForm = (props) => {
           onChange={(e) => setOwnerName(e.target.value)}
         />
 
-<label>Coordinates:</label>
+        <label>Coordinates:</label>
         <textarea
           name="coordinates"
-          value={JSON.stringify(props.selectedCoordinates, null, 2)} // Use selectedCoordinates from props
+          rows={props.selectedCoordinates.length + 1} 
+          value={JSON.stringify(props.selectedCoordinates, null, 2)}
           readOnly
+          
         />
+        <div>
         <button type="submit">Save</button>
+        </div>
       </form>
     </div>
   );

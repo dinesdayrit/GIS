@@ -32,4 +32,6 @@
     width: 100%;
     height: calc(100vh - 40px); /* Subtract padding from height to account for button and padding */
     margin-top: 10px;
+    position: relative;
+    z-index: 1;
 }

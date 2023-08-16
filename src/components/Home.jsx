@@ -10,10 +10,12 @@ const Home = (props) => {
   const togglePopupForm = () => {
     setShowPopupForm(!showPopupForm);
   };
-
+  const selectedDrawing = () => {
+    setShowPopupForm('true');
+  }
   const handleShapeClick = (clickedCoordinates) => {
     setSelectedCoordinates(clickedCoordinates);
-    togglePopupForm();
+    selectedDrawing();
   };
 
   return (
@@ -34,6 +36,7 @@ const Home = (props) => {
       <div className={styles.mapWrapper}>
         <LeafletMap handleShapeClick={handleShapeClick} />
       </div>
+
     </div>
   );
 };
