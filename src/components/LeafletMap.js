@@ -5,14 +5,22 @@ import 'leaflet-draw/dist/leaflet.draw.css'; // Import leaflet-draw's CSS
 import L from 'leaflet';
 import 'leaflet-draw';
 import 'leaflet-geometryutil';
-import PopupForm from './PopupForm';
-import ReactDOMServer from 'react-dom/server'; 
+// import PopupForm from './PopupForm';
+// import ReactDOMServer from 'react-dom/server'; 
 
 
 class LeafletMap extends Component {
+  
+  
+  handleShapeClick = (coordinates) => {
+    // Call the function passed as a prop from the parent component
+    this.props.handleShapeClick(coordinates);
+  };
+
+
   componentDidMount() {
     const map = new Map('leaflet-map', {
-      center: [7.1907, 125.4553],
+      center: [7.078987297874518,125.5428209424999],
       zoom: 13,
     });
 
@@ -72,51 +80,39 @@ var editableLayers = new L.FeatureGroup();
     var drawControl = new L.Control.Draw(options);
     map.addControl(drawControl);
     
-    map.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-            layer = e.layer;
-    
-        if (type === 'marker') {
-            layer.bindPopup('A popup!');
-        }
-    
-        editableLayers.addLayer(layer);
 
+    
 
+    map.on(L.Draw.Event.CREATED, (e) => {
+      var type = e.layerType,
+        layer = e.layer;
+
+      if (type === 'rectangle' || type === 'polygon') {
+        var latlngs = layer.getLatLngs()[0];
+        var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);
+
+        var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
+        layer.bindPopup(popupContent).on('click', () => {
+          this.handleShapeClick(coordinates);
+          this.setState({selectedCoordinates: coordinates});
+        });
+      }
+
+      editableLayers.addLayer(layer);
     });
-   
-      map.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-          layer = e.layer;
-  
-        if (type === 'polygon') {
-          var latlngs = layer.getLatLngs()[0];  // Get the array of coordinates
-          var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);  // Extract coordinates
-  
-          var area = L.GeometryUtil.geodesicArea(coordinates); // Calculate the area
-
-  
-          const popupContent = (
-            ReactDOMServer.renderToString(<PopupForm 
-            coordinates={coordinates}
-            onSubmit={({ title, surveyNumber }) => {
-              // Do something with title and surveyNumber, e.g., save to database
-              layer.closePopup();
-            }} />)
-          );
-      
-          layer.bindPopup(popupContent);
-        }
-      
-        editableLayers.addLayer(layer);
-      });
-
-}
-  
-
-  render() {
-    return <div id="leaflet-map" style={{ width: '100%', height: '80vh' }} />;
   }
-}
+  
+
+    render() {
+      return (
+  
+        <div id="leaflet-map" style={{ width: '100%', height: '90vh' }}>
+        
+          
+        </div>
+       
+      );
+    }
+  }
 
 export default LeafletMap;

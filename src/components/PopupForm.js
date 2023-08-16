@@ -1,60 +1,84 @@
 import React, { useState } from 'react';
 import styles from './PopupForm.module.css';
 
-const PopupForm = ({ coordinates, area, onSubmit  }) => {
+const PopupForm = (props) => {
   const [title, setTitle] = useState('');
   const [surveyNumber, setSurveyNumber] = useState('');
-  const [lotNumber, setlotNumber] = useState('');
+  const [lotNumber, setLotNumber] = useState('');
   const [ownerName, setOwnerName] = useState('');
+ 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ title, surveyNumber, lotNumber, ownerName });
+
+    const formData = {
+      title,
+      surveyNumber,
+      lotNumber,
+      ownerName,
+      coordinates: props.selectedCoordinates,
+    };
+
+    fetch('/GisDetail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data, "userRegister");
+      if (data.status === "ok") {
+        alert("Registration Successful");
+        window.location.href = "/home";
+      } else {
+        alert("Something went wrong");
+      }
+    });
   };
 
   return (
     <div className={styles['popup-form-container']}>
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="title">Title number:</label>
-      <input
-        type="text"
-        id="title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        required
-      />
+      <form onSubmit={handleSubmit}>
+        <label>Title number:</label>
+        <input
+          type="text"
+          name="title"
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+        />
 
-      <label htmlFor="surveyNumber">Survey Number:</label>
-      <input
-        type="text"
-        id="surveyNumber"
-        value={surveyNumber}
-        onChange={(e) => setSurveyNumber(e.target.value)}
-        required
-      />
-            <label htmlFor="lotNumber">Lot Number:</label>
-      <input
-        type="text"
-        id="lotNumber"
-        value={lotNumber}
-        onChange={(e) => setSurveyNumber(e.target.value)}
-        required
-      />
-            <label htmlFor="ownerName">Owner:</label>
-      <input
-        type="text"
-        id="ownerName"
-        value={ownerName}
-        onChange={(e) => setSurveyNumber(e.target.value)}
-        required
-      />
-        {coordinates && (
-        <p className={styles.coordinates}>Coordinates: {JSON.stringify(coordinates)}</p>
-      )}
-      <button type="submit">Save</button>
-    </form>
+        <label>Survey Number:</label>
+        <input
+          type="text"
+          name="surveyNumber"
+          onChange={(e) => setSurveyNumber(e.target.value)}
+        />
 
+        <label>Lot Number:</label>
+        <input
+          type="text"
+          name="lotNumber"
+          onChange={(e) => setLotNumber(e.target.value)}
+        />
 
+        <label>Owner:</label>
+        <input
+          type="text"
+          name="ownerName"
+          onChange={(e) => setOwnerName(e.target.value)}
+        />
+
+<label>Coordinates:</label>
+        <textarea
+          name="coordinates"
+          value={JSON.stringify(props.selectedCoordinates, null, 2)} // Use selectedCoordinates from props
+          readOnly
+        />
+        <button type="submit">Save</button>
+      </form>
     </div>
   );
 };

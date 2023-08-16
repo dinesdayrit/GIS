@@ -12,6 +12,7 @@ const SignUpForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    console.log(formData);
   };
 
   const handleSubmit = (e) => {
@@ -42,8 +43,8 @@ const SignUpForm = () => {
     <div className='container'>
     
     <form onSubmit={handleSubmit}>
-      <input type="email" name="email" placeholder="email" onChange={handleChange} />
-      <input type="password" name="password" placeholder="password" onChange={handleChange} />
+      <input type="email" name="email" placeholder="email" onChange={handleChange} required/>
+      <input type="password" name="password" placeholder="password" onChange={handleChange} required/>
       <button type="submit">Sign Up</button>
     </form>
     </div>
