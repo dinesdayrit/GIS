@@ -24,7 +24,41 @@ class LeafletMap extends Component {
     });
 
 
-    new TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    //OSM
+    const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    });
+
+    //Hybrid View
+
+    const googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+        maxZoom: 22,
+        subdomains:['mt0','mt1','mt2','mt3']
+}).addTo(map);
+
+    //Satellite View
+
+    const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+        maxZoom: 22,
+        subdomains:['mt0','mt1','mt2','mt3']
+});
+
+// LayerControl starts here
+
+let baseMaps = {
+    "OpenStreetMap": osm,
+    "Hybrid": googleHybrid,
+    "Satellite": googleSat,
+};
+
+let overlayMaps = {
+    // "Cities": cities
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
 
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
@@ -50,6 +84,7 @@ var editableLayers = new L.FeatureGroup();
         const latlngs = gisDetail.coordinates.map(coord => [coord[1], coord[0]]);
         L.polygon(latlngs, { color: 'blue' }).addTo(map);
       });
+      
     });
 
 
