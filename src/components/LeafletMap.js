@@ -1,19 +1,17 @@
 import React, { Component } from 'react';
-import { Map, TileLayer } from 'leaflet';
+import { Map, TileLayer, MapContainer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css'; // Import leaflet-draw's CSS
 import L from 'leaflet';
 import 'leaflet-draw';
 import 'leaflet-geometryutil';
-// import PopupForm from './PopupForm';
-// import ReactDOMServer from 'react-dom/server'; 
 
 
 class LeafletMap extends Component {
   
   
   handleShapeClick = (coordinates) => {
-    // Call the function passed as a prop from the parent component
+    
     this.props.handleShapeClick(coordinates);
   };
 
@@ -22,7 +20,9 @@ class LeafletMap extends Component {
     const map = new Map('leaflet-map', {
       center: [7.078987297874518,125.5428209424999],
       zoom: 13,
+
     });
+
 
     new TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
@@ -41,7 +41,18 @@ var editableLayers = new L.FeatureGroup();
             iconUrl: 'link/to/image.png'
         }
     });
-    
+
+
+    fetch('/GisDetail')
+    .then(response => response.json())
+    .then(gisDetails => {
+      gisDetails.forEach(gisDetail => {
+        const latlngs = gisDetail.coordinates.map(coord => [coord[1], coord[0]]);
+        L.polygon(latlngs, { color: 'blue' }).addTo(map);
+      });
+    });
+
+
     var options = {
         position: 'topright',
         draw: {
@@ -89,7 +100,7 @@ var editableLayers = new L.FeatureGroup();
 
       if (type === 'rectangle' || type === 'polygon') {
         var latlngs = layer.getLatLngs()[0];
-        var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);
+        var coordinates = latlngs.map(coord => [coord.lng, coord.lat]);
 
         var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
         layer.bindPopup(popupContent).on('click', () => {
@@ -100,7 +111,11 @@ var editableLayers = new L.FeatureGroup();
 
       editableLayers.addLayer(layer);
     });
+
+
   }
+
+
   
 
     render() {
