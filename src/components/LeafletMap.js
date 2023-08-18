@@ -60,9 +60,6 @@ L.control.layers(baseMaps, overlayMaps).addTo(map);
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
-var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
-
 
 var editableLayers = new L.FeatureGroup();
     map.addLayer(editableLayers);
