@@ -23,8 +23,38 @@ class LeafletMap extends Component {
 
     });
 
+    //OSM
+    const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
 
-    new TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    //Hybrid View
+
+    const googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+        maxZoom: 22,
+        subdomains:['mt0','mt1','mt2','mt3']
+});
+
+    //Satellite View
+
+    const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+        maxZoom: 22,
+        subdomains:['mt0','mt1','mt2','mt3']
+});
+
+// LayerControl starts here
+
+let baseMaps = {
+    "OpenStreetMap": osm,
+    "Hybrid": googleHybrid,
+    "Satellite": googleSat,
+};
+
+let overlayMaps = {
+    // "Cities": cities
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
