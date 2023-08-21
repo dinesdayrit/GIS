@@ -75,14 +75,49 @@ var editableLayers = new L.FeatureGroup();
 
 
     fetch('/GisDetail')
-    .then(response => response.json())
-    .then(gisDetails => {
-      gisDetails.forEach(gisDetail => {
-        const latlngs = gisDetail.coordinates.map(coord => [coord[1], coord[0]]);
-        L.polygon(latlngs, { color: 'blue' }).addTo(map);
-      });
+  .then(response => response.json())
+  .then(gisDetails => {
+    gisDetails.forEach(gisDetail => {
+      const geojsonObject = gisDetail.geojson; 
+
+      if (geojsonObject) {
+        const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+  
       
+        const title = geojsonObject.properties.title;
+        const surveyNumber = geojsonObject.properties.surveyNumber;
+        const lotNumber = geojsonObject.properties.lotNumber;
+        const ownerName = geojsonObject.properties.ownerName;
+
+        const textIconStyle = {
+          textAlign: 'center',
+          fontSize: '12px',
+          fontWeight: 'bold',
+          color: 'black',
+          backgroundColor: 'white',
+          padding: '4px',
+        };
+
+
+        const popupContent = `
+          <p>Title: ${title}</p>
+          <p>Survey Number: ${surveyNumber}</p>
+          <p>Lot Number: ${lotNumber}</p>
+          <p>Owner Name: ${ownerName}</p>
+        `;
+
+   
+
+        const polygon = L.polygon(latlngs, { color: 'blue' });
+        polygon.bindPopup(popupContent).on('click', () => {
+          // this.handleShapeClick(latlngs);
+        });
+
+        polygon.addTo(map);
+
+      }
     });
+  });
 
 
     var options = {
@@ -95,16 +130,16 @@ var editableLayers = new L.FeatureGroup();
                 }
             },
             polygon: {
-                allowIntersection: false, // Restricts shapes to simple polygons
+                allowIntersection: false, 
                 drawError: {
-                    color: '#e1e100', // Color the shape will turn when intersects
-                    message: '<strong>Oh snap!<strong> you can\'t draw that!' // Message that will show when intersect
+                    color: '#e1e100',
+                    message: '<strong>Oh snap!<strong> you can\'t draw that!'
                 },
                 shapeOptions: {
                     color: '#bada55'
                 }
             },
-            circle: false, // Turns off this drawing tool
+            circle: false, 
             rectangle: {
                 shapeOptions: {
                     clickable: false
@@ -115,7 +150,7 @@ var editableLayers = new L.FeatureGroup();
             }
         },
         edit: {
-            featureGroup: editableLayers, //REQUIRED!!
+            featureGroup: editableLayers, 
             remove: false
         }
     };

@@ -6,17 +6,31 @@ const PopupForm = (props) => {
   const [surveyNumber, setSurveyNumber] = useState('');
   const [lotNumber, setLotNumber] = useState('');
   const [ownerName, setOwnerName] = useState('');
+  const [geojson, setGeoJSON] = useState('');
  
+  const generateGeoJSON = () => {
+    const feature = {
+      type: 'Feature',
+      geometry: {
+        type: 'Polygon',
+        coordinates: [props.selectedCoordinates],
+      },
+      properties: {
+        title: title,
+        surveyNumber: surveyNumber,
+        lotNumber: lotNumber,
+        ownerName: ownerName,
+      },
+    };
 
+    setGeoJSON(JSON.stringify(feature, null, 2));
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const formData = {
-      title,
-      surveyNumber,
-      lotNumber,
-      ownerName,
-      coordinates: props.selectedCoordinates,
+      geojson: geojson,
+      
     };
 
     fetch('/GisDetail', {
@@ -28,9 +42,9 @@ const PopupForm = (props) => {
     })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data, "userRegister");
+      console.log(data, "New Data Saved");
       if (data.status === "ok") {
-        alert("Registration Successful");
+        alert("New Data Saved");
         window.location.href = "/home";
       } else {
         alert("Something went wrong");
@@ -71,13 +85,14 @@ const PopupForm = (props) => {
           onChange={(e) => setOwnerName(e.target.value)}
         />
 
-        <label>Coordinates:</label>
+
+        <label>Generate GeoJSON:</label>
+        <button type="button" onClick={generateGeoJSON}>Generate</button>
         <textarea
-          name="coordinates"
-          rows={props.selectedCoordinates.length + 1} 
-          value={JSON.stringify(props.selectedCoordinates, null, 2)}
-          readOnly
-          
+          name="geojson"
+          rows={6}
+          value={geojson}
+          onChange={(e) => setGeoJSON(e.target.value)}
         />
         <div>
         <button type="submit">Save</button>

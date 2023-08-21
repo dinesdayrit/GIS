@@ -63,3 +63,11 @@ form button {
   border: 1px solid #d0e9c6;
   margin: 10px 0;
 }
+.text-label {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid #000;
+  padding: 4px;
+  font-size: 12px;
+  text-align: center;
+}
+

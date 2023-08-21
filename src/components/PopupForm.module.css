@@ -20,6 +20,7 @@
     display: block;
     margin-bottom: 6px;
     font-weight: bold;
+    color:white;
   }
   
   .popup-form-container input {
@@ -28,7 +29,8 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 3px;
-    color: black;
+    color: white;
+
   }
   
   .popup-form-container textarea {
