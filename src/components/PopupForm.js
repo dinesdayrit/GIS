@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './PopupForm.module.css';
 
 const PopupForm = (props) => {
@@ -7,7 +7,13 @@ const PopupForm = (props) => {
   const [lotNumber, setLotNumber] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [geojson, setGeoJSON] = useState('');
- 
+
+
+  useEffect(() => {
+    generateGeoJSON();
+  }, [title, surveyNumber, lotNumber, ownerName, props.selectedCoordinates]);
+
+
   const generateGeoJSON = () => {
     const feature = {
       type: 'Feature',
@@ -86,13 +92,13 @@ const PopupForm = (props) => {
         />
 
 
-        <label>Generate GeoJSON:</label>
-        <button type="button" onClick={generateGeoJSON}>Generate</button>
+        <label>Generate GeoJSON Format:</label>
         <textarea
           name="geojson"
           rows={6}
           value={geojson}
           onChange={(e) => setGeoJSON(e.target.value)}
+          readOnly
         />
         <div>
         <button type="submit">Save</button>
