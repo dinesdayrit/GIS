@@ -88,6 +88,7 @@ var editableLayers = new L.FeatureGroup();
         const surveyNumber = geojsonObject.properties.surveyNumber;
         const lotNumber = geojsonObject.properties.lotNumber;
         const ownerName = geojsonObject.properties.ownerName;
+        const id = gisDetail._id;
 
         const textIconStyle = {
           textAlign: 'center',
@@ -109,12 +110,19 @@ var editableLayers = new L.FeatureGroup();
    
 
         const polygon = L.polygon(latlngs, { color: 'blue' });
-        polygon.bindPopup(popupContent).on('click', () => {
-          // this.handleShapeClick(latlngs);
+        polygon.bindPopup(popupContent).on('click', () => {});
+
+        const markerLatLng = polygon.getBounds().getCenter(); // Position marker at polygon center
+        const textMarker = L.marker(markerLatLng, {
+          icon: L.divIcon({
+            className: 'text-marker',
+            html: title,
+            iconSize: null, 
+          }),
         });
 
         polygon.addTo(map);
-
+        textMarker.addTo(map);
       }
     });
   });
