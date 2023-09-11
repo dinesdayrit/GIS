@@ -1,4 +1,4 @@
-/* PopupForm.module.css */
+
 .popup-form-container {
     position: absolute;
     right: 10px;
@@ -8,12 +8,16 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-    width: 25%;
+    width: 28%;
+    height: 90vh;
     z-index: 9999; 
+    overflow-y: auto;
   }
   
   .popup-form-container form {
     margin-bottom: 10px;
+    overflow-y: auto;
+  
   }
   
   .popup-form-container label {
@@ -25,12 +29,23 @@
   
   .popup-form-container input {
     width: 100%;
-    padding: 8px;
+    padding: 7.5px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 3px;
     color: white;
 
+  }
+
+  .popup-form-container select{
+    padding: 11px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    
   }
   
   .popup-form-container textarea {

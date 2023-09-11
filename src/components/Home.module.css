@@ -32,7 +32,7 @@
 }
 .mapWrapper {
     width: 100%;
-    height: calc(100vh - 82px); /* Subtract padding from height to account for button and padding */
+    height: calc(100vh - 80px); /* Subtract padding from height to account for button and padding */
     margin-top: 10px;
     position: relative;
     z-index: 1;

@@ -1,0 +1,62 @@
+/* Form.module.css */
+.popup-form-container {
+    position: absolute;
+    right: 10px;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5); 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+    width: 25%;
+    height: 90vh;
+    z-index: 9999; 
+    overflow-y: auto;
+  }
+  
+  .popup-form-container form {
+    margin-bottom: 10px;
+    overflow-y: auto;
+  
+  }
+  
+  .popup-form-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color:white;
+  }
+  
+  .popup-form-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: white;
+
+  }
+  
+  .popup-form-container textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: black;
+  }
+
+  .popup-form-container button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .popup-form-container button:hover {
+    background-color: #0056b3;
+  }
+  
+
