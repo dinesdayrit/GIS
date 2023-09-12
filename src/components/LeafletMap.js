@@ -7,6 +7,8 @@ import 'leaflet-draw';
 import 'leaflet-geometryutil';
 import 'leaflet.pm';
 import 'leaflet.pm/dist/leaflet.pm.css';
+import { PlusCodes } from 'olc-plus-codes';
+import * as turf from '@turf/turf';
 
 const LeafletMap = (props) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
@@ -89,7 +91,40 @@ const options = {
 map.pm.addControls(options);
 map.addLayer(pmDrawnItems);
 
-//Draw control End Here
+
+
+//calculate area in sqm
+function calculatePolygonArea(coordinates) {
+          
+  const firstCoord = coordinates[0];
+  const lastCoord = [...firstCoord];
+
+  coordinates.push(lastCoord);
+
+  const turfCoords = coordinates.map(coord => [coord[0], coord[1]]);
+  const polygon = turf.polygon([turfCoords]);
+  const areaInSqMeters = turf.area(polygon);
+
+  return areaInSqMeters.toFixed(2);
+}
+//calculate centroid
+function calculateCenterCoordinate(coordinates) {
+  var sumLat = 0;
+  var sumLng = 0;
+
+  for (let r = 0; r < coordinates.length; r++) {
+    sumLng += coordinates[r][1];
+    sumLat += coordinates[r][0];
+  }
+  var centerLat = sumLat / coordinates.length;
+  var centerLng = sumLng / coordinates.length;
+  var plusCodes = new PlusCodes();
+var centroidPlusCode = plusCodes.encode(centerLng, centerLat, 12);
+return [centerLat, centerLng, centroidPlusCode];
+
+
+}
+
 
     // Fetch data from '/GisDetail' and add polygons to the map
     fetch('/GisDetail')
@@ -97,24 +132,25 @@ map.addLayer(pmDrawnItems);
       .then(gisDetails => {
         gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
+          const title = gisDetail.title;
+          const surveyNumber = gisDetail.surveyNumber;
+          const lotNumber = gisDetail.lotNumber;
+          const ownerName = gisDetail.ownerName;
+          const lotArea = gisDetail.area;
+          const plusCode = gisDetail.plusCode;
 
           if (geojsonObject) {
             const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
-
-
-            const title = geojsonObject.properties.title;
-            const surveyNumber = geojsonObject.properties.surveyNumber;
-            const lotNumber = geojsonObject.properties.lotNumber;
-            const ownerName = geojsonObject.properties.ownerName;
            
-            
-      
+                
 
-            const popupContent = `
+            var popupContent = `
               <p>Title: ${title}</p>
               <p>Survey Number: ${surveyNumber}</p>
               <p>Lot Number: ${lotNumber}</p>
               <p>Owner Name: ${ownerName}</p>
+              <p>Lot Area: ${lotArea}</p>
+              <p>Plus Code: ${plusCode}</p>
               <button style="background-color: #007bff;
                 color: #fff;
                 border: none;
@@ -122,9 +158,11 @@ map.addLayer(pmDrawnItems);
                 border-radius: 10px;
                 cursor: pointer;" class="edit-button">Edit</button>
             `;
+           
 
            
             const polygon = L.polygon(latlngs, { color: 'blue' });
+
             const popup = polygon.bindPopup(popupContent).on('click', () => {});
 
             const markerLatLng = polygon.getBounds().getCenter();
@@ -134,7 +172,9 @@ map.addLayer(pmDrawnItems);
                html: title, 
                }),
                  });
-
+            
+            
+            
             textMarker.addTo(map);
           
             polygon.addTo(map);
@@ -166,20 +206,42 @@ map.addLayer(pmDrawnItems);
 
       if (type === 'Rectangle' || type === 'Polygon') {
         var latlngs = layer.getLatLngs()[0];
-        var coordinates = latlngs.map(coord => [coord.lng, coord.lat]);
+        var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);
+        var centerCoordinate = calculateCenterCoordinate(coordinates);
+        var centroidPlusCode = centerCoordinate[2];
+      
 
-        var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
+        var centerLat = centerCoordinate[1];
+        var centerLng = centerCoordinate[0];
+
+        // var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
+        var popupContent = '<p>Center Coordinate:</p>';
+        popupContent += '<pre>Latitude: ' + centerLat.toFixed(6) + ', Longitude: ' + centerLng.toFixed(6) + '</pre>';
+        popupContent += '<p>Plus Code:</p>';
+        popupContent += '<pre>' + centroidPlusCode + '</pre>';
+
+
         layer.bindPopup(popupContent).on('click', () => {
           props.handleShapeClick(coordinates);
-
+          
         });
 
         layer.on('pm:edit', (e) => {
           var editedLayer = e.target;
           var editedCoordinates = editedLayer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+          var updatedCenterCoordinate = calculateCenterCoordinate(editedCoordinates);
+          var updatedCenterLat = updatedCenterCoordinate[1];
+          var updatedCenterLng = updatedCenterCoordinate[0];
+          var updatedCentroidPlusCode = updatedCenterCoordinate[2];
+
           var updatedPopupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(editedCoordinates, null, 2) + '</pre>';
-          console.log("pm:edit event triggered");
-          console.log(editedCoordinates);
+          updatedPopupContent += '<p>Center Coordinate:</p>';
+          updatedPopupContent += '<pre>Latitude: ' + updatedCenterLat.toFixed(6) + ', Longitude: ' + updatedCenterLng.toFixed(6) + '</pre>';
+          updatedPopupContent += '<p>Plus Code:</p>';
+          updatedPopupContent += '<pre>' + updatedCentroidPlusCode + '</pre>'
+
+
+
           editedLayer.getPopup().setContent(updatedPopupContent);
 
           props.handleShapeClick(editedCoordinates);
@@ -191,20 +253,54 @@ map.addLayer(pmDrawnItems);
     if (props.polygonCoordinates.length > 0) {
       const formattedPolygonCoordinates = props.polygonCoordinates.map(coord => [coord[1], coord[0]]);
       const polygon = L.polygon(formattedPolygonCoordinates, { color: 'red' }).addTo(drawnLayerRef.current);
-      props.handleShapeClick(formattedPolygonCoordinates);
+      const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+
+      var centerCoordinate = calculateCenterCoordinate(polygonCoordinates);
+
+      var centerLng = centerCoordinate[0];
+      var centerLat = centerCoordinate[1];
+      var centroidPlusCode = centerCoordinate[2];
+      var areaInSqMeters = calculatePolygonArea(polygonCoordinates);
+
+      var popupContent = '<p>Centroid:</p>';
+      popupContent += '<pre>Latitude: ' + centerLat.toFixed(6) + ', Longitude: ' + centerLng.toFixed(6) + '</pre>';
+      popupContent += '<p>Plus Code:</p>';
+      popupContent += '<pre>' + centroidPlusCode + '</pre>';
+      popupContent += '<p>Area:</p>';
+      popupContent += '<pre>' + areaInSqMeters + ' sq.m.</pre>';
+            
+      polygon.bindPopup(popupContent)
+
+      props.handleShapeClick(polygonCoordinates);
       map.fitBounds(polygon.getBounds()); 
 
-      
+      function updatePolygonInfo() {
+        const updatedPolygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+        const updatedCenterCoordinate = calculateCenterCoordinate(updatedPolygonCoordinates);
+        const updatedCenterLng = updatedCenterCoordinate[0];
+        const updatedCenterLat = updatedCenterCoordinate[1];
+        const updatedCentroidPlusCode = updatedCenterCoordinate[2];
+        var areaInSqMeters = calculatePolygonArea(updatedPolygonCoordinates);
 
-      polygon.on('pm:edit', (e) => {
-        const editedLayer = e.target;
-        const editedCoordinates = editedLayer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
 
-        
-        props.handleShapeClick(editedCoordinates);
-        setSelectedCoordinates(editedCoordinates);
+        var updatedPopupContent = '<p>Centroid:</p>';
+          updatedPopupContent += '<pre>Latitude: ' + updatedCenterLat.toFixed(6) + ', Longitude: ' + updatedCenterLng.toFixed(6) + '</pre>';
+          updatedPopupContent += '<p>Plus Code:</p>';
+          updatedPopupContent += '<pre>' + updatedCentroidPlusCode + '</pre>';
+          updatedPopupContent += '<p>Area:</p>';
+          updatedPopupContent += '<pre>' + areaInSqMeters + ' sq.m.</pre>'
 
-      });
+          polygon.getPopup(updatedPopupContent).setContent(updatedPopupContent);
+
+    // Update the parent component with the edited coordinates
+    props.handleShapeClick(updatedPolygonCoordinates);
+    setSelectedCoordinates(updatedPolygonCoordinates);
+  }
+
+  polygon.on('pm:edit', updatePolygonInfo);
+  
+
+
       editableLayers.addLayer(polygon);
     }
     drawnLayerRef.current.addTo(map);

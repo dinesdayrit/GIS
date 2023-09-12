@@ -65,7 +65,6 @@ const EditForm = (props) => {
 
         <label>Owner:</label>
         <input
-        styles={{width: '25%'}}
           type="text"
           name="ownerName"
           onChange={(e) => setOwnerName(e.target.value)}
@@ -74,7 +73,7 @@ const EditForm = (props) => {
 
         <label>Generate GeoJSON Format:</label>
         <textarea
-
+          
           name="geojson"
           rows={6}
           value={geojson}

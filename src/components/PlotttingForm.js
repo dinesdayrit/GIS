@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 
 
@@ -20,6 +20,14 @@ const Plottingform = (props) => {
   const [results, setResults] = useState([]);
   const [pointCount, setPointCount] = useState(0);
 
+  useEffect(() => {
+    handleCalculate(); 
+    const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
+    setFormData({
+      ...formData,
+      gridCoordinates: formattedResults,
+    });
+  }, [formData]); 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
     console.log({ name, value });
@@ -116,6 +124,7 @@ const Plottingform = (props) => {
     });
 
     setResults(resultsArray);
+    props.onGridCoordinatesChange(formData.gridCoordinates);
   };
 
 
@@ -214,9 +223,7 @@ const Plottingform = (props) => {
       ))}
 
       <button type='button' onClick={handleAddTieLine} style ={{width: '15%',borderRadius: '50%', textAlign: 'center'}}>+</button> <br /> <br />
-      <button type='button' onClick={() => {
-        handleCalculate();
-        props.onCalculate(results); }}>Calculate</button>
+
     </div>
   );
 };

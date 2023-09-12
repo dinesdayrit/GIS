@@ -11,20 +11,23 @@ const AddForm = (props) => {
   const [title, setTitle] = useState('');
   const [surveyNumber, setSurveyNumber] = useState('');
   const [lotNumber, setLotNumber] = useState('');
+  const [blkNumber, setBlkNumber] = useState('');
+  const [area, setArea] = useState('');
   const [ownerName, setOwnerName] = useState('');
+  const [plusCode, setPlusCode] = useState('');
   const [geojson, setGeoJSON] = useState('');
-  const [coordinatesInput, setCoordinatesInput] = useState('');
+  const [gridCoordinates, setGridCoordinates] = useState(''); 
   const [prs92Coordinates, setPrs92Coordinates] = useState([]);
 
-  const handleCalculate = (results) => {
-    const formattedCoordinates = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n');
-  setCoordinatesInput(formattedCoordinates);
-  };
   
+  const handleGridCoordinatesChange = (newGridCoordinates) => {
+    setGridCoordinates(newGridCoordinates);
+  };
+
 useEffect(() => {
     generateGeoJSON();
-
-  }, [title, surveyNumber, lotNumber, ownerName, props.selectedCoordinates]);
+   
+  }, [props.selectedCoordinates]);
 
 
   const generateGeoJSON = () => {
@@ -34,30 +37,36 @@ useEffect(() => {
         type: 'Polygon',
         coordinates: [props.selectedCoordinates],
       },
-      properties: {
-        title: title,
-        surveyNumber: surveyNumber,
-        lotNumber: lotNumber,
-        ownerName: ownerName,
-      },
+      
     };
 
     setGeoJSON(JSON.stringify(feature, null, 2));
   
   };
-const handleConvert = () => {
-  const inputLines = coordinatesInput.split('\n').map(line => line.trim());
-  const newCoordinates = inputLines.map(line => {
-    const [x, y] = line.split(',').map(Number); 
-    return proj4("EPSG:3125", "EPSG:4326", [x, y]);
-  });
 
-
-  setPrs92Coordinates(newCoordinates);
-
-  console.log('Coordinates converted and added:', newCoordinates);
+  const handleConvert = () => {
+    const inputLines = gridCoordinates.split('\n').map(line => line.trim());
+    const newCoordinates = [];
   
-};
+    try {
+      inputLines.forEach(line => {
+        const [x, y] = line.split(',').map(Number);
+  
+        if (!isFinite(x) || !isFinite(y)) {
+          throw new Error(`Invalid coordinate: ${line}`);
+        }
+  
+        const converted = proj4("EPSG:3125", "EPSG:4326", [x, y]);
+        newCoordinates.push(converted);
+      });
+  
+      setPrs92Coordinates(newCoordinates);
+      console.log('Coordinates converted and added:', newCoordinates);
+    } catch (error) {
+      alert(`Error converting coordinates: ${error.message}`);
+    }
+  };
+  
   
 
   const handleDrawClick = () => {
@@ -69,6 +78,13 @@ const handleConvert = () => {
     e.preventDefault();
 
     const formData = {
+      title: title,
+      surveyNumber: surveyNumber,
+      lotNumber: lotNumber,
+      blkNumber: blkNumber,
+      area: area,
+      ownerName: ownerName,
+      plusCode: plusCode,
       geojson: geojson,
       
     };
@@ -116,41 +132,59 @@ const handleConvert = () => {
         <input
           type="text"
           name="lotNumber"
+          valuue={lotNumber}
           onChange={(e) => setLotNumber(e.target.value)}
         />
 
-        <label>Owner:</label>
+        <label>Blk No.:</label>
+        <input
+          type="text"
+          name="blkNumber"
+          value={blkNumber}
+          onChange={(e) => setBlkNumber(e.target.value)}
+          />
+
+
+        <label>Owner Name:</label>
         <input
           type="text"
           name="ownerName"
           onChange={(e) => setOwnerName(e.target.value)}
         />
 
-        <Plottingform onCalculate={handleCalculate}/>
+        <label>Area (sq.m.):</label> 
+        <input
+          type="text"
+          name="area"
+          onChange={(e) => setArea(e.target.value)}
+          required />
 
-       <label>Grid Coordinates</label>
-       <textarea
-         id="coordinatesInput"
-         rows={4}
-         value={coordinatesInput}
-         onChange={(e) => setCoordinatesInput(e.target.value)}
-        />
-        <button type="button" id="convert" onClick={handleConvert}>
-           Convert
-        </button>
 
-        
-        <label>Converted Coordinates:</label>
+        <Plottingform 
+        onGridCoordinatesChange={handleGridCoordinatesChange}
+         />
+
+        <label>LongLat Coordinates:</label>
           <textarea
           id="convertedCoordinates"
           name="convertedCoordinates"
           rows={5}
+          onClick={handleConvert}
+          onSelect={handleConvert}
           value={JSON.stringify(prs92Coordinates, null, 2)}
-          readOnly
+
           />   
         <button type="button" id="drawButton" onClick={handleDrawClick}>
            Draw
         </button> 
+
+        <label>Plus Code:</label>
+        <input
+          type="text"
+          name="plusCode"
+          value={plusCode}
+          onChange={(e) => setPlusCode(e.target.value)}
+        />
 
         <label>Generate GeoJSON Format:</label>
         <textarea
