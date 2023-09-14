@@ -22,6 +22,22 @@ const LeafletMap = (props) => {
       zoom: 13,
     });
 
+
+  var wmsOptions = {
+    layers: 'Davao:TechDesc',
+    transparent: true,
+    tiled: false,
+    format: "image/png",
+    opacity: 1,
+    maxZoom: 20,
+    maxNativeZoom: 20,
+    crs: L.CRS.EPSG4326,
+    Identify: false
+    };
+  
+  
+  var wmsdavTitle = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsOptions);
+
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -31,7 +47,7 @@ const LeafletMap = (props) => {
     const googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
       maxZoom: 22,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    }).addTo(map);
+    });
 
     // Satellite View
     const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
@@ -39,11 +55,11 @@ const LeafletMap = (props) => {
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     });
 
-      // Satellite View
+      // EsriSat
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 22,
+      maxZoom: 19,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-    });
+    }).addTo(map);
     
 
     // LayerControl starts here
@@ -51,14 +67,16 @@ const LeafletMap = (props) => {
       'OpenStreetMap': osm,
       'Hybrid': googleHybrid,
       'Satellite': googleSat,
-      'esriSat':esriSat,
+      'esriSat':esriSat
+    
     };
 
     let overlayMaps = {
-      // "Cities": cities
+      'wmsdavTitle': wmsdavTitle
     };
 
     L.control.layers(baseMaps, overlayMaps).addTo(map);
+
 
     const handleEditClick = (polygon) => {
       console.log('Edit button Clicked');
@@ -80,12 +98,14 @@ const options = {
   position: 'topleft',
   drawCircle: false,
   drawMarker: false,
-  drawRectangle: true,
+  drawCircleMarker: false,
+  drawRectangle: false,
   drawPolyline: false,
-  drawPolygon: true,
+  drawPolygon: false,
   editMode: true,
-  cutPolygon: true,
+  cutPolygon: false,
   removalMode: true,
+  
 };
 
 map.pm.addControls(options);
@@ -133,11 +153,11 @@ return [centerLat, centerLng, centroidPlusCode];
         gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
           const title = gisDetail.title;
-          const surveyNumber = gisDetail.surveyNumber;
-          const lotNumber = gisDetail.lotNumber;
-          const ownerName = gisDetail.ownerName;
+          const surveyNumber = gisDetail.surveynumber;
+          const lotNumber = gisDetail.lotnumber;
+          const ownerName = gisDetail.ownername;
           const lotArea = gisDetail.area;
-          const plusCode = gisDetail.plusCode;
+          const plusCode = gisDetail.pluscode;
 
           if (geojsonObject) {
             const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
@@ -200,56 +220,56 @@ return [centerLat, centerLng, centroidPlusCode];
       });
 
 
-    map.on('pm:create', (e) => {
-        let layer = e.layer;
-        let type = e.shape;
+    // map.on('pm:create', (e) => {
+    //     let layer = e.layer;
+    //     let type = e.shape;
 
-      if (type === 'Rectangle' || type === 'Polygon') {
-        var latlngs = layer.getLatLngs()[0];
-        var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);
-        var centerCoordinate = calculateCenterCoordinate(coordinates);
-        var centroidPlusCode = centerCoordinate[2];
+    //   if (type === 'Rectangle' || type === 'Polygon') {
+    //     var latlngs = layer.getLatLngs()[0];
+    //     var coordinates = latlngs.map(coord => [coord.lat, coord.lng]);
+    //     var centerCoordinate = calculateCenterCoordinate(coordinates);
+    //     var centroidPlusCode = centerCoordinate[2];
       
 
-        var centerLat = centerCoordinate[1];
-        var centerLng = centerCoordinate[0];
+    //     var centerLat = centerCoordinate[1];
+    //     var centerLng = centerCoordinate[0];
 
-        // var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
-        var popupContent = '<p>Center Coordinate:</p>';
-        popupContent += '<pre>Latitude: ' + centerLat.toFixed(6) + ', Longitude: ' + centerLng.toFixed(6) + '</pre>';
-        popupContent += '<p>Plus Code:</p>';
-        popupContent += '<pre>' + centroidPlusCode + '</pre>';
+    //     // var popupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(coordinates, null, 2) + '</pre>';
+    //     var popupContent = '<p>Center Coordinate:</p>';
+    //     popupContent += '<pre>Latitude: ' + centerLat.toFixed(6) + ', Longitude: ' + centerLng.toFixed(6) + '</pre>';
+    //     popupContent += '<p>Plus Code:</p>';
+    //     popupContent += '<pre>' + centroidPlusCode + '</pre>';
 
 
-        layer.bindPopup(popupContent).on('click', () => {
-          props.handleShapeClick(coordinates);
+    //     layer.bindPopup(popupContent).on('click', () => {
+    //       props.handleShapeClick(coordinates);
           
-        });
+    //     });
 
-        layer.on('pm:edit', (e) => {
-          var editedLayer = e.target;
-          var editedCoordinates = editedLayer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
-          var updatedCenterCoordinate = calculateCenterCoordinate(editedCoordinates);
-          var updatedCenterLat = updatedCenterCoordinate[1];
-          var updatedCenterLng = updatedCenterCoordinate[0];
-          var updatedCentroidPlusCode = updatedCenterCoordinate[2];
+    //     layer.on('pm:edit', (e) => {
+    //       var editedLayer = e.target;
+    //       var editedCoordinates = editedLayer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+    //       var updatedCenterCoordinate = calculateCenterCoordinate(editedCoordinates);
+    //       var updatedCenterLat = updatedCenterCoordinate[1];
+    //       var updatedCenterLng = updatedCenterCoordinate[0];
+    //       var updatedCentroidPlusCode = updatedCenterCoordinate[2];
 
-          var updatedPopupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(editedCoordinates, null, 2) + '</pre>';
-          updatedPopupContent += '<p>Center Coordinate:</p>';
-          updatedPopupContent += '<pre>Latitude: ' + updatedCenterLat.toFixed(6) + ', Longitude: ' + updatedCenterLng.toFixed(6) + '</pre>';
-          updatedPopupContent += '<p>Plus Code:</p>';
-          updatedPopupContent += '<pre>' + updatedCentroidPlusCode + '</pre>'
+    //       var updatedPopupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(editedCoordinates, null, 2) + '</pre>';
+    //       updatedPopupContent += '<p>Center Coordinate:</p>';
+    //       updatedPopupContent += '<pre>Latitude: ' + updatedCenterLat.toFixed(6) + ', Longitude: ' + updatedCenterLng.toFixed(6) + '</pre>';
+    //       updatedPopupContent += '<p>Plus Code:</p>';
+    //       updatedPopupContent += '<pre>' + updatedCentroidPlusCode + '</pre>'
 
 
 
-          editedLayer.getPopup().setContent(updatedPopupContent);
+    //       editedLayer.getPopup().setContent(updatedPopupContent);
 
-          props.handleShapeClick(editedCoordinates);
-          setSelectedCoordinates(editedCoordinates);
-        });
-      }
-      editableLayers.addLayer(layer);
-    });
+    //       props.handleShapeClick(editedCoordinates);
+    //       setSelectedCoordinates(editedCoordinates);
+    //     });
+    //   }
+    //   editableLayers.addLayer(layer);
+    // });
     if (props.polygonCoordinates.length > 0) {
       const formattedPolygonCoordinates = props.polygonCoordinates.map(coord => [coord[1], coord[0]]);
       const polygon = L.polygon(formattedPolygonCoordinates, { color: 'red' }).addTo(drawnLayerRef.current);

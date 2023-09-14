@@ -19,18 +19,29 @@ const Plottingform = (props) => {
   });
   const [results, setResults] = useState([]);
   const [pointCount, setPointCount] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
-  useEffect(() => {
+  useEffect(() => { 
     handleCalculate(); 
     const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
+    props.onGridCoordinatesChange(formattedResults);
+    console.log(formattedResults);
+    
+    setIsInitialRender(true);
+
+    if (isInitialRender) { 
     setFormData({
-      ...formData,
-      gridCoordinates: formattedResults,
-    });
+    ...formData,
+    // gridCoordinates: formattedResults,
+   });
+   setIsInitialRender(false);
+  }
   }, [formData]); 
+
+
   const handleChange = (e, index) => {
     const { name, value } = e.target;
-    console.log({ name, value });
+
 
     if (name.startsWith('tieLines[')) {
         const updatedTieLines = [...formData.tieLines];
@@ -113,7 +124,6 @@ const Plottingform = (props) => {
       const sine = parseFloat(tieLine.g14) * Math.sin(azimuth * (Math.PI / 180)) * -1;
       const cosine = parseFloat(tieLine.g14) * Math.cos(azimuth * (Math.PI / 180)) * -1;
       const eastingCoordinate = cumulativeEasting + sine;
-      console.log(azimuth);
       cumulativeEasting = eastingCoordinate; // Update cumulative Easting
   
       const northingCoordinate = cumulativeNorthing + cosine;
@@ -124,7 +134,6 @@ const Plottingform = (props) => {
     });
 
     setResults(resultsArray);
-    props.onGridCoordinatesChange(formData.gridCoordinates);
   };
 
 
@@ -153,7 +162,8 @@ const Plottingform = (props) => {
         value={formData.northingValue}
         onChange={(e) => handleChange(e)}
       />
-    
+
+
       {formData.tieLines.map((tieLine, index) => (
         <div key={index} >
         <label>
@@ -208,6 +218,7 @@ const Plottingform = (props) => {
             name={`tieLines[${index}].g14`}
             value={tieLine.g14}
             onChange={(e) => handleChange(e, index)}
+            // onBeforeInputCapture={handleAddTieLine}
           />
             <button
               type="button"
@@ -218,12 +229,12 @@ const Plottingform = (props) => {
             </button>
         
           </div>
+        
             </div>
+            
         
       ))}
-
-      <button type='button' onClick={handleAddTieLine} style ={{width: '15%',borderRadius: '50%', textAlign: 'center'}}>+</button> <br /> <br />
-
+      <button type='button' onClick={handleAddTieLine} style ={{width: '15%',borderRadius: '50%', textAlign: 'center'}}>+</button>
     </div>
   );
 };

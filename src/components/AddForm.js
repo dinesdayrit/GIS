@@ -186,7 +186,7 @@ useEffect(() => {
           onChange={(e) => setPlusCode(e.target.value)}
         />
 
-        <label>Generate GeoJSON Format:</label>
+        <label>Generated GeoJSON Format:</label>
         <textarea
           name="geojson"
           rows={6}

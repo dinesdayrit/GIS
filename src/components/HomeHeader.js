@@ -30,7 +30,7 @@ const HomeHeader = (props) => {
             <div className={styles.dropdown}>
               <button className={styles.dropbtn}>Menu</button>
               <div className={styles["dropdown-content"]}>
-                <button onClick={handleAddParcel}>Plot A Parcel</button>
+                <button onClick={handleAddParcel}>New Parcel</button>
                 <button href={null} >Edit/Update</button>
                
               </div>
