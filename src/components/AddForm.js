@@ -28,6 +28,7 @@ useEffect(() => {
     generateGeoJSON();
    
   }, [props.selectedCoordinates]);
+  
 
 
   const generateGeoJSON = () => {
@@ -71,8 +72,14 @@ useEffect(() => {
 
   const handleDrawClick = () => {
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
+    props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2));
+    
   };
+// const handleConvertThenDraw = () => {
+//   handleConvert();
+//   handleDrawClick()
 
+// }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -84,7 +91,7 @@ useEffect(() => {
       blkNumber: blkNumber,
       area: area,
       ownerName: ownerName,
-      plusCode: plusCode,
+      plusCode: props.plusCode,
       geojson: geojson,
       
     };
@@ -182,7 +189,7 @@ useEffect(() => {
         <input
           type="text"
           name="plusCode"
-          value={plusCode}
+          value={props.plusCode}
           onChange={(e) => setPlusCode(e.target.value)}
         />
 

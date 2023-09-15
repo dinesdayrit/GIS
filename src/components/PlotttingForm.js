@@ -3,22 +3,25 @@ import React, { useState, useEffect } from 'react';
 
 
 const Plottingform = (props) => {
+
+  function createTieLine() {
+    return {
+      c14: '',
+      d14: '',
+      e14: '',
+      f14: '',
+      g14: '',
+    };
+  }
   const [formData, setFormData] = useState({
     monument: '',
     eastingValue: '', 
     northingValue:'',
-    tieLines: [
-      {
-        c14: '', //bearing degree angle
-        d14: '', //degree
-        e14: '', //Minutes
-        f14: '', //Minutes angle
-        g14: '', //distance
-      },
-    ],
+    tieLines: [createTieLine()],
   });
   const [results, setResults] = useState([]);
   const [pointCount, setPointCount] = useState(0);
+  const [numberOfPoints, setNumberOfPoints] = useState('');
   const [isInitialRender, setIsInitialRender] = useState(true);
 
   useEffect(() => { 
@@ -86,24 +89,20 @@ const Plottingform = (props) => {
   };
 
   const handleAddTieLine = () => {
-    const newTieLine = {
-      c14: '',
-      d14: '',
-      e14: '',
-      f14: '',
-      g14: '',
-    };
-
-    setFormData({
-      ...formData,
-      tieLines: [...formData.tieLines, newTieLine],
-    });
-
-    
-    if (pointCount > 0) {
-        setPointCount(pointCount + 1);
+    const numPointsToAdd = parseInt(numberOfPoints);
+  
+    if (!isNaN(numPointsToAdd) && numPointsToAdd > 0) {
+      const newTieLines = Array(numPointsToAdd).fill().map(() => createTieLine());
+  
+      setFormData({
+        ...formData,
+        tieLines: newTieLines,
+      });
+  
+      setPointCount(numPointsToAdd);
+    }
   };
-  };
+  
 
   const handleRemovePoint = (indexToRemove) => {
     const updatedTieLines = formData.tieLines.filter((_, index) => index !== indexToRemove);
@@ -163,16 +162,24 @@ const Plottingform = (props) => {
         onChange={(e) => handleChange(e)}
       />
 
-
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <label>Number of points:</label>
+      <input style ={{width: '50%'}}
+          type="text"
+          name="numberOfPoints"
+          onSelect={handleAddTieLine}
+          onChange={(e) => setNumberOfPoints(e.target.value)}
+      />
+     
+      
+      </div>
       {formData.tieLines.map((tieLine, index) => (
         <div key={index} >
         <label>
         {index === 0
-              ? 'Tie Line'
-              : index === 1
-              ? `Point ${pointCount + 1}`
-              : `Point ${index  + pointCount}`
-            }
+          ? 'Tie Line'
+        : `Point ${index}`
+      }
     </label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <select
@@ -218,12 +225,13 @@ const Plottingform = (props) => {
             name={`tieLines[${index}].g14`}
             value={tieLine.g14}
             onChange={(e) => handleChange(e, index)}
-            // onBeforeInputCapture={handleAddTieLine}
+       
           />
+          
             <button
               type="button"
               onClick={() => handleRemovePoint(index)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', width: '2%' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', width: '2%', color: 'black' }}
             >
             x
             </button>
@@ -234,7 +242,17 @@ const Plottingform = (props) => {
             
         
       ))}
-      <button type='button' onClick={handleAddTieLine} style ={{width: '15%',borderRadius: '50%', textAlign: 'center'}}>+</button>
+      {/* <label>Number of points</label>
+      <div style={{ display: 'flex' }}>
+      <input style ={{width: '50%'}}
+          type="text"
+          name="numberOfPoints"
+          
+          onChange={(e) => setNumberOfPoints(e.target.value)}
+      />
+      <button type='button' onClick={handleAddTieLine} style ={{width: '30%',borderRadius: '50%', textAlign: 'center'}}>+</button>
+      
+      </div> */}
     </div>
   );
 };

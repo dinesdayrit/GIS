@@ -10,6 +10,7 @@ const Home = (props) => {
   const [showEditForm, setShowEditForm] = useState(false);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
+  const [plusCode, setPlusCode] = useState([]);
 
   const handleDraw = (coordinates) => {
     console.log('click')
@@ -46,6 +47,10 @@ const Home = (props) => {
     selectedDrawing();
   };
 
+  const handlePlusCode = (clickedplusCode) => {
+    setPlusCode(clickedplusCode);
+  }
+
   return (
     <div className={styles.home}>
     <HomeHeader 
@@ -57,9 +62,12 @@ const Home = (props) => {
       {showPopupForm && (
         <AddForm
           selectedCoordinates={selectedCoordinates}
+          plusCode = {plusCode}
           onFormSubmit={togglePopupForm}
           onDraw={handleDraw}
           onCustomCoordinatesChange={(coordinates) => setSelectedCoordinates(coordinates)}
+          handleShapeClick={handleShapeClick}
+          handlePlusCode ={handlePlusCode}
         />
       )}
       {showEditForm && <EditForm editOnCancel={editOnCancel}/>}
@@ -70,6 +78,7 @@ const Home = (props) => {
           handleShapeClick={handleShapeClick}
           handleEditClick={handleEditClick}
           editOnCancel = {editOnCancel}
+          handlePlusCode ={handlePlusCode}
         />
       </div>
     </div>
