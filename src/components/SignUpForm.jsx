@@ -42,10 +42,10 @@ const SignUpForm = () => {
   return (
     <div className='container'>
     
-    <form onSubmit={handleSubmit}>
-      <input type="email" name="email" placeholder="email" onChange={handleChange} required/>
-      <input type="password" name="password" placeholder="password" onChange={handleChange} required/>
-      <button type="submit">Sign Up</button>
+    <form onSubmit={handleSubmit} className='.LoginForm'>
+      <input type="email" name="email" placeholder="email" onChange={handleChange} className='LoginFormInput' required/>
+      <input type="password" name="password" placeholder="password" onChange={handleChange} className='LoginFormInput' required/>
+      <button type="submit" className='loginButton'>Sign Up</button>
     </form>
     </div>
   );

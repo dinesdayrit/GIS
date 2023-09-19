@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-
-
+import Papa from 'papaparse';
 
 const Plottingform = (props) => {
 
   function createTieLine() {
     return {
-      c14: '',
-      d14: '',
-      e14: '',
-      f14: '',
-      g14: '',
+      c14: '', //degree angle
+      d14: '', //degree
+      e14: '', //minutes
+      f14: '', //minutes angle
+      g14: '', // distance
     };
   }
+
   const [formData, setFormData] = useState({
     monument: '',
     eastingValue: '', 
@@ -23,12 +23,16 @@ const Plottingform = (props) => {
   const [pointCount, setPointCount] = useState(0);
   const [numberOfPoints, setNumberOfPoints] = useState('');
   const [isInitialRender, setIsInitialRender] = useState(true);
+  // const [techincalDescription, setTechnicalDescription] = useState("");
 
   useEffect(() => { 
     handleCalculate(); 
     const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
     props.onGridCoordinatesChange(formattedResults);
     console.log(formattedResults);
+    const newTechnicalDescription = generateTechnicalDescription(formData);
+    props.onTechnicalDescriptionChange(newTechnicalDescription);
+
     
     setIsInitialRender(true);
 
@@ -44,7 +48,7 @@ const Plottingform = (props) => {
 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
-
+   
 
     if (name.startsWith('tieLines[')) {
         const updatedTieLines = [...formData.tieLines];
@@ -52,17 +56,23 @@ const Plottingform = (props) => {
         const tieLineIndex = parseInt(parts[1]);
         const fieldName = parts[2];
         updatedTieLines[tieLineIndex][fieldName] = value;
+     
 
         setFormData({
             ...formData,
             tieLines: updatedTieLines,
+            
           });
+       
         } else {
           setFormData({
             ...formData,
             [name]: value,
           });
+          
         }
+
+        
       };
 
   const calculateDecimalBearig = (d14, e14) => {
@@ -135,9 +145,74 @@ const Plottingform = (props) => {
     setResults(resultsArray);
   };
 
+  const generateTechnicalDescription = (formData) => {
+    const tieLineDescriptions = formData.tieLines.map((tieLine, index) => (
+    `${index === 0 ? '[Tie Line]' : `[Point ${index}]`}
+   ${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
+    )).join('\n');
+  
+    return `monument: ${formData.monument}
+  eastingValue: ${formData.eastingValue}
+  northingValue: ${formData.northingValue}
+  ${tieLineDescriptions}`.trim('');
+  };
+
+//CSV Upload Start Here
+const handleFileUpload = (e) => {
+  const files = e.target.files;
+  if (files.length === 0) return;
+
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    const content = e.target.result;
+    Papa.parse(content, {
+      header: true,
+      skipEmptyLines: true, // dapat naka true para e disregard niya empty lines/rows
+      complete: (result) => {
+        if (result.data.length > 0) {
+          const headerToData = result.data[0];
+
+          const numberOfPointsValue = headerToData['numberofpoints'] || '';
+          setNumberOfPoints(numberOfPointsValue);
+
+          const tieLines = result.data.map((row) => ({
+            c14: row['c14'] || '',
+            d14: row['d14'] || '',
+            e14: row['e14'] || '',
+            f14: row['f14'] || '',
+            g14: row['g14'] || '',
+          }));
+
+          setFormData({
+            monument: headerToData['monument'] || '',
+            eastingValue: headerToData['eastingValue'] || '',
+            northingValue: headerToData['northingValue'] || '',
+            numberOfPoints: numberOfPointsValue,
+            tieLines,
+          });
+
+          alert('Data uploaded from CSV file.');
+        } else {
+          alert('CSV file is empty or invalid.');
+        }
+      },
+    });
+  };
+
+  reader.readAsText(files[0]);
+};
 
   return (
     <div>
+
+      <label>Upload CSV File:</label>
+        <input
+          type="file"
+          name="files"
+          accept=".csv"
+          onChange={handleFileUpload}
+      />
       <label>Monument</label>
       <input        
         type="text"
@@ -162,9 +237,9 @@ const Plottingform = (props) => {
         onChange={(e) => handleChange(e)}
       />
 
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <label>Number of points:</label>
-      <input style ={{width: '50%'}}
+      <input style ={{width: '15%'}}
           type="text"
           name="numberOfPoints"
           onSelect={handleAddTieLine}
@@ -231,7 +306,7 @@ const Plottingform = (props) => {
             <button
               type="button"
               onClick={() => handleRemovePoint(index)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', width: '2%', color: 'black' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', width: '2%', color: 'black'}}
             >
             x
             </button>
@@ -242,6 +317,13 @@ const Plottingform = (props) => {
             
         
       ))}
+      {/* <label>Technical Description</label>
+      <textarea 
+        name= 'technicalDescription'
+        rows={4}
+        value={generateTechnicalDescription(formData)}
+        onChange={(e) => setTechnicalDescription(e.target.value)} 
+      /> */}
       {/* <label>Number of points</label>
       <div style={{ display: 'flex' }}>
       <input style ={{width: '50%'}}

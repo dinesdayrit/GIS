@@ -4,7 +4,10 @@ import logoIcon from '../assets/Davao_City.png'
 
 const HomeHeader = (props) => {
 
-
+const handleMenu = () => {
+  
+  props.plotOnCancel();
+}
     const handleAddParcel = () => {
  
        
@@ -28,7 +31,7 @@ const HomeHeader = (props) => {
           </div>
           <div className={styles["navbar-right"]}>
             <div className={styles.dropdown}>
-              <button className={styles.dropbtn}>Menu</button>
+              <button className={styles.dropbtn} onClick={handleMenu}>Menu</button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>New Parcel</button>
                 <button href={null} >Edit/Update</button>

@@ -50,12 +50,13 @@ const LoginForm = ({ onLogin }) => {
   return (
     <div className='container'>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className='.LoginForm'>
         <input
           type='email'
           name='email'
           placeholder='Email'
           onChange={handleChange}
+          className='LoginFormInput'
           required
         />
         <input
@@ -63,11 +64,12 @@ const LoginForm = ({ onLogin }) => {
           name='password'
           placeholder='Password'
           onChange={handleChange}
+          className='LoginFormInput'
           required
         />
 
         
-        <button type='submit'>Login</button>
+        <button type='submit' className='loginButton'>Login</button>
       </form>
       <p>
         Don't have an account? <Link to='/signup'>Sign Up</Link>

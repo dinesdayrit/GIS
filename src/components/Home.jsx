@@ -42,6 +42,10 @@ const Home = (props) => {
     setShowEditForm(false);
   };
 
+  const plotOnCancel = () => {
+    setShowPopupForm(false);
+  };
+
   const handleShapeClick = (clickedCoordinates) => {
     setSelectedCoordinates(clickedCoordinates);
     selectedDrawing();
@@ -56,6 +60,7 @@ const Home = (props) => {
     <HomeHeader 
     onAddParcelClick={togglePopupForm}
     onLogoutClick={props.onLogout}
+    plotOnCancel = {plotOnCancel}
     />
      
 
@@ -68,6 +73,7 @@ const Home = (props) => {
           onCustomCoordinatesChange={(coordinates) => setSelectedCoordinates(coordinates)}
           handleShapeClick={handleShapeClick}
           handlePlusCode ={handlePlusCode}
+          
         />
       )}
       {showEditForm && <EditForm editOnCancel={editOnCancel}/>}

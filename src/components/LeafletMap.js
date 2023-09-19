@@ -20,7 +20,11 @@ const LeafletMap = (props) => {
     const map = new Map(document.getElementById('leaflet-map'), {
       center: [7.078987297874518, 125.5428209424999],
       zoom: 13,
+      zoomControl: false // Disable the default zoom control
     });
+
+// Add the zoom control to the top-right corner
+L.control.zoom({ position: 'topright' }).addTo(map);
 
 
   var wmsTechDescOptions = {
@@ -91,7 +95,7 @@ const LeafletMap = (props) => {
 
     };
 
-    L.control.layers( baseMaps, overlayMaps).addTo(map);
+    L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
 
 
     const handleEditClick = (polygon) => {
@@ -185,7 +189,7 @@ return [centerLat, centerLng, centroidPlusCode];
               <p>Survey Number: ${surveyNumber}</p>
               <p>Lot Number: ${lotNumber}</p>
               <p>Owner Name: ${ownerName}</p>
-              <p>Lot Area: ${lotArea}</p>
+              <p>Lot Area (Sqm): ${lotArea}</p>
               <p>Plus Code: ${plusCode}</p>
               <button style="background-color: #007bff;
                 color: #fff;
