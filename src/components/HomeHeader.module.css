@@ -22,6 +22,7 @@
   .dropdown {
     position: relative;
     display: inline-block;
+
   }
   
   .dropbtn {
@@ -33,10 +34,13 @@
   .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #f9f9f9;
+    background-color: white;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 999;
+    
+    left: 50%;
+    transform: translate(-50%);
   }
   
   .dropdown-content button {
@@ -48,10 +52,12 @@
     color: black;
     border: none;
     cursor: pointer;
+    width: 100%;
+    text-align: left;
   }
   
   .dropdown-content button:hover {
-    background-color: #ddd;
+    background-color: whitesmoke;
 
   }
   
@@ -61,7 +67,6 @@
   
   /* Style the logout button*/
   .logout {
-    color: black;
     margin-left: 20px;
     text-decoration: none;
     background-color: white;

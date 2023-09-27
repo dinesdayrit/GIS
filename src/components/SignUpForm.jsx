@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 
 const SignUpForm = () => {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: ""
   });
+  
   
 
   const handleChange = (e) => {
@@ -43,6 +45,7 @@ const SignUpForm = () => {
     <div className='container'>
     
     <form onSubmit={handleSubmit} className='.LoginForm'>
+    <input  type="name" name="name" placeholder="full Name" onChange={handleChange} className='LoginFormInput' required/>
       <input type="email" name="email" placeholder="email" onChange={handleChange} className='LoginFormInput' required/>
       <input type="password" name="password" placeholder="password" onChange={handleChange} className='LoginFormInput' required/>
       <button type="submit" className='loginButton'>Sign Up</button>

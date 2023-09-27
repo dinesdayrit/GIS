@@ -5,19 +5,26 @@ import logoIcon from '../assets/Davao_City.png'
 const HomeHeader = (props) => {
 
 const handleMenu = () => {
+
+  props.formOnCancel();
   
-  props.plotOnCancel();
 }
-    const handleAddParcel = () => {
- 
-       
-          props.onAddParcelClick();
+
+
+  const handleAddParcel = () => {
+      props.onAddParcelClick();
       
       };
 
     const handleLogout =() => {
 
         props.onLogoutClick();
+
+    };
+
+    const handleMonument = () => {
+
+      props.onMonumentClick();
 
     };
 
@@ -34,11 +41,11 @@ const handleMenu = () => {
               <button className={styles.dropbtn} onClick={handleMenu}>Menu</button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>New Parcel</button>
-                <button href={null} >Edit/Update</button>
-               
+                <button >Edit/Update</button>
+                <button onClick={handleMonument}>List of Monuments</button>
               </div>
             </div>
-            <button  href={null} className={styles.logout} onClick={handleLogout}>Logout</button>
+            <button className={styles.logout} onClick={handleLogout}>Logout</button>
           </div>
         </nav>
       </header>

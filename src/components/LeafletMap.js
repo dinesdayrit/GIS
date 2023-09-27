@@ -12,9 +12,10 @@ import * as turf from '@turf/turf';
 
 const LeafletMap = (props) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
-  const mapRef = useRef(null);
+  // const mapRef = useRef(null);
   const drawnLayerRef = useRef(L.featureGroup());
-  const drawControlRef = useRef(null);
+  // const drawControlRef = useRef(null);
+
 
   useEffect(() => {
     const map = new Map(document.getElementById('leaflet-map'), {
@@ -53,7 +54,7 @@ L.control.zoom({ position: 'topright' }).addTo(map);
     Identify: false
     };
 
-    var wmsdavStreets = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
+    var wmsdavZoning2019 = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
 
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -91,16 +92,14 @@ L.control.zoom({ position: 'topright' }).addTo(map);
 
     let overlayMaps = {
       'wmsdavTechDesc': wmsdavTechDesc,
-      'wmsdavStreets' : wmsdavStreets
+      'wmsdavZoning2019' : wmsdavZoning2019
 
     };
 
     L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
 
 
-    const handleEditClick = (polygon) => {
-      console.log('Edit button Clicked');
-    };
+
 
     //New Draw Control
     const pmDrawnItems = new L.FeatureGroup();
@@ -175,14 +174,25 @@ return [centerLat, centerLng, centroidPlusCode];
           const title = gisDetail.title;
           const surveyNumber = gisDetail.surveynumber;
           const lotNumber = gisDetail.lotnumber;
+          const blkNumber = gisDetail.blknumber;
           const ownerName = gisDetail.ownername;
+          const technicalDescription = gisDetail.tecnicaldescription;
           const lotArea = gisDetail.area;
-          const plusCode = gisDetail.pluscode;
+          const status = gisDetail.status;
 
           if (geojsonObject) {
-            const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
-           
-                
+          const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+
+          let polygon = L.polygon(latlngs, { color: 'red' });
+          if(status === 'APPROVED') {
+            polygon = L.polygon(latlngs, { color: 'blue' });
+          } 
+            
+          const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+            
+          var centerCoordinate = calculateCenterCoordinate(polygonCoordinates);
+          var centroidPlusCode = centerCoordinate[2];
+            
 
             var popupContent = `
               <p>Title: ${title}</p>
@@ -190,20 +200,36 @@ return [centerLat, centerLng, centroidPlusCode];
               <p>Lot Number: ${lotNumber}</p>
               <p>Owner Name: ${ownerName}</p>
               <p>Lot Area (Sqm): ${lotArea}</p>
-              <p>Plus Code: ${plusCode}</p>
-              <button style="background-color: #007bff;
-                color: #fff;
-                border: none;
-                padding: 10px 20px;
-                border-radius: 10px;
-                cursor: pointer;" class="edit-button">Edit</button>
+              <p>Plus Code: ${centroidPlusCode}</p>
+
             `;
-           
+            // <button style="background-color: #007bff;
+            // color: #fff;
+            // border: none;
+            // padding: 10px 20px;
+            // border-radius: 10px;
+            // cursor: pointer;" class="edit-button">Edit</button>
+            
+            polygon.bindPopup(popupContent)
+            
+            // .on('click', () => {
+            //   props.handleEditClick({
+            //     title,
+            //     surveyNumber,
+            //     lotNumber,
+            //     blkNumber,
+            //     ownerName,
+            //     technicalDescription,
+            //     lotArea,
+            //     centroidPlusCode,
+            //     status,
+            //   });
+              
+            // });
 
-           
-            const polygon = L.polygon(latlngs, { color: 'blue' });
 
-            const popup = polygon.bindPopup(popupContent).on('click', () => {});
+            
+            
 
             const markerLatLng = polygon.getBounds().getCenter();
             const textMarker = L.marker(markerLatLng, {
@@ -212,35 +238,99 @@ return [centerLat, centerLng, centroidPlusCode];
                html: title, 
                }),
                  });
-            
-            
-            
+                
+                polygon.on('popupopen', () => { 
+                  props.handleShapeClick(polygonCoordinates); 
+                  props.handlePlusCode(centroidPlusCode);
+                props.handleEditClick({
+                  title,
+                  surveyNumber,
+                  lotNumber,
+                  blkNumber,
+                  ownerName,
+                  lotArea,
+                  technicalDescription,
+                  status,
+                  
+                });
+              });
+
+              
             textMarker.addTo(map);
           
             polygon.addTo(map);
             polygon.addTo(editableLayers);
 
-            polygon.on('editable:editing', (e) => {
-              const editedLayer = e.layer;
-              const editedCoordinates = editedLayer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
-              const updatedPopupContent = '<p>Coordinates:</p><pre>' + JSON.stringify(editedCoordinates, null, 2) + '</pre>';
-              popup.setContent(updatedPopupContent);
+            function updatePolygonInfo() {
+              console.log("updatePolygonInfo function called");
+              console.log("Props:", props);
 
+              const updatedPolygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+              const updatedCenterCoordinate = calculateCenterCoordinate(updatedPolygonCoordinates);
+              const updatedCentroidPlusCode = updatedCenterCoordinate[2];
               
-            });
 
-            polygon.on('popupopen', () => {
-              const editButton = document.querySelector('.edit-button');
-              editButton.addEventListener('click', () => {
-              props.handleEditClick();
-              });
-            });
+      
+
+      
+          // Update the parent component with the edited coordinates
+          props.handlePlusCode(updatedCentroidPlusCode);
+          props.handleShapeClick(updatedPolygonCoordinates);
+          setSelectedCoordinates(updatedPolygonCoordinates);
+
+
+          var updatedPopupContent = `
+          <p>Title: ${title}</p>
+          <p>Survey Number: ${surveyNumber}</p>
+          <p>Lot Number: ${lotNumber}</p>
+          <p>Owner Name: ${ownerName}</p>
+          <p>Lot Area (Sqm): ${lotArea}</p>
+          <p>Plus Code: ${updatedCentroidPlusCode}</p>
+          `;
+
+          polygon.getPopup(updatedPopupContent).setContent(updatedPopupContent);
+
+          // props.handleEditClick({
+          //   title,
+          //   surveyNumber,
+          //   lotNumber,
+          //   blkNumber,
+          //   ownerName,
+          //   lotArea,
+          //   updatedCentroidPlusCode,
+          //   status,
+          // });
+
+         
+
+            }
+            
+        polygon.on('pm:edit', updatePolygonInfo);
+      
+  
+
+          
+
+      editableLayers.addLayer(polygon);
+    }
+    drawnLayerRef.current.addTo(map);
+    return () => {
+      map.remove();
+    
+
           }
         });
       });
 
 
-    // draw starts here
+
+    //draw Tie Line
+    if (props.tieLineCoordinates.length > 0) {
+      const formattedPolygonCoordinates = props.tieLineCoordinates.map(coord => [coord[1], coord[0]]);
+      L.polygon(formattedPolygonCoordinates, { color: 'blue' }).addTo(drawnLayerRef.current);
+    }
+
+    // draw Polygon
     if (props.polygonCoordinates.length > 0) {
       const formattedPolygonCoordinates = props.polygonCoordinates.map(coord => [coord[1], coord[0]]);
       const polygon = L.polygon(formattedPolygonCoordinates, { color: 'red' }).addTo(drawnLayerRef.current);

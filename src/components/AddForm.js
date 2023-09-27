@@ -4,20 +4,29 @@ import 'leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import Plottingform from './PlotttingForm';
 import proj4 from 'proj4';
-import { center } from '@turf/turf';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 proj4.defs("EPSG:3125","+proj=tmerc +lat_0=0 +lon_0=125 +k=0.99995 +x_0=500000 +y_0=0 +ellps=clrk66 +towgs84=-127.62,-67.24,-47.04,-3.068,4.903,1.578,-1.06 +units=m +no_defs +type=crs");
 
 const AddForm = (props) => {
   const [title, setTitle] = useState('');
+  const [titleDate, setTitleDate] = useState(new Date());
   const [surveyNumber, setSurveyNumber] = useState('');
   const [lotNumber, setLotNumber] = useState('');
   const [blkNumber, setBlkNumber] = useState('');
   const [area, setArea] = useState('');
-  const [ownerName, setOwnerName] = useState('');
+  const [boundary, setBoundary] = useState('');
+  const [oct, setOct] = useState('');
+  const [octDate, setOctDate] = useState((new Date()));
+  const [prevTct, setPrevTct] = useState('');
+  const [tctDate, setTctDate] = useState((new Date()));
   const [geojson, setGeoJSON] = useState('');
   const [gridCoordinates, setGridCoordinates] = useState(''); 
+  const [tieLineCoordinates, setTieLineCoordinates] = useState('');
   const [prs92Coordinates, setPrs92Coordinates] = useState([]);
+  const [tieLinePrs92Coordinates, setTieLinePrs92Coordinates] = useState([]);
   const [technicalDescriptionValue, setTechnicalDescriptionValue] = useState('');
   const [ownerNames, setOwnerNames] = useState([{
     lName: "",
@@ -25,8 +34,10 @@ const AddForm = (props) => {
     mi: "",
     suffix: "",
   }]);
+  const [businessName, setBusinessName] = useState('');
+  const [remarks, setRemarks] = useState('');
 
-
+  
 
   const handleAddOwnerName = () => {
     // Create a copy of the current ownerNames array and add a new object with default values
@@ -49,20 +60,25 @@ const AddForm = (props) => {
   };
 
   const getCombinedOwnerName = () => {
-    const combinedOwnerName = ownerNames
+    const ownerNamesArray = ownerNames
       .map((ownerName) => {
         const { lName, fName, mi, suffix } = ownerName;
         return `${lName} ${fName} ${mi} ${suffix}`.trim();
       })
-      .filter((name) => name !== '')
-      .join(', ');
-
-    return combinedOwnerName;
+      .filter((name) => name !== '');
+  
+    if (businessName) {
+      ownerNamesArray.push(businessName);
+    }
+  
+    return ownerNamesArray.join(', ');
   };
 
   const combinedOwnerName = getCombinedOwnerName();
  
-
+  const handleTieLineCoordinatesChange = (bagoTieLineCoordinates) => {
+    setTieLineCoordinates(bagoTieLineCoordinates);
+  };
   
 
   const handleGridCoordinatesChange = (newGridCoordinates) => {
@@ -72,7 +88,14 @@ const AddForm = (props) => {
   useEffect(() => {
     // Automatically call handleConvert whenever gridCoordinates changes
     handleConvert();
+    
   }, [gridCoordinates]);
+
+  useEffect(() => {
+    // Automatically call handleConvert whenever gridCoordinates changes
+    handleTieLineConvert();
+  }, [tieLineCoordinates]);
+
 
 
 useEffect(() => {
@@ -99,6 +122,8 @@ useEffect(() => {
   const handleConvert = () => {
     const inputLines = gridCoordinates.split('\n').map(line => line.trim());
     const newCoordinates = [];
+
+
   
     try {
       inputLines.forEach(line => {
@@ -111,44 +136,102 @@ useEffect(() => {
         const converted = proj4("EPSG:3125", "EPSG:4326", [x, y]);
         newCoordinates.push(converted);
       });
-  
+
       setPrs92Coordinates(newCoordinates);
       console.log('Coordinates converted and added:', newCoordinates);
-    
-     
+
+           
     } catch (error) {
       // alert(`Error converting coordinates: ${error.message}`);
+
+    }
+
+  };
+
+  const handleTieLineConvert = () => {
+    const tieLine = tieLineCoordinates.split('\n').map(line => line.trim());
+    const newTieLineCoordinates = []; 
+  
+    try {
+      tieLine.forEach(line => {
+        const [x, y] = line.split(',').map(Number);
+  
+        if (!isFinite(x) || !isFinite(y)) {
+          throw new Error(`Invalid tie line coordinate: ${line}`);
+        }
+  
+        const converted = proj4("EPSG:3125", "EPSG:4326", [x, y]);
+        newTieLineCoordinates.push(converted);
+      });
+  
+      setTieLinePrs92Coordinates(newTieLineCoordinates); // Update the state variable here
+      console.log('Tie line coordinates converted and added:', newTieLineCoordinates);
+  
+    } catch (error) {
+      // alert(`Error converting Tie line coordinates: ${error.message}`);
     }
   };
   
+
+  
   
 
+
   const handleDrawClick = () => {
-    
+    props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
     props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2));
-    
+  
   };
-  // const handleConvertAndDraw = () => {
-  //   handleConvert();
-  //   handleDrawClick();
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const formattedTitleDate = titleDate instanceof Date && !isNaN(titleDate)
+  ? titleDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  : null;
+
+const formattedOctDate = octDate instanceof Date && !isNaN(octDate)
+  ? octDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  : null;
+
+const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
+  ? tctDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  : null;
+
+
     const formData = {
       title: title,
+      titleDate: formattedTitleDate,
       surveyNumber: surveyNumber,
       lotNumber: lotNumber,
       blkNumber: blkNumber,
       area: area,
+      boundary: boundary,
       ownerName: combinedOwnerName,
+      oct: oct,
+      octDate: formattedOctDate,
+      tct: prevTct,
+      tctDate: formattedTctDate,
       technicalDescription: technicalDescriptionValue,
+      technicaldescremarks: remarks,
       plusCode: props.plusCode,
       geojson: geojson,
-   
+      status: 'For Approval',
       
+   
       
     };
 
@@ -176,7 +259,10 @@ useEffect(() => {
     <div className={styles['popup-form-container']}>
    
       <form onSubmit={handleSubmit}>
-        <label>Title number:</label>
+      <div className={styles.inputWrapper}>
+      <div style={{width: '100%'}}>
+        <label>Title No.:</label>
+       
         <input
           type="text"
           name="title"
@@ -184,13 +270,26 @@ useEffect(() => {
             setTitle(e.target.value);
           }}
         />
+         </div>
+         <div>
+         <label>Date:</label>
+        <DatePicker 
+        selected={titleDate} 
+        onChange={(titleDate) => setTitleDate(titleDate)}
+        dateFormat="MMM d, yyyy"
+        />
+        </div>
+        </div>
+      
 
-        <label>Survey Number:</label>
+        <label>Survey No.:</label>
         <input
           type="text"
           name="surveyNumber"
           onChange={(e) => setSurveyNumber(e.target.value)}
         />
+    
+        
      <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
        <div>
       <label>Lot Number:</label>
@@ -223,11 +322,22 @@ useEffect(() => {
 
       </div>
       </div>
+
+      <label>Boundary:</label>
+      <textarea 
+        rows={6}
+        type="text"
+        name="boundary"
+        onChange={(e) => {
+        setBoundary(e.target.value);
+        }}
+
+      />
         
         <label>Owner Name: <p>(Last name, First name, Middle Initials, Suffix)</p></label>
       
         {ownerNames.map((ownerName, index) => (
-          <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div key={index} className={styles.inputWrapper}>
         
           <input
               type="text"
@@ -273,10 +383,19 @@ useEffect(() => {
         <button
           type="button"
           onClick={handleAddOwnerName}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', width: '2%', color: 'black' }}
+          style={{width: '35%'}}
         >
-          +
+          +  Add Name
         </button>
+
+        <label>Business Name:</label>
+        <input 
+          type='text'
+          name="businessName"
+          value={businessName}
+          onChange={(e) => setBusinessName(e.target.value)}
+        />
+
         
 
   
@@ -286,13 +405,55 @@ useEffect(() => {
           type="text"
           name="ownerName"
           value={combinedOwnerName}
-          onChange={(e) => setOwnerName(e.target.value)}
+      
         /> */}
         
+        <div className={styles.inputWrapper}>
+        <div style={{width: '90%'}}>
+        <label>OCT No.:</label>
+        <input
+          type='text'
+          name="oct"
+          value={oct}
+          onChange={(e) => setOct(e.target.value)}
+        />
+        </div>
 
+        <div>
+        <label>Date:</label>
+        <DatePicker 
+        selected={octDate} 
+        onChange={(octDate) => setOctDate(octDate)}
+        dateFormat="MMM d, yyyy"
+        />
+        </div>
+        </div>
 
+        <div className={styles.inputWrapper}>
+        <div style={{width: '90%'}}>
+        <label>Prev TCT No.:</label>
+        <input
+          type='text'
+          name="prevTct"
+          value={prevTct}
+          onChange={(e) => setPrevTct(e.target.value)}
+        />
+        </div>
+
+        <div>
+        <label>Date:</label>
+        <DatePicker 
+        selected={tctDate} 
+        onChange={(tctDate) => setTctDate(tctDate)}
+        dateFormat="MMM d, yyyy"
+        />
+        </div>
+        </div>
+
+      
         <Plottingform 
         onGridCoordinatesChange={handleGridCoordinatesChange}
+        onTieLineCoordinates={handleTieLineCoordinatesChange}
         onTechnicalDescriptionChange={(newTechnicalDescription) =>
         setTechnicalDescriptionValue(newTechnicalDescription)
           }
@@ -303,14 +464,23 @@ useEffect(() => {
           id="convertedCoordinates"
           name="convertedCoordinates"
           rows={5}
-          onClick={handleConvert}
-          onSelect={handleConvert}
           value={JSON.stringify(prs92Coordinates, null, 2)}
           />    */}
-        
-        <button type="button" id="drawButton" onClick= {handleDrawClick}>
-           Draw
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '10%'}}>
+        <button type="button" id="drawButton" onClick= {handleDrawClick} style={{width: '35%'}}>
+           DRAW
         </button> 
+        </div>
+
+        <label>REMARKS:</label>
+        <textarea 
+          rows={3}
+          type="text"
+          name="remarks"
+          onChange={(e) => {
+            setRemarks(e.target.value);
+          }}
+        />
 
         <label>Plus Code:</label>
         <input
@@ -319,6 +489,8 @@ useEffect(() => {
           value={props.plusCode}
         
         />
+
+
         {/* <label>Technical Description</label>
       <textarea 
         name= 'technicalDescription'
@@ -335,8 +507,9 @@ useEffect(() => {
           onChange={(e) => setGeoJSON(e.target.value)}
           readOnly
         /> */}
-        <div>
-        <button type="submit">Save</button>
+        
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '10%'}}>
+        <button type="submit" style={{width: '35%'}}>SAVE</button>
     
         </div>
       </form>

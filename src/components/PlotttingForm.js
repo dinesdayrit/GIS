@@ -19,6 +19,7 @@ const Plottingform = (props) => {
     northingValue:'',
     tieLines: [createTieLine()],
   });
+  const [drawTieLine, setDrawTieLine] = useState("");
   const [results, setResults] = useState([]);
   const [pointCount, setPointCount] = useState(0);
   const [numberOfPoints, setNumberOfPoints] = useState('');
@@ -26,12 +27,14 @@ const Plottingform = (props) => {
   // const [techincalDescription, setTechnicalDescription] = useState("");
 
   useEffect(() => { 
+    calculateTieLine();
     handleCalculate(); 
     const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
     props.onGridCoordinatesChange(formattedResults);
     console.log(formattedResults);
     const newTechnicalDescription = generateTechnicalDescription(formData);
     props.onTechnicalDescriptionChange(newTechnicalDescription);
+    props.onTieLineCoordinates(drawTieLine);
 
     
     setIsInitialRender(true);
@@ -122,6 +125,8 @@ const Plottingform = (props) => {
       tieLines: updatedTieLines,
     });
   };
+  
+
 
   const handleCalculate = () => {
     let cumulativeEasting = parseFloat(formData.eastingValue);
@@ -145,16 +150,46 @@ const Plottingform = (props) => {
     setResults(resultsArray);
   };
 
+  const calculateTieLine = () => {
+    //get the the easting, northing and the first tie line's eastingCoordinate and northingCoordinate
+  const { eastingValue, northingValue } = formData;
+
+  // Check if there are any results
+  if (results.length > 0) {
+    // Get the eastingCoordinate and northingCoordinate of the first tie line
+    const firstTieLine = results[0];
+    const { eastingCoordinate, northingCoordinate } = firstTieLine;
+
+    // Now you have access to these values for drawing
+    console.log('Easting:', eastingValue);
+    console.log('Northing:', northingValue);
+    console.log('Easting Coordinate (First Tie Line):', eastingCoordinate);
+    console.log('Northing Coordinate (First Tie Line):', northingCoordinate);
+
+    
+    
+
+    setDrawTieLine(
+      `${eastingValue}, ${northingValue}\n` +
+      `${eastingCoordinate}, ${northingCoordinate}`
+      );
+
+    
+      props.onTieLineCoordinates(drawTieLine);
+      
+  } else {
+    console.log('No results available to draw.');
+  }
+  }
+
+
   const generateTechnicalDescription = (formData) => {
     const tieLineDescriptions = formData.tieLines.map((tieLine, index) => (
     `${index === 0 ? '[Tie Line]' : `[Point ${index}]`}
-   ${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
+${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
     )).join('\n');
   
-    return `monument: ${formData.monument}
-  eastingValue: ${formData.eastingValue}
-  northingValue: ${formData.northingValue}
-  ${tieLineDescriptions}`.trim('');
+  return `Monument: ${formData.monument}\nEastingValue: ${formData.eastingValue}\nNorthingValue: ${formData.northingValue}\n\n${tieLineDescriptions}`.trim('');
   };
 
 //CSV Upload Start Here
@@ -177,17 +212,17 @@ const handleFileUpload = (e) => {
           setNumberOfPoints(numberOfPointsValue);
 
           const tieLines = result.data.map((row) => ({
-            c14: row['c14'] || '',
-            d14: row['d14'] || '',
-            e14: row['e14'] || '',
-            f14: row['f14'] || '',
-            g14: row['g14'] || '',
+            c14: row['DegreeAngle'] || '',
+            d14: row['Degree'] || '',
+            e14: row['Minutes'] || '',
+            f14: row['MinutesAngle'] || '',
+            g14: row['Distance'] || '',
           }));
 
           setFormData({
             monument: headerToData['monument'] || '',
-            eastingValue: headerToData['eastingValue'] || '',
-            northingValue: headerToData['northingValue'] || '',
+            eastingValue: headerToData['easting'] || '',
+            northingValue: headerToData['northing'] || '',
             numberOfPoints: numberOfPointsValue,
             tieLines,
           });
@@ -203,6 +238,32 @@ const handleFileUpload = (e) => {
   reader.readAsText(files[0]);
 };
 
+ // Fetch data from /monuments
+ useEffect(() => {
+  fetch('/monuments')
+    .then((response) => response.json())
+    .then((monuments) => {
+      console.log('Fetched Monuments:', monuments);
+      const matchingMonument = monuments.find(
+        (monument) => monument.monument === formData.monument
+      );
+
+      console.log('Matching Monument:', matchingMonument);
+
+      if (matchingMonument) {
+        setFormData({
+          ...formData,
+          eastingValue: matchingMonument.easting,
+          northingValue: matchingMonument.northing,
+        });
+      }
+    })
+    .catch((error) => {
+      alert('Error fetching Monuments:', error);
+    });
+}, [formData.monument]);
+
+
   return (
     <div>
 
@@ -213,29 +274,37 @@ const handleFileUpload = (e) => {
           accept=".csv"
           onChange={handleFileUpload}
       />
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
+          <div>
       <label>Monument</label>
       <input        
         type="text"
         name="monument"
-        value={formData.monument}
+        defaultValue={formData.monument}
         onChange={(e) => handleChange(e)}
       />
+      </div>
 
-      <label>Easting Value</label>
+       <div>
+      <label>Easting</label>
       <input
         type="text"
         name="eastingValue"
         value={formData.eastingValue}
         onChange={(e) => handleChange(e)}
       />
-
-      <label>Northing Value</label>
+      </div>
+      
+      <div>
+      <label>Northing</label>
       <input
         type="text"
         name="northingValue"
         value={formData.northingValue}
         onChange={(e) => handleChange(e)}
       />
+      </div>
+      </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
       <label>Number of points:</label>
@@ -335,6 +404,13 @@ const handleFileUpload = (e) => {
       <button type='button' onClick={handleAddTieLine} style ={{width: '30%',borderRadius: '50%', textAlign: 'center'}}>+</button>
       
       </div> */}
+      
+      {/* <button type='button' onClick={calculateTieLine}>draw tie line</button>
+      <textarea 
+        rows={4}
+        defaultValue={drawTieLine}
+        
+      /> */}
     </div>
   );
 };
