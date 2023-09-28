@@ -172,12 +172,19 @@ return [centerLat, centerLng, centroidPlusCode];
         gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
           const title = gisDetail.title;
+          const titleDate = gisDetail.titledate;
           const surveyNumber = gisDetail.surveynumber;
           const lotNumber = gisDetail.lotnumber;
           const blkNumber = gisDetail.blknumber;
           const ownerName = gisDetail.ownername;
           const technicalDescription = gisDetail.tecnicaldescription;
+          const technicaldescremarks = gisDetail.technicaldescremarks;
           const lotArea = gisDetail.area;
+          const boundary = gisDetail.boundary;
+          const oct = gisDetail.oct;
+          const octDate = gisDetail.octdate;
+          const tct = gisDetail.prevtct;
+          const tctDate = gisDetail.tctdate;
           const status = gisDetail.status;
 
           if (geojsonObject) {
@@ -212,24 +219,6 @@ return [centerLat, centerLng, centroidPlusCode];
             
             polygon.bindPopup(popupContent)
             
-            // .on('click', () => {
-            //   props.handleEditClick({
-            //     title,
-            //     surveyNumber,
-            //     lotNumber,
-            //     blkNumber,
-            //     ownerName,
-            //     technicalDescription,
-            //     lotArea,
-            //     centroidPlusCode,
-            //     status,
-            //   });
-              
-            // });
-
-
-            
-            
 
             const markerLatLng = polygon.getBounds().getCenter();
             const textMarker = L.marker(markerLatLng, {
@@ -244,14 +233,21 @@ return [centerLat, centerLng, centroidPlusCode];
                   props.handlePlusCode(centroidPlusCode);
                 props.handleEditClick({
                   title,
+                  titleDate,
                   surveyNumber,
                   lotNumber,
                   blkNumber,
-                  ownerName,
                   lotArea,
+                  ownerName,
+                  oct,
+                  octDate,
+                  tct,
+                  tctDate,
+                  boundary,
                   technicalDescription,
+                  technicaldescremarks,
                   status,
-                  
+
                 });
               });
 

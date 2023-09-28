@@ -1,5 +1,5 @@
 import LeafletMap from "./LeafletMap"
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from './Home.module.css';
 import AddForm from './AddForm';
 import EditForm from "./EditForm";
@@ -15,6 +15,7 @@ const Home = (props) => {
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [plusCode, setPlusCode] = useState([]);
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
+
 
 
   const handleTieLineDraw = (coordinates) => {
@@ -48,6 +49,9 @@ const Home = (props) => {
 
   const togglePopupForm = () => {
     setShowPopupForm(!showPopupForm);
+    setPlusCode("");
+    
+
   };
 
   // const selectedDrawing = () => {
@@ -57,6 +61,7 @@ const Home = (props) => {
   const handleEditClick = (polygonDetails) => {
     setSelectedPolygonDetails(polygonDetails);
     setShowEditForm(true);
+    console.log("kani",selectedPolygonDetails);
   
   };
 
@@ -106,7 +111,7 @@ const Home = (props) => {
           handleShapeClick={handleShapeClick}
           handlePlusCode ={handlePlusCode}
           onTieLineDraw={handleTieLineDraw}
-          // handTieLineClick=
+       
           
         />
       )}
