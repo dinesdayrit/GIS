@@ -20,22 +20,24 @@ const LoginForm = ({ onLogin }) => {
     // Make the POST request for login here
     fetch('/userLogin', {
       method: 'POST',
+      crossDomain: true,
       headers: {
         'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(formData),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data, 'userLogin');
-        // Pass the data to the onLogin function
-        // onLogin(data);
         if (data.status === 'ok') {
-           // Store the authentication token in localStorage
-           localStorage.setItem('authToken', data.token); // assuming your response has a token field
-           onLogin(data);
-          // Show the alert for successful login
           alert('Login Successful');
+           localStorage.setItem('authToken', data.token);
+          //  window.localStorage.setItem("loggedIn", true); 
+           onLogin(data);
+         
+          
           // Navigate to the home page after successful login
           navigate('/home');
         } else {

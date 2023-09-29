@@ -111,18 +111,3 @@
     
 }
 
-.custom-datepicker button{
-  background: transparent !important;
-  border: none !important;
-  cursor: pointer !important;
-  font-size: 16px !important;
-  padding: 4px !important;
-}
-
-.popup-form-container .custom-datepicker .react-datepicker__navigation--previous button{
-  left: 8px !important;
-}
-
-.popup-form-container .custom-datepicker .react-datepicker__navigation--next button {
-  right: 8px !important;
-}

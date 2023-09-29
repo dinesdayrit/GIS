@@ -5,20 +5,24 @@ import LoginForm from './LoginForm.jsx';
 import Home from './Home.jsx';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
+  const initialIsLoggedIn = !!localStorage.getItem('authToken');
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIsLoggedIn);
 
   useEffect(() => {
-    // Check localStorage for authentication token on app load
     const authToken = localStorage.getItem('authToken');
+    console.log(isLoggedIn);
     if (authToken) {
       setIsLoggedIn(true);
+      
+    } else {
+      setIsLoggedIn(false);
     }
-  }, []);
-
+   
+  }, []); 
 
   const handleLogin = (data) => {
-    if (data.status === 'ok') {
+    if (data.status === 'ok' && data.token) {
+      localStorage.setItem('authToken', data.token);
       setIsLoggedIn(true);
     } else {
       alert('Invalid email or password');
@@ -26,7 +30,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    // Remove the authentication token from localStorage
     localStorage.removeItem('authToken');
     setIsLoggedIn(false);
   };
@@ -46,7 +49,7 @@ function App() {
             path='/home'
             element={
               isLoggedIn ? (
-                <Home onLogout={handleLogout}/>
+                <Home onLogout={handleLogout} />
               ) : (
                 // If not logged in, redirect to the login page
                 <Navigate to="/" replace />

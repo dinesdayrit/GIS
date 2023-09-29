@@ -231,8 +231,6 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       geojson: geojson,
       status: 'For Approval',
       
-   
-      
     };
 
     fetch('/GisDetail', {
