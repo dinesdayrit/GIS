@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Map, TileLayer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -11,7 +11,7 @@ import { PlusCodes } from 'olc-plus-codes';
 import * as turf from '@turf/turf';
 
 const LeafletMap = (props) => {
-  const [selectedCoordinates, setSelectedCoordinates] = useState(null);
+  // const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   // const mapRef = useRef(null);
   const drawnLayerRef = useRef(L.featureGroup());
   // const drawControlRef = useRef(null);
@@ -208,16 +208,15 @@ return [centerLat, centerLng, centroidPlusCode];
               <p>Owner Name: ${ownerName}</p>
               <p>Lot Area (Sqm): ${lotArea}</p>
               <p>Plus Code: ${centroidPlusCode}</p>
-
-            `;
+              `;
             // <button style="background-color: #007bff;
             // color: #fff;
             // border: none;
             // padding: 10px 20px;
             // border-radius: 10px;
-            // cursor: pointer;" class="edit-button">Edit</button>
+            // cursor: pointer;" class="approved-button">EDIT</button>
             
-            polygon.bindPopup(popupContent)
+            polygon.bindPopup(popupContent).on('click')
             
 
             const markerLatLng = polygon.getBounds().getCenter();
@@ -227,29 +226,38 @@ return [centerLat, centerLng, centroidPlusCode];
                html: title, 
                }),
                  });
-                
+
                 polygon.on('popupopen', () => { 
                   props.handleShapeClick(polygonCoordinates); 
                   props.handlePlusCode(centroidPlusCode);
-                props.handleEditClick({
-                  title,
-                  titleDate,
-                  surveyNumber,
-                  lotNumber,
-                  blkNumber,
-                  lotArea,
-                  ownerName,
-                  oct,
-                  octDate,
-                  tct,
-                  tctDate,
-                  boundary,
-                  technicalDescription,
-                  technicaldescremarks,
-                  status,
 
-                });
-              });
+                // // Add an event listener for the "Edit" button click
+                // const editButton = document.querySelector('.edit-button');
+                // editButton.addEventListener('click', () => {
+                // // Call the handleEditClick function with the provided data
+  
+            props.handleEditClick({
+            title,
+            titleDate,
+            surveyNumber,
+            lotNumber,
+            blkNumber,
+            lotArea,
+            ownerName,
+            oct,
+            octDate,
+            tct,
+            tctDate,
+            boundary,
+            technicalDescription,
+            technicaldescremarks,
+            status,
+
+  
+            })
+
+        });
+    // });
 
               
             textMarker.addTo(map);
@@ -272,7 +280,7 @@ return [centerLat, centerLng, centroidPlusCode];
           // Update the parent component with the edited coordinates
           props.handlePlusCode(updatedCentroidPlusCode);
           props.handleShapeClick(updatedPolygonCoordinates);
-          setSelectedCoordinates(updatedPolygonCoordinates);
+          // setSelectedCoordinates(updatedPolygonCoordinates);
 
 
           var updatedPopupContent = `
@@ -373,7 +381,7 @@ return [centerLat, centerLng, centroidPlusCode];
     // Update the parent component with the edited coordinates
     props.handlePlusCode(updatedCentroidPlusCode);
     props.handleShapeClick(updatedPolygonCoordinates);
-    setSelectedCoordinates(updatedPolygonCoordinates);
+    // setSelectedCoordinates(updatedPolygonCoordinates);
   }
 
   polygon.on('pm:edit', updatePolygonInfo);

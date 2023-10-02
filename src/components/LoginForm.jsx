@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './styles.css';
 
 const LoginForm = ({ onLogin }) => {
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,7 +35,7 @@ const LoginForm = ({ onLogin }) => {
         if (data.status === 'ok') {
           alert('Login Successful');
            localStorage.setItem('authToken', data.token);
-          //  window.localStorage.setItem("loggedIn", true); 
+           localStorage.setItem('userDetails', JSON.stringify(data.user));
            onLogin(data);
          
           

@@ -21,7 +21,7 @@ const Plottingform = (props) => {
   });
   const [drawTieLine, setDrawTieLine] = useState("");
   const [results, setResults] = useState([]);
-  const [pointCount, setPointCount] = useState(0);
+  // const [pointCount, setPointCount] = useState(0);
   const [numberOfPoints, setNumberOfPoints] = useState('');
   const [isInitialRender, setIsInitialRender] = useState(true);
   // const [techincalDescription, setTechnicalDescription] = useState("");
@@ -112,7 +112,7 @@ const Plottingform = (props) => {
         tieLines: newTieLines,
       });
   
-      setPointCount(numPointsToAdd);
+      // setPointCount(numPointsToAdd);
     }
   };
   
@@ -274,45 +274,51 @@ const handleFileUpload = (e) => {
           accept=".csv"
           onChange={handleFileUpload}
       />
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%', marginBottom: '10px' }}>
           <div>
-      <label>Monument</label>
+      <label>Monument*</label>
       <input        
         type="text"
         name="monument"
+        placeholder='Monument'
         defaultValue={formData.monument}
         onChange={(e) => handleChange(e)}
       />
       </div>
 
        <div>
-      <label>Easting</label>
+      <label>Easting*</label>
       <input
         type="text"
         name="eastingValue"
+        placeholder='Easting'
         value={formData.eastingValue}
         onChange={(e) => handleChange(e)}
+        required
       />
       </div>
       
       <div>
-      <label>Northing</label>
+      <label>Northing*</label>
       <input
         type="text"
         name="northingValue"
+        placeholder='Northing'
         value={formData.northingValue}
         onChange={(e) => handleChange(e)}
+        required
       />
       </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <label>Number of points:</label>
+      <label>Number of points</label>
       <input style ={{width: '15%'}}
           type="text"
           name="numberOfPoints"
           onSelect={handleAddTieLine}
           onChange={(e) => setNumberOfPoints(e.target.value)}
+          
       />
      
       
@@ -321,8 +327,8 @@ const handleFileUpload = (e) => {
         <div key={index} >
         <label>
         {index === 0
-          ? 'Tie Line'
-        : `Point ${index}`
+          ? 'Tie Line*'
+        : `Point ${index}*`
       }
     </label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -330,9 +336,10 @@ const handleFileUpload = (e) => {
         style={{ width: '30%' }}
          name={`tieLines[${index}].c14`}
          value={tieLine.c14}
+         placeholder='N/S'
           onChange={(e) => handleChange(e, index)}
              >
-        <option value={null}></option>
+        <option value={null} placeholder='N/S'></option>
          <option value="N">N</option>
           <option value="S">S</option>
          </select>
@@ -354,6 +361,7 @@ const handleFileUpload = (e) => {
             style={{width: '30%'}}
             type="text"
             name={`tieLines[${index}].f14`}
+            placeholder='E/W'
             value={tieLine.f14}
             onChange={(e) => handleChange(e, index)}
             >

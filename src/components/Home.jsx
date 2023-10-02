@@ -1,5 +1,5 @@
 import LeafletMap from "./LeafletMap"
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styles from './Home.module.css';
 import AddForm from './AddForm';
 import EditForm from "./EditForm";
@@ -15,6 +15,7 @@ const Home = (props) => {
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [plusCode, setPlusCode] = useState([]);
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
+
 
 
 

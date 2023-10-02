@@ -24,10 +24,17 @@ const EditForm = (props) => {
   const [textStatusColor, setTextStatusColor] = useState('');
   const [geojson, setGeoJSON] = useState('');
   const [isApproved, setIsApproved] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
   
 
 
+useEffect(() => {
+  const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
+  if (storedUserDetails && storedUserDetails.role === "user") {
+    setIsAdmin(false);
+  }
+}, []);
   
   useEffect(() => {
     generateGeoJSON();
@@ -46,10 +53,10 @@ const EditForm = (props) => {
     setTctDate(polygonDetails.tctDate);
     setTechnicalDescription(polygonDetails.technicalDescription);
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
+    console.log('isadmin', isAdmin);
   }, [props.selectedCoordinates]);
 
-
-  
+ 
 
   const generateGeoJSON = () => {
     const feature = {
@@ -81,6 +88,7 @@ const EditForm = (props) => {
 
     const formData = {
       title: title,
+      titleDate: titleDate,
       surveyNumber: surveyNumber,
       lotNumber: lotNumber,
       blkNumber: blkNumber,
@@ -118,10 +126,15 @@ const EditForm = (props) => {
 
   };
 
+
+
+
   const handleApprove = () => {
     // Update the status in the component state
     setStatus('APPROVED');
     setTextStatusColor('blue');
+    setIsApproved(false);
+   
 
     // Send a PUT request to update the status in the backend
     fetch(`/approved/${polygonDetails.title}`, {
@@ -137,6 +150,8 @@ const EditForm = (props) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        alert('APPROVED');
+        console.log('isApproved',isApproved);
         // Handle the response from the server as needed
       })
       .catch((error) => {
@@ -152,7 +167,7 @@ const EditForm = (props) => {
 
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
-        <label>Title No.:</label>
+        <label>Title no.*</label>
         <input
           type="text"
           name="title"
@@ -160,10 +175,11 @@ const EditForm = (props) => {
           onChange={(e) => {
             setTitle(e.target.value);
           }}
+          required
         />
          </div>
          <div>
-         <label>Date:</label>
+         <label>Date</label>
         <input
         value ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
@@ -171,36 +187,38 @@ const EditForm = (props) => {
         </div>
         </div>
 
-        <label>Survey Number:</label>
+        <label>Survey no.*</label>
         <input
           type="text"
           name="surveyNumber"
           value={surveyNumber}
           onChange={(e) => setSurveyNumber(e.target.value)}
+          required
         />
      <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
        <div>
-      <label>Lot Number:</label>
+      <label>Lot no.*</label>
     <input
       type="text"
       name="lotNumber"
       value={lotNumber}
       onChange={(e) => setLotNumber(e.target.value)}
+      required
     />
       </div>
 
        <div>
-        <label>Blk No.:</label>
+        <label>Blk no.*</label>
         <input
       type="text"
       name="blkNumber"
       value={blkNumber}
       onChange={(e) => setBlkNumber(e.target.value)}
-    
+      required
       />
       </div>
       <div>
-      <label>Area (sq.m.):</label> 
+      <label>Area (sq.m.)*</label> 
         <input
           type="text"
           name="area"
@@ -212,7 +230,7 @@ const EditForm = (props) => {
       </div>
 
 
-      <label>Boundary:</label>
+      <label>Boundary*</label>
       <textarea 
         rows={6}
         type="text"
@@ -221,10 +239,11 @@ const EditForm = (props) => {
         onChange={(e) => {
         setBoundary(e.target.value);
         }}
+        required
       />
       
 
-      <label>Owner Name</label>
+      <label>Owner Name*</label>
       <input
           type="text"
           name="ownerName"
@@ -235,7 +254,7 @@ const EditForm = (props) => {
 
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
-        <label>OCT No.:</label>
+        <label>OCT No.*</label>
         <input
           type="text"
           name="OCT"
@@ -246,7 +265,7 @@ const EditForm = (props) => {
         />
          </div>
          <div>
-         <label>Date:</label>
+         <label>Date</label>
         <input
         value ={octDate}
         onChange={(e) => setOctDate(e.target.value)}
@@ -256,7 +275,7 @@ const EditForm = (props) => {
 
         <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
-        <label>Prev TCT No.:</label>
+        <label>Prev TCT No.*</label>
         <input
           type="text"
           name="tct"
@@ -267,7 +286,7 @@ const EditForm = (props) => {
         />
          </div>
          <div>
-         <label>Date:</label>
+         <label>Date</label>
         <input
         value ={tctDate}
         onChange={(e) => setTctDate(e.target.value)}
@@ -275,7 +294,7 @@ const EditForm = (props) => {
         </div>
         </div>
 
-      <label>Technnnical Description</label>
+      <label>Technnnical Description*</label>
       <textarea
           rows={6}
           type="text"
@@ -286,7 +305,7 @@ const EditForm = (props) => {
 
           />
 
-      <label>REMARKS:</label>
+      <label>REMARKS</label>
       <textarea 
           rows={3}
           type="text"
@@ -298,7 +317,7 @@ const EditForm = (props) => {
         />
 
 
-        <label>Plus Code:</label>
+        <label>Plus Code*</label>
         <input
           type="text"
           name="plusCode"
@@ -330,7 +349,7 @@ const EditForm = (props) => {
       </form>
       <div style={{display: 'flex', marginTop: '10%'}}>
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
-      {!isApproved && ( 
+      {!isApproved && isAdmin &&( 
           <button style={{ marginLeft: '20px' }} onClick={handleApprove}>
             APPROVE
           </button>

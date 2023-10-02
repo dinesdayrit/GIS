@@ -12,16 +12,16 @@ proj4.defs("EPSG:3125","+proj=tmerc +lat_0=0 +lon_0=125 +k=0.99995 +x_0=500000 +
 
 const AddForm = (props) => {
   const [title, setTitle] = useState('');
-  const [titleDate, setTitleDate] = useState(new Date());
+  const [titleDate, setTitleDate] = useState('');
   const [surveyNumber, setSurveyNumber] = useState('');
   const [lotNumber, setLotNumber] = useState('');
   const [blkNumber, setBlkNumber] = useState('');
   const [area, setArea] = useState('');
   const [boundary, setBoundary] = useState('');
   const [oct, setOct] = useState('');
-  const [octDate, setOctDate] = useState((new Date()));
+  const [octDate, setOctDate] = useState('');
   const [prevTct, setPrevTct] = useState('');
-  const [tctDate, setTctDate] = useState((new Date()));
+  const [tctDate, setTctDate] = useState('');
   const [geojson, setGeoJSON] = useState('');
   const [gridCoordinates, setGridCoordinates] = useState(''); 
   const [tieLineCoordinates, setTieLineCoordinates] = useState('');
@@ -259,20 +259,22 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       <form onSubmit={handleSubmit}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
-        <label>Title No.:</label>
+        <label>Title no.*</label>
        
         <input
           type="text"
           name="title"
+          placeholder='Title number'
           onChange={(e) => {
             setTitle(e.target.value);
           }}
         />
          </div>
          <div>
-         <label>Date:</label>
+         <label>Date*</label>
         <DatePicker 
         selected={titleDate} 
+        placeholderText='MMM dd, yyyy'
         onChange={(titleDate) => setTitleDate(titleDate)}
         dateFormat="MMM d, yyyy"
         />
@@ -280,59 +282,64 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         </div>
       
 
-        <label>Survey No.:</label>
+        <label>Survey no.*</label>
         <input
           type="text"
           name="surveyNumber"
+          placeholder='Survey number'
           onChange={(e) => setSurveyNumber(e.target.value)}
         />
     
         
      <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
        <div>
-      <label>Lot Number:</label>
+      <label>Lot no.*</label>
     <input
       type="text"
       name="lotNumber"
-      value={lotNumber}
+      // value={lotNumber}
+      placeholder='Lot no.'
       onChange={(e) => setLotNumber(e.target.value)}
     />
       </div>
 
        <div>
-        <label>Blk No.:</label>
+        <label>Blk no.*</label>
         <input
       type="text"
       name="blkNumber"
-      value={blkNumber}
+      // value={blkNumber}
+      placeholder='Block no.'
       onChange={(e) => setBlkNumber(e.target.value)}
       />
       </div>
 
 
       <div>
-      <label>Area (sq.m.):</label> 
+      <label>Area (sq.m.)*</label> 
         <input
           type="text"
           name="area"
+          placeholder='Lot Area(sqm)'
           onChange={(e) => setArea(e.target.value)}
           required />
 
       </div>
       </div>
 
-      <label>Boundary:</label>
+      <label>Boundary*</label>
       <textarea 
         rows={6}
         type="text"
         name="boundary"
+        placeholder='Boundaries'
         onChange={(e) => {
         setBoundary(e.target.value);
         }}
 
       />
         
-        <label>Owner Name: <p>(Last name, First name, Middle Initials, Suffix)</p></label>
+        <label>Owner (Name/Business name)* <p>(Last name, First name, Middle Initials, Suffix)</p></label>
       
         {ownerNames.map((ownerName, index) => (
           <div key={index} className={styles.inputWrapper}>
@@ -342,7 +349,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="lName"
               placeholder="Last Name"
               style={{ width: '25%' }}
-              value={ownerName.lName}
+              // value={ownerName.lName}
               onChange={(e) => handleOwnerNameChange(index, 'lName', e.target.value)}
             />
             <input
@@ -350,7 +357,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="fName"
               placeholder="First Name"
               style={{ width: '25%' }}
-              value={ownerName.fName}
+              // value={ownerName.fName}
               onChange={(e) => handleOwnerNameChange(index, 'fName', e.target.value)}
             />
             <input
@@ -358,7 +365,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="mi"
               placeholder="MI"
               style={{ width: '25%' }}
-              value={ownerName.mi}
+              // value={ownerName.mi}
               onChange={(e) => handleOwnerNameChange(index, 'mi', e.target.value)}
             />
             <input
@@ -366,7 +373,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="suffix"
               placeholder="Suffix"
               style={{ width: '25%' }}
-              value={ownerName.suffix}
+              // value={ownerName.suffix}
               onChange={(e) => handleOwnerNameChange(index, 'suffix', e.target.value)}
             />
             <button
@@ -386,11 +393,12 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           +  Add Name
         </button>
 
-        <label>Business Name:</label>
+        <p>Business Name</p>
         <input 
           type='text'
           name="businessName"
-          value={businessName}
+          // value={businessName}
+          placeholder='Business Name'
           onChange={(e) => setBusinessName(e.target.value)}
         />
 
@@ -408,19 +416,21 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         
         <div className={styles.inputWrapper}>
         <div style={{width: '90%'}}>
-        <label>OCT No.:</label>
+        <label>OCT No.*</label>
         <input
           type='text'
           name="oct"
-          value={oct}
+          // value={oct}
+          placeholder='OCT'
           onChange={(e) => setOct(e.target.value)}
         />
         </div>
 
         <div>
-        <label>Date:</label>
+        <label>Date</label>
         <DatePicker 
         selected={octDate} 
+        placeholderText='MMM dd, yyyy'
         onChange={(octDate) => setOctDate(octDate)}
         dateFormat="MMM d, yyyy"
         />
@@ -429,19 +439,21 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
 
         <div className={styles.inputWrapper}>
         <div style={{width: '90%'}}>
-        <label>Prev TCT No.:</label>
+        <label>Prev TCT No.*</label>
         <input
           type='text'
           name="prevTct"
-          value={prevTct}
+          // value={prevTct}
+          placeholder='Previous TCT'
           onChange={(e) => setPrevTct(e.target.value)}
         />
         </div>
 
         <div>
-        <label>Date:</label>
+        <label>Date</label>
         <DatePicker 
         selected={tctDate} 
+        placeholderText='MMM dd, yyyy'  
         onChange={(tctDate) => setTctDate(tctDate)}
         dateFormat="MMM d, yyyy"
         />
@@ -470,21 +482,24 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         </button> 
         </div>
 
-        <label>REMARKS:</label>
+        <label>REMARKS</label>
         <textarea 
           rows={3}
           type="text"
           name="remarks"
+          placeholder='Techical description Remarks'
           onChange={(e) => {
             setRemarks(e.target.value);
           }}
         />
 
-        <label>Plus Code:</label>
+        <label>Plus Code*</label>
         <input
           type="text"
           name="plusCode"
+          placeholder='Pluscode'
           value={props.plusCode}
+          readOnly
         
         />
 
