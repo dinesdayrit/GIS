@@ -44,7 +44,7 @@ const handleMenu = () => {
       <header>
         <nav className={styles.navbar}>
         <div className={styles["navbar-left"]}>
-            <img src={logoIcon} alt="Logo" className={styles.logo} style={{ height: '60px' }}/>
+            <img src={logoIcon} alt="Logo" className={styles.logo} style={{ height: '45px' }}/>
             
              <h1>Davao City</h1>
            
@@ -53,8 +53,8 @@ const handleMenu = () => {
             <div className={styles.dropdown}>
               <button className={styles.dropbtn} onClick={handleMenu}>Menu</button>
               <div className={styles["dropdown-content"]}>
-                <button onClick={handleAddParcel}>New Parcel</button>
-                <button >Edit/Update</button>
+                <button onClick={handleAddParcel}>Plot Parcel</button>
+                {/* <button >Edit/Update</button> */}
                 <button onClick={handleMonument}>List of Monuments</button>
                 {userDetails && <button>{userDetails.name} {userDetails.role}</button>}
                 

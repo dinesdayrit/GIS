@@ -26,6 +26,8 @@ const EditForm = (props) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
+  const [defaultCode, setDefaultCode] = useState('');
+  const [pin, setPin] = useState('');
   
 
 
@@ -57,6 +59,7 @@ useEffect(() => {
   }, [props.selectedCoordinates]);
 
  
+
 
   const generateGeoJSON = () => {
     const feature = {
@@ -160,6 +163,34 @@ useEffect(() => {
       });
   };
  
+  useEffect(() => {
+    // Create a function to generate the PIN based on input values
+    const generatePin = () => {
+      const districtValue = document.getElementsByName('district')[0].value || '0';
+      const brgyValue = document.getElementsByName('brgy')[0].value || '0';
+      const sectionValue = document.getElementsByName('section')[0].value || '0';
+
+      const generatedPin = `172-${districtValue}-${brgyValue}-${sectionValue}-`.trim();
+      setDefaultCode(generatedPin);
+    };
+
+    // Add event listeners to the input fields
+    const districtInput = document.getElementsByName('district')[0];
+    const brgyInput = document.getElementsByName('brgy')[0];
+    const sectionInput = document.getElementsByName('section')[0];
+
+    districtInput.addEventListener('input', generatePin);
+    brgyInput.addEventListener('input', generatePin);
+    sectionInput.addEventListener('input', generatePin);
+
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      districtInput.removeEventListener('input', generatePin);
+      brgyInput.removeEventListener('input', generatePin);
+      sectionInput.removeEventListener('input', generatePin);
+    };
+  }, []);
+  
   return (
     <div className={styles['popup-form-container']}>
    
@@ -171,7 +202,7 @@ useEffect(() => {
         <input
           type="text"
           name="title"
-          value={title}
+          defaultValue={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -181,7 +212,7 @@ useEffect(() => {
          <div>
          <label>Date</label>
         <input
-        value ={titleDate}
+        defaultValue ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
         />
         </div>
@@ -191,7 +222,7 @@ useEffect(() => {
         <input
           type="text"
           name="surveyNumber"
-          value={surveyNumber}
+          defaultValue={surveyNumber}
           onChange={(e) => setSurveyNumber(e.target.value)}
           required
         />
@@ -201,7 +232,7 @@ useEffect(() => {
     <input
       type="text"
       name="lotNumber"
-      value={lotNumber}
+      defaultValue={lotNumber}
       onChange={(e) => setLotNumber(e.target.value)}
       required
     />
@@ -212,7 +243,7 @@ useEffect(() => {
         <input
       type="text"
       name="blkNumber"
-      value={blkNumber}
+      defaultValue={blkNumber}
       onChange={(e) => setBlkNumber(e.target.value)}
       required
       />
@@ -222,7 +253,7 @@ useEffect(() => {
         <input
           type="text"
           name="area"
-          value={area}
+          defaultValue={area}
           onChange={(e) => setArea(e.target.value)}
           required />
 
@@ -235,7 +266,7 @@ useEffect(() => {
         rows={6}
         type="text"
         name="boundary"
-        value={boundary}
+        defaultValue={boundary}
         onChange={(e) => {
         setBoundary(e.target.value);
         }}
@@ -247,7 +278,7 @@ useEffect(() => {
       <input
           type="text"
           name="ownerName"
-          value={ownerName}
+          defaultValue={ownerName}
           onChange={(e) => setOwnerName(e.target.value)}
           required />
       
@@ -258,7 +289,7 @@ useEffect(() => {
         <input
           type="text"
           name="OCT"
-          value={oct}
+          defaultValue={oct}
           onChange={(e) => {
             setOct(e.target.value);
           }}
@@ -267,7 +298,7 @@ useEffect(() => {
          <div>
          <label>Date</label>
         <input
-        value ={octDate}
+        defaultValue ={octDate}
         onChange={(e) => setOctDate(e.target.value)}
         />
         </div>
@@ -279,7 +310,7 @@ useEffect(() => {
         <input
           type="text"
           name="tct"
-          value={tct}
+          defaultValue={tct}
           onChange={(e) => {
             setTct(e.target.value);
           }}
@@ -288,7 +319,7 @@ useEffect(() => {
          <div>
          <label>Date</label>
         <input
-        value ={tctDate}
+        defaultValue ={tctDate}
         onChange={(e) => setTctDate(e.target.value)}
         />
         </div>
@@ -299,7 +330,7 @@ useEffect(() => {
           rows={6}
           type="text"
           name="technicalDescription"
-          value={technicalDescription}
+          defaultValue={technicalDescription}
           onChange={(e) => setTechnicalDescription(e.target.value)}
           required 
 
@@ -310,7 +341,7 @@ useEffect(() => {
           rows={3}
           type="text"
           name="remarks"
-          value={technicaldescremarks}
+          defaultValue={technicaldescremarks}
           onChange={(e) => {
             setTechnicaldescremarks(e.target.value);
           }}
@@ -321,7 +352,7 @@ useEffect(() => {
         <input
           type="text"
           name="plusCode"
-          value={props.plusCode}
+          defaultValue={props.plusCode}
           readOnly
 
         />
@@ -346,8 +377,54 @@ useEffect(() => {
         <button type="button" onClick={props.editOnCancel}>Cancel</button>
         </div>
         
+        
       </form>
-      <div style={{display: 'flex', marginTop: '10%'}}>
+      <div style={{ border: 'solid', padding: '10px', position: 'relative', borderRadius: '10%', marginTop: '30px' }}>
+      <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+        }}
+      >
+      Generate  PIN
+      </p>
+       <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
+      <div>
+        <p>District*</p>
+        <input 
+          name='district'
+        />
+      </div>
+
+      <div>
+        <p>Brgy*</p>
+        <input 
+          name='brgy'
+        />
+      </div>
+
+      <div>
+        <p>Section*</p>
+        <input 
+          name='section'
+        />
+      </div>
+      </div> 
+
+     
+      <input 
+          name='pin' 
+          defaultValue={defaultCode} 
+          onChange={(e) => {
+            setPin(e.target.value);
+          }}
+      />
+    </div>
+
+      <div style={{display: 'flex', marginTop: '5%'}}>
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
       {!isApproved && isAdmin &&( 
           <button style={{ marginLeft: '20px' }} onClick={handleApprove}>
@@ -355,6 +432,7 @@ useEffect(() => {
           </button>
         )}
         </div>
+     
       
     </div>
   );

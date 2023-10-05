@@ -51,6 +51,7 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
+    <body className='loginBody'>
     <div className='container'>
       <h1>Login</h1>
       <form onSubmit={handleSubmit} className='.LoginForm'>
@@ -78,6 +79,7 @@ const LoginForm = ({ onLogin }) => {
         Don't have an account? <Link to='/signup'>Sign Up</Link>
       </p>
     </div>
+    </body>
   );
 };
 

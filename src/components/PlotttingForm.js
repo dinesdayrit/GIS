@@ -312,7 +312,7 @@ const handleFileUpload = (e) => {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <label>Number of points</label>
+      <p>Number of points</p>
       <input style ={{width: '15%'}}
           type="text"
           name="numberOfPoints"

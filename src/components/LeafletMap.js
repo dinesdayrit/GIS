@@ -42,8 +42,8 @@ L.control.zoom({ position: 'topright' }).addTo(map);
 
   var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions);
   
-  var wmsStreetsOptions = {
-    layers: 'Davao:Grp_Zoning2019_Det',
+  var wmsBrgyOptions = {
+    layers: 'Davao:Barangay',
     transparent: true,
     tiled: false,
     format: "image/png",
@@ -54,7 +54,21 @@ L.control.zoom({ position: 'topright' }).addTo(map);
     Identify: false
     };
 
-    var wmsdavZoning2019 = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
+    var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
+
+    var wmsStreetsOptions = {
+      layers: 'Davao:Grp_Zoning2019_Det',
+      transparent: true,
+      tiled: false,
+      format: "image/png",
+      opacity: 1,
+      maxZoom: 20,
+      maxNativeZoom: 20,
+      crs: L.CRS.EPSG4326,
+      Identify: false
+      };
+  
+      var wmsdavZoning2019 = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
 
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -90,13 +104,27 @@ L.control.zoom({ position: 'topright' }).addTo(map);
     
     };
 
+
+
+
     let overlayMaps = {
+      
       'wmsdavTechDesc': wmsdavTechDesc,
-      'wmsdavZoning2019' : wmsdavZoning2019
+      'wmsdavZoning2019' : wmsdavZoning2019,
+      'wmsdavBrgy': wmsdavBrgy
 
     };
 
     L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
+
+    // // Add header to the basemap
+    //   layerControl._container.querySelector('.leaflet-control-layers-base').innerHTML =
+    //       '<h4>BASEMAPS</h4>'+
+    //   layerControl._container.querySelector('.leaflet-control-layers-base').innerHTML;
+    // // Add headers to the overlay
+    //   layerControl._container.querySelector('.leaflet-control-layers-overlays').innerHTML =
+    //   '<h4>OVERLAY MAPS</h4>' +
+    //   layerControl._container.querySelector('.leaflet-control-layers-overlays').innerHTML;
 
 
 
@@ -396,7 +424,7 @@ return [centerLat, centerLng, centroidPlusCode];
     };
   }, [props.polygonCoordinates]);
 
-  return <div id="leaflet-map" style={{ width: '100%', height: '90vh', zIndex: '1'}}></div>;
+  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1'}}></div>;
 };
 
 export default LeafletMap;

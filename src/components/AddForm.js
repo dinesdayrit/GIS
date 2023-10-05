@@ -38,7 +38,7 @@ const AddForm = (props) => {
   const [remarks, setRemarks] = useState('');
 
   
-
+  
   const handleAddOwnerName = () => {
     // Create a copy of the current ownerNames array and add a new object with default values
     const newOwnerNames = [...ownerNames, { lName: '', fName: '', mi: '', suffix: '' }];
@@ -257,6 +257,8 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
     <div className={styles['popup-form-container']}>
    
       <form onSubmit={handleSubmit}>
+
+      <div style={{border: 'green solid', borderRadius: '%', padding: '10px', marginBottom: '20px'}}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
         <label>Title no.*</label>
@@ -327,7 +329,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       </div>
       </div>
 
-      <label>Boundary*</label>
+      <label>Boundaries*</label>
       <textarea 
         rows={6}
         type="text"
@@ -338,9 +340,22 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         }}
 
       />
+
+      </div>
         
-        <label>Owner (Name/Business name)* <p>(Last name, First name, Middle Initials, Suffix)</p></label>
-      
+      <div style={{border: 'green solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
+        <label
+        style={{
+          position: 'absolute',
+          top: '-15px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+         
+        }}
+        >Owner (Name/Business name)* </label>
+       
+       {/* <p>(Last name, First name, Middle Initials, Suffix)</p> */}
         {ownerNames.map((ownerName, index) => (
           <div key={index} className={styles.inputWrapper}>
         
@@ -393,7 +408,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           +  Add Name
         </button>
 
-        <p>Business Name</p>
+        {/* <p>Business Name</p> */}
         <input 
           type='text'
           name="businessName"
@@ -401,7 +416,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           placeholder='Business Name'
           onChange={(e) => setBusinessName(e.target.value)}
         />
-
+        </div>
         
 
   
@@ -413,7 +428,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           value={combinedOwnerName}
       
         /> */}
-        
+        <div style={{border: 'green solid', borderRadius: 'auto%', padding: '10px',marginBottom: '15px'}}>
         <div className={styles.inputWrapper}>
         <div style={{width: '90%'}}>
         <label>OCT No.*</label>
@@ -459,15 +474,27 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         />
         </div>
         </div>
-
+        </div>
       
+        <div style={{border: 'green solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
+        <label
+        style={{
+          position: 'absolute',
+          top: '-15px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+        }}
+        >Technical Description</label>
         <Plottingform 
         onGridCoordinatesChange={handleGridCoordinatesChange}
         onTieLineCoordinates={handleTieLineCoordinatesChange}
         onTechnicalDescriptionChange={(newTechnicalDescription) =>
         setTechnicalDescriptionValue(newTechnicalDescription)
           }
+          required
          />
+        
 
         {/* <label>LongLat Coordinates:</label>
           <textarea
@@ -492,6 +519,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             setRemarks(e.target.value);
           }}
         />
+         </div>
 
         <label>Plus Code*</label>
         <input
