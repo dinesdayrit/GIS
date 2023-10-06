@@ -18,8 +18,8 @@ const EditForm = (props) => {
   const [octDate, setOctDate] = useState('');
   const [tct, setTct] = useState('');
   const [tctDate, setTctDate] = useState('');
-  const [technicalDescription, setTechnicalDescription] = useState('');
-  const [technicaldescremarks, setTechnicaldescremarks] = useState('');
+  // const [technicalDescription, setTechnicalDescription] = useState('');
+  // const [technicaldescremarks, setTechnicaldescremarks] = useState('');
   const [status, setStatus] = useState('')
   const [textStatusColor, setTextStatusColor] = useState('');
   const [geojson, setGeoJSON] = useState('');
@@ -28,14 +28,20 @@ const EditForm = (props) => {
   const { polygonDetails } = props;
   const [defaultCode, setDefaultCode] = useState('');
   const [pin, setPin] = useState('');
-  
-
+  const [brgycodes, setBrgycodes] = useState([]);
+  const [selectedBrgy, setSelectedBrgy] = useState('');
+  const [selectedBrgyCode, setSelectedBrgyCode] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
+  const [selectedSectionCode, setSelectedSectionCode] = useState('');
 
 useEffect(() => {
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
   if (storedUserDetails && storedUserDetails.role === "user") {
     setIsAdmin(false);
+   
   }
+ 
 }, []);
   
   useEffect(() => {
@@ -53,8 +59,8 @@ useEffect(() => {
     setOctDate(polygonDetails.octDate);
     setTct(polygonDetails.tct);
     setTctDate(polygonDetails.tctDate);
-    setTechnicalDescription(polygonDetails.technicalDescription);
-    setTechnicaldescremarks(polygonDetails.technicaldescremarks);
+    // setTechnicalDescription(polygonDetails.technicalDescription);
+    // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     console.log('isadmin', isAdmin);
   }, [props.selectedCoordinates]);
 
@@ -103,8 +109,8 @@ useEffect(() => {
       tct: tct,
       tctDate: tctDate,
       plusCode: props.plusCode,
-      technicalDescription: technicalDescription,
-      technicaldescremarks: technicaldescremarks,
+      technicalDescription: polygonDetails.technicalDescription,
+      technicaldescremarks: polygonDetails.technicaldescremarks,
       geojson: geojson,
     };
 
@@ -128,8 +134,6 @@ useEffect(() => {
     
 
   };
-
-
 
 
   const handleApprove = () => {
@@ -164,38 +168,44 @@ useEffect(() => {
   };
  
   useEffect(() => {
-    // Create a function to generate the PIN based on input values
-    const generatePin = () => {
-      const districtValue = document.getElementsByName('district')[0].value || '0';
-      const brgyValue = document.getElementsByName('brgy')[0].value || '0';
-      const sectionValue = document.getElementsByName('section')[0].value || '0';
+    // Fetch brgycode data and set it in the brgycodes state
+    fetch('/brgycode')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Fetched brgycode:', data);
+        setBrgycodes(data);
 
-      const generatedPin = `172-${districtValue}-${brgyValue}-${sectionValue}-`.trim();
-      setDefaultCode(generatedPin);
-    };
+        const matchingBrgycode = brgycodes.find(
+        (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
+        );
+        console.log('matchingBrgycode', matchingBrgycode);
+      
+          if (matchingBrgycode) {
+            setSelectedBrgyCode(matchingBrgycode.brgycode);
+            setSelectedDistrict(matchingBrgycode.admindistrict);
+            setSelectedDistrictCode(matchingBrgycode.districtcode);
+          } 
 
-    // Add event listeners to the input fields
-    const districtInput = document.getElementsByName('district')[0];
-    const brgyInput = document.getElementsByName('brgy')[0];
-    const sectionInput = document.getElementsByName('section')[0];
+          const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-`.trim();
+          setDefaultCode(generatedPin);
+      })
+      .catch((error) => {
+        console.error('Error fetching brgycodes:', error);
+        alert('Error fetching brgycodes:', error);
+      });
+     
+  }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode]);
 
-    districtInput.addEventListener('input', generatePin);
-    brgyInput.addEventListener('input', generatePin);
-    sectionInput.addEventListener('input', generatePin);
-
-    // Clean up the event listeners when the component unmounts
-    return () => {
-      districtInput.removeEventListener('input', generatePin);
-      brgyInput.removeEventListener('input', generatePin);
-      sectionInput.removeEventListener('input', generatePin);
-    };
-  }, []);
+  const handleBrgyChange = (e) => {
+    const selectedBrgyValue = e.target.value;
+    setSelectedBrgy(selectedBrgyValue);
+  };
   
   return (
     <div className={styles['popup-form-container']}>
    
       <form onSubmit={handleUpdate}>
-
+      <div style={{ border: 'green solid', padding: '10px' }}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
         <label>Title no.*</label>
@@ -261,7 +271,7 @@ useEffect(() => {
       </div>
 
 
-      <label>Boundary*</label>
+      <label>Boundaries*</label>
       <textarea 
         rows={6}
         type="text"
@@ -324,7 +334,8 @@ useEffect(() => {
         />
         </div>
         </div>
-
+        
+{/* 
       <label>Technnnical Description*</label>
       <textarea
           rows={6}
@@ -334,9 +345,9 @@ useEffect(() => {
           onChange={(e) => setTechnicalDescription(e.target.value)}
           required 
 
-          />
+          /> */}
 
-      <label>REMARKS</label>
+      {/* <label>REMARKS</label>
       <textarea 
           rows={3}
           type="text"
@@ -345,7 +356,7 @@ useEffect(() => {
           onChange={(e) => {
             setTechnicaldescremarks(e.target.value);
           }}
-        />
+        /> */}
 
 
         <label>Plus Code*</label>
@@ -356,7 +367,7 @@ useEffect(() => {
           readOnly
 
         />
-
+        
 
 
         {/* <label>Generate GeoJSON Format:</label>
@@ -376,10 +387,10 @@ useEffect(() => {
         <button type="submit">Update</button>
         <button type="button" onClick={props.editOnCancel}>Cancel</button>
         </div>
-        
+        </div>
         
       </form>
-      <div style={{ border: 'solid', padding: '10px', position: 'relative', borderRadius: '10%', marginTop: '30px' }}>
+      <div style={{ border: 'green solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
           position: 'absolute',
@@ -389,41 +400,55 @@ useEffect(() => {
           padding: '0 5px',
         }}
       >
-      Generate  PIN
+      Assign PIN
       </p>
        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
+      <div>
+        <p>Brgy*</p>
+        <select
+        name='brgy'
+        onChange={handleBrgyChange}
+         value={selectedBrgy}
+    >
+      {brgycodes.map((targetBrgycode) => (
+        <option key={targetBrgycode.id} value={targetBrgycode.brgy}>
+          {targetBrgycode.brgy}
+        </option>
+      ))}
+    </select>
+      </div>
+
       <div>
         <p>District*</p>
         <input 
           name='district'
+          defaultValue={selectedDistrict}
         />
       </div>
-
-      <div>
-        <p>Brgy*</p>
-        <input 
-          name='brgy'
-        />
-      </div>
-
       <div>
         <p>Section*</p>
         <input 
           name='section'
+          onChange={(e) => setSelectedSectionCode(e.target.value)}
+          
         />
       </div>
+      
       </div> 
 
      
       <input 
           name='pin' 
           defaultValue={defaultCode} 
-          onChange={(e) => {
-            setPin(e.target.value);
-          }}
+          // onChange={(e) => {
+          //   setPin(e.target.value);
+          // }}
       />
+       <div className={styles['button-wrapper']}>
+        <button type="submit" style={{width: "40%"}}>SAVE</button>
+        </div>
     </div>
-
+  
       <div style={{display: 'flex', marginTop: '5%'}}>
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
       {!isApproved && isAdmin &&( 

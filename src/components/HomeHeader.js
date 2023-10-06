@@ -38,6 +38,9 @@ const handleMenu = () => {
       props.onMonumentClick();
 
     };
+    const handleKmlFileUpload = () => {
+       props.onKMLUpload();
+    }; 
 
   return (
     <Fragment>
@@ -54,6 +57,7 @@ const handleMenu = () => {
               <button className={styles.dropbtn} onClick={handleMenu}>Menu</button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>Plot Parcel</button>
+                <button onClick={handleKmlFileUpload}>Upload KML </button>
                 {/* <button >Edit/Update</button> */}
                 <button onClick={handleMonument}>List of Monuments</button>
                 {userDetails && <button>{userDetails.name} {userDetails.role}</button>}

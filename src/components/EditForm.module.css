@@ -70,22 +70,26 @@
 
 
 .popup-form-container button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;   
-}
+    /* background-color: #55555; */
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;  
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 
 
-
-.popup-form-container button:hover {
-  background-color: #0056b3;
- 
-}
+  
+  .popup-form-container button:hover {
+    background-color: #3e8e41;
+   
+  }
 
 .button-wrapper {
 display: flex;

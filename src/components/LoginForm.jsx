@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './styles.css';
+import logoIcon from '../assets/Davao_City.png';
 
 const LoginForm = ({ onLogin }) => {
   
@@ -51,9 +52,9 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <body className='loginBody'>
+    <body>
     <div className='container'>
-      <h1>Login</h1>
+      <img src={logoIcon} alt="Logo"  style={{ height: '150px' , marginBottom: '5px'}}/>
       <form onSubmit={handleSubmit} className='.LoginForm'>
         <input
           type='email'
@@ -63,6 +64,8 @@ const LoginForm = ({ onLogin }) => {
           className='LoginFormInput'
           required
         />
+
+
         <input
           type='password'
           name='password'

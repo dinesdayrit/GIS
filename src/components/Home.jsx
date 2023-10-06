@@ -5,6 +5,8 @@ import AddForm from './AddForm';
 import EditForm from "./EditForm";
 import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
+import KmlUploadForm from "./KmlUploadForm";
+
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
@@ -15,9 +17,24 @@ const Home = (props) => {
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [plusCode, setPlusCode] = useState([]);
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
+  const [showKmlForm, setShowKmlForm] = useState(false);
+  const [geojsonData, setGeojsonData] = useState('');
+
+
+  const handleKMLUpload = (convertedGeoJSON) => {
+    setGeojsonData(convertedGeoJSON);
+    console.log('geojsonData', geojsonData);
+  };
 
 
 
+  const toggleKmlTable = () => {
+    setShowKmlForm(true);
+  };
+
+  const closeKmlTable = () => {
+    setShowKmlForm(false);
+  };
 
   const handleTieLineDraw = (coordinates) => {
     console.log('click')
@@ -99,8 +116,16 @@ const Home = (props) => {
     onLogoutClick={props.onLogout}
     formOnCancel = {formOnCancel}
     onMonumentClick ={showMonument}
+    onKMLUpload={toggleKmlTable}
     />
      
+      {showKmlForm && (
+              <KmlUploadForm
+                plusCode={plusCode}
+                onKMLUpload={handleKMLUpload}
+                closeKmlTable={closeKmlTable}
+            />
+              )}
 
       {showPopupForm && (
         <AddForm
@@ -143,7 +168,7 @@ const Home = (props) => {
           editOnCancel = {editOnCancel}
           handlePlusCode ={handlePlusCode}
           tieLineCoordinates = {tieLineCoordinates}
-
+          kmlData={geojsonData}
         />
       </div>
     </div>

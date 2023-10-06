@@ -17,8 +17,6 @@
   .popup-form-container form {
     margin-bottom: 10px;
     overflow-y: auto;
-
-    
   }
   
   .popup-form-container label {
@@ -65,7 +63,8 @@
   }
 
   .popup-form-container button {
-    background-color: #007bff;
+    /* background-color: #55555; */
+    background-color: #4CAF50;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -81,7 +80,7 @@
 
   
   .popup-form-container button:hover {
-    background-color: #0056b3;
+    background-color: #3e8e41;
    
   }
   
