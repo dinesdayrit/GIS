@@ -3,8 +3,6 @@ import styles from './HomeHeader.module.css';
 import logoIcon from '../assets/Davao_City.png'
 
 
-
-
 const HomeHeader = (props) => {
   const [userDetails, setUserDetails] = useState(null);
 
@@ -39,6 +37,10 @@ const handleMenu = () => {
 
     };
 
+    const KmlFileUpload = () => {
+      props.toggleKmlTable();
+    };
+
   return (
     <Fragment>
       <header>
@@ -57,6 +59,7 @@ const handleMenu = () => {
                 {/* <button >Edit/Update</button> */}
                 <button onClick={handleMonument}>List of Monuments</button>
                 {userDetails && <button>{userDetails.name} {userDetails.role}</button>}
+                <button onClick={KmlFileUpload}>Upload KML</button>
                 
               </div>
             </div>

@@ -5,6 +5,7 @@ import AddForm from './AddForm';
 import EditForm from "./EditForm";
 import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
+import KmlTable from "./KmlTable";
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
@@ -15,6 +16,9 @@ const Home = (props) => {
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
   const [plusCode, setPlusCode] = useState([]);
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
+  const [geojsonData, setGeojsonData] = useState(null);
+  const [showKmlTable, setShowKmlTable] = useState(false);
+  const [centroidCoordinates, setCentroidCoordinates] = useState(null);
 
 
 
@@ -66,8 +70,6 @@ const Home = (props) => {
   
   };
 
-
-
   const editOnCancel = () => {
     setShowEditForm(false);
   };
@@ -92,6 +94,18 @@ const Home = (props) => {
     setShowMonumentForm(true);
   }
 
+  const handleKMLUpload = (convertedGeoJSON) => {
+    setGeojsonData(convertedGeoJSON);
+  };
+
+  const toggleKmlTable = () => {
+    setShowKmlTable(!showKmlTable);
+  };
+
+  const closeKmlTable = () => {
+    setShowKmlTable(false);
+  };
+
   return (
     <div className={styles.home}>
     <HomeHeader 
@@ -99,6 +113,7 @@ const Home = (props) => {
     onLogoutClick={props.onLogout}
     formOnCancel = {formOnCancel}
     onMonumentClick ={showMonument}
+    toggleKmlTable={toggleKmlTable}
     />
      
 
@@ -135,6 +150,15 @@ const Home = (props) => {
 
           />}
 
+{showKmlTable && (
+              <KmlTable
+                plusCode={plusCode}
+                onKMLUpload={handleKMLUpload}
+                closeKmlTable={closeKmlTable}
+                centroidCoordinates={centroidCoordinates}
+              />
+              )}
+
       <div className={styles.mapWrapper}>
         <LeafletMap
           polygonCoordinates={polygonCoordinates}
@@ -143,7 +167,7 @@ const Home = (props) => {
           editOnCancel = {editOnCancel}
           handlePlusCode ={handlePlusCode}
           tieLineCoordinates = {tieLineCoordinates}
-
+          kmlData={geojsonData}
         />
       </div>
     </div>

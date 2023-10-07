@@ -188,9 +188,65 @@ function calculateCenterCoordinate(coordinates) {
   var plusCodes = new PlusCodes();
 var centroidPlusCode = plusCodes.encode(centerLng, centerLat, 12);
 return [centerLat, centerLng, centroidPlusCode];
-
-
 }
+
+//KML multiple Polygons when uploaded
+const updateMapWithGeoJSON = (geojsonData) => {
+  if (drawnLayerRef.current) {
+    map.removeLayer(drawnLayerRef.current);
+  }
+  const geojsonLayer = L.geoJSON(geojsonData, {
+    onEachFeature: function(feature, layer) {
+      const latlngs = layer.getLatLngs()[0];
+      const multipleCoordinates = latlngs.map(coord => [coord.lng, coord.lat]);
+      const multipleCenterCoordinate = calculateCenterCoordinate(multipleCoordinates);
+      const multipleCenterLat = multipleCenterCoordinate[1];
+      const multipleCenterLng = multipleCenterCoordinate[0];
+      const multipleCentroidPlusCode = multipleCenterCoordinate[2];
+      const multipleAreaInSqMeters = calculatePolygonArea(multipleCoordinates);
+
+      const popupContent = `
+        <pre>Area: ${multipleAreaInSqMeters} sq.m. </pre>
+        <br/>
+        <p>Centroid:</p>
+        <pre>Latitude: ${multipleCenterLat.toFixed(6)}, Longitude: ${multipleCenterLng.toFixed(6)}</pre>
+        <br/>
+        <pre>Plus Code: ${multipleCentroidPlusCode}</pre>
+      `;
+      layer.bindPopup(popupContent);
+
+      layer.on('pm:edit', () => {
+        const editedCoordinates = layer.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
+        const updatedCenterCoordinate = calculateCenterCoordinate(editedCoordinates);
+        const updatedCenterLat = updatedCenterCoordinate[1];
+        const updatedCenterLng = updatedCenterCoordinate[0];
+        const updatedCentroidPlusCode = updatedCenterCoordinate[2];
+        const updatedAreaInSqMeters = calculatePolygonArea(editedCoordinates);
+
+        const updatedPopupContent = `
+          <pre>Area: ${updatedAreaInSqMeters} sq.m. </pre>
+          <br/>
+          <p>Centroid:</p>
+          <pre>Latitude: ${updatedCenterLat.toFixed(6)}, Longitude: ${updatedCenterLng.toFixed(6)}</pre>
+          <br/>
+          <pre>Plus Code: ${updatedCentroidPlusCode}</pre>
+        `;
+
+        layer.setPopupContent(updatedPopupContent);
+      });
+    }
+  });
+
+  drawnLayerRef.current = geojsonLayer;
+
+  map.fitBounds(geojsonLayer.getBounds());
+  geojsonLayer.addTo(map);
+};
+
+if (props.kmlData) {
+  updateMapWithGeoJSON(props.kmlData);
+}
+//End KML
 
 
     // Fetch data from '/GisDetail' and add polygons to the map
@@ -422,7 +478,7 @@ return [centerLat, centerLng, centroidPlusCode];
     return () => {
       map.remove();
     };
-  }, [props.polygonCoordinates]);
+  }, [props.polygonCoordinates, props.kmlData]);
 
   return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1'}}></div>;
 };
