@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef} from 'react';
 import { Map, TileLayer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -9,6 +9,8 @@ import 'leaflet.pm';
 import 'leaflet.pm/dist/leaflet.pm.css';
 import { PlusCodes } from 'olc-plus-codes';
 import * as turf from '@turf/turf';
+import MapLegendForm from './MapLegendForm';
+import ReactDOM from 'react-dom';
 
 const LeafletMap = (props) => {
   // const [selectedCoordinates, setSelectedCoordinates] = useState(null);
@@ -126,7 +128,14 @@ L.control.zoom({ position: 'topright' }).addTo(map);
     //   '<h4>OVERLAY MAPS</h4>' +
     //   layerControl._container.querySelector('.leaflet-control-layers-overlays').innerHTML;
 
-
+//map legend
+  const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = () => {
+      const div = L.DomUtil.create('div', 'legend-control');
+      ReactDOM.render(<MapLegendForm />, div);
+      return div;
+    };
+    legend.addTo(map);
 
 
     //New Draw Control

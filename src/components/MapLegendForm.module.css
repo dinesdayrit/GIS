@@ -1,0 +1,15 @@
+.legend {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: none;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px black solid;
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    background-color: whitesmoke;
+    
+  }

@@ -18,6 +18,7 @@ const KmlTable = (props) => {
       if (extractedData && extractedData.length > 0) {
         setEditableData([...extractedData]);
       }
+      
     }, [extractedData, extractedCoordinates]);
 
     const handleKMLUpload = (e) => {
@@ -35,6 +36,7 @@ const KmlTable = (props) => {
             setExtractedCoordinates(extractedCoordinates);
             const rows = generateTableRows(extractedData, headerNames);
             setTableRows(rows);
+            
           } catch (error) {
             console.error('Error processing KML data:', error);
           }
@@ -216,6 +218,7 @@ const KmlTable = (props) => {
           plusCode,
           geojson,
         } = placemarkData.SimpleData;
+        
   
         const dataToSave = {
           title: title_no,
@@ -225,9 +228,9 @@ const KmlTable = (props) => {
           area,
           ownerName: owner,
           plusCode: props.plusCode,
-          geojson: geojson,
+          geojson: extractedCoordinates,
         };
-  
+
         fetch('/GisDetail', {
           method: 'POST',
           headers: {
