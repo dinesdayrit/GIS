@@ -3,8 +3,6 @@ import styles from './HomeHeader.module.css';
 import logoIcon from '../assets/Davao_City.png'
 
 
-
-
 const HomeHeader = (props) => {
   const [userDetails, setUserDetails] = useState(null);
 
@@ -42,6 +40,7 @@ const handleMenu = () => {
        props.onKMLUpload();
     }; 
 
+
   return (
     <Fragment>
       <header>
@@ -61,6 +60,7 @@ const handleMenu = () => {
                 {/* <button >Edit/Update</button> */}
                 <button onClick={handleMonument}>List of Monuments</button>
                 {userDetails && <button>{userDetails.name} {userDetails.role}</button>}
+            
                 
               </div>
             </div>

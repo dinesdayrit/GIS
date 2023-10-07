@@ -4,47 +4,21 @@ import 'leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import toGeoJSON from 'togeojson';
 
-const KmlUploadForm = (props) => {
+const KmlTable = (props) => {
     const [kmlDetailsSaved, setKmlDetailsSaved] = useState(false);
     const [tableRows, setTableRows] = useState([]);
     const [extractedData, setExtractedData] = useState(null);
+    const [geojson, setGeoJSON] = useState('');
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
     const [editableData, setEditableData] = useState([]);
     const [editedData, setEditedData] = useState({});
-    const [coordinatesForTable, setCoordinatesForTable] = useState([]);
+    const [multipleCentroidPlusCode, setMultipleCentroidPlusCode] = useState('');
 
     useEffect(() => {
       if (extractedData && extractedData.length > 0) {
         setEditableData([...extractedData]);
       }
-  
-     
-    }, [extractedData]);
-
-    // const handleKMLUpload = (e) => {
-    //   const file = e.target.files[0];
-    //   if (file) {
-    //     const reader = new FileReader();
-    //     reader.onload = (event) => {
-    //       try {
-    //         const kmlData = event.target.result;
-    //         const convertedGeoJSON = toGeoJSON.kml(new DOMParser().parseFromString(kmlData, 'text/xml'));
-    //         props.onKMLUpload(convertedGeoJSON);
-    //         const coordinates = extractCoordinatesFromGeoJSON(convertedGeoJSON);
-    //         console.log('kani ang convert', coordinates);
-            
-    //         const { extractedData, extractedCoordinates, headerNames } = extractKMLData(kmlData);
-    //         setExtractedData(extractedData);
-    //         setExtractedCoordinates(extractedCoordinates);
-    //         const rows = generateTableRows(extractedData, headerNames);
-    //         setTableRows(rows);
-    //       } catch (error) {
-    //         console.error('Error processing KML data:', error);
-    //       }
-    //     };
-    //     reader.readAsText(file);
-    //   }
-    // };
+    }, [extractedData, extractedCoordinates]);
 
     const handleKMLUpload = (e) => {
       const file = e.target.files[0];
@@ -55,18 +29,10 @@ const KmlUploadForm = (props) => {
             const kmlData = event.target.result;
             const convertedGeoJSON = toGeoJSON.kml(new DOMParser().parseFromString(kmlData, 'text/xml'));
             props.onKMLUpload(convertedGeoJSON);
-            console.log('convertedGeoJSON:', convertedGeoJSON);
-    
-            // Accessing coordinates from the GeoJSON
-            const coordinates = extractCoordinatesFromGeoJSON();
-            console.log("kani na ngyud", coordinates);
-            
-           
-      
-
-          
-            const { extractedData, headerNames } = extractKMLData(kmlData);
+  
+            const { extractedData, extractedCoordinates, headerNames } = extractKMLData(kmlData);
             setExtractedData(extractedData);
+            setExtractedCoordinates(extractedCoordinates);
             const rows = generateTableRows(extractedData, headerNames);
             setTableRows(rows);
           } catch (error) {
@@ -75,23 +41,6 @@ const KmlUploadForm = (props) => {
         };
         reader.readAsText(file);
       }
-    };
-    
-      // Function to extract coordinates from GeoJSON
-      const extractCoordinatesFromGeoJSON = (geoJSON) => {
-      const coordinates = [];
-    
-      if (geoJSON && geoJSON.features) {
-        geoJSON.features.forEach((feature) => {
-          if (feature.geometry && feature.geometry.coordinates) {
-            coordinates.push(feature.geometry.coordinates);
-          }
-          return coordinates;
-        });
-      }
-     
-     
-      return coordinates;
     };
     
       const extractKMLData = (kmlData) => {
@@ -124,8 +73,7 @@ const KmlUploadForm = (props) => {
         });
     
         extractedData.push(data);
-        // console.log(`Coordinates for Placemark ${index}:`, data.coordinates);
-        console.log('extracted Data', extractedData);
+        console.log(`Coordinates for Placemark ${index}:`, data.coordinates);
       });
       
       return { extractedData, extractedCoordinates, headerNames: Array.from(headerNames) };
@@ -133,12 +81,12 @@ const KmlUploadForm = (props) => {
     };
 
     const generateTableRows = (data, headerNames) => {
-      const displayHeaders = ['id', 'applicant', 'area', 'blk_no', 'lot_no', 'owner', 'res_no', 'surv_no', 't_date', 'title_no', 'coordinates'];
+      const displayHeaders = ['id', 'applicant', 'area', 'blk_no', 'lot_no', 'owner', 'res_no', 'surv_no', 't_date', 'title_no'];
     
       const filteredHeaderNames = headerNames.filter(name => displayHeaders.includes(name));
-    
-      const headerRow = [...filteredHeaderNames.map((name) => <th key={name}>{name}</th>), <th key="coordinates">Coordinates</th>];
-    
+      
+      const headerRow = filteredHeaderNames.map((name) => <th key={name}>{name}</th>);
+      
       const bodyRows = data.map((item, index) => (
         <tr key={index}>
           {filteredHeaderNames.map((name) => (
@@ -146,14 +94,11 @@ const KmlUploadForm = (props) => {
               key={name}
               contentEditable={true}
               onBlur={(e) => handleCellEdit(e, index, name)}
-              suppressContentEditableWarning={true}
+              suppressContentEditableWarning={true} // Suppress the warning
             >
-              {editedData[index] && editedData[index][name]
-                ? editedData[index][name]
-                : item.SimpleData[name]}
+              {editedData[index] && editedData[index][name] ? editedData[index][name] : item.SimpleData[name]}
             </td>
           ))}
-          <td> {coordinatesForTable[index] ? `[${coordinatesForTable[index].join(', ')}]` : ''}</td> 
         </tr>
       ));
     
@@ -172,62 +117,77 @@ const KmlUploadForm = (props) => {
     };
 
   // Saves Changes from the table to Database
-    const handleSaveAllChanges = () => {
-      const updatedDataToSave = [];
-      for (let rowIndex in editedData) {
-        const updatedDataRow = {
-          SimpleData: {},
-          coordinates: extractedCoordinates[rowIndex] || '',
-        };
+    // const handleSaveAllChanges = () => {
+    //   const updatedDataToSave = [];
+    //   for (let rowIndex in editedData) {
+    //     const updatedDataRow = {
+    //       SimpleData: {},
+    //       coordinates: extractedCoordinates[rowIndex] || '',
+    //     };
   
-        for (let columnName in editedData[rowIndex]) {
-          updatedDataRow.SimpleData[columnName] = editedData[rowIndex][columnName];
-        }
+    //     for (let columnName in editedData[rowIndex]) {
+    //       updatedDataRow.SimpleData[columnName] = editedData[rowIndex][columnName];
+    //     }
   
-        updatedDataToSave.push(updatedDataRow);
-      }
-      if (updatedDataToSave.length > 0) {
-        let savedCount = 0;
+    //     updatedDataToSave.push(updatedDataRow);
+    //   }
+    //   if (updatedDataToSave.length > 0) {
+    //     let savedCount = 0;
   
-        const handleSaveComplete = () => {
-          savedCount++;
-          if (savedCount === updatedDataToSave.length) {
-            alert('All data updated and saved!');
-            setKmlDetailsSaved(true);
-          }
-        };
-        
-        for (let r = 0; r < updatedDataToSave.length; r++) {
-          const updatedPlacemarkData = updatedDataToSave[r];
-          const updatedPlacemarkCoordinates = extractedCoordinates[r];
-  
-          const dataToSave = {
-            ...updatedPlacemarkData,
-            coordinates: updatedPlacemarkCoordinates,
-          };
+    //     const handleSaveComplete = () => {
+    //       savedCount++;
+    //       if (savedCount === updatedDataToSave.length) {
+    //         alert('All data updated and saved!');
+    //         setKmlDetailsSaved(true);
+    //       }
+    //     };
 
-          
-          fetch('/kmlDetails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSave),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              handleSaveComplete();
-            })
-            .catch((error) => {
-              alert('Error saving data:', error);
-            });
-        }
-      } else {
-        alert('No changes to save.');
-      }
+    //     for (let r = 0; r < updatedDataToSave.length; r++) {
+    //       const updatedPlacemarkData = updatedDataToSave[r];
+    //       const updatedPlacemarkCoordinates = extractedCoordinates[r];
+  
+    //       const dataToSave = {
+    //         ...updatedPlacemarkData,
+    //         coordinates: updatedPlacemarkCoordinates,
+    //       };
+
+    //       fetch('/kmlDetails', {
+    //         method: 'POST',
+    //         headers: {
+    //           'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(dataToSave),
+    //       })
+    //         .then((res) => res.json())
+    //         .then((data) => {
+    //           handleSaveComplete();
+    //         })
+    //         .catch((error) => {
+    //           alert('Error saving data:', error);
+    //         });
+    //     }
+    //   } else {
+    //     alert('No changes to save.');
+    //   }
+    // };
+
+    useEffect(() => {
+      console.log('extractedCoordinates:', extractedCoordinates);
+      generateGeoJSON();
+     
+    }, [extractedCoordinates]);
+  
+    const generateGeoJSON = (coordinate) => {
+      const feature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon',
+          coordinates: coordinate,
+        },
+      };
+  
+      setGeoJSON(JSON.stringify(feature, null, 2));
     };
-
-
 
 //Direct Save to Database
   const handleSaveToDatabase = () => {
@@ -247,62 +207,28 @@ const KmlUploadForm = (props) => {
         const placemarkCoordinates = extractedCoordinates[r];
   
         const {
-          id,
-          applicant,
-          area,
-          blk_no,
-          date_enact,
-          date_pass,
-          lot_no,
-          map_no,
-          ord_no,
-          owner,
-          plot_edit,
-          plotted_ba,
-          projtype,
-          purpose,
-          res_no,
-          surv_no,
-          t_date,
           title_no,
-          zone_class,
-          plotted_by,
-          pgplot_by,
-          date_time,
-          coordinate,
-          centroid,
-          pluscode,
+          surv_no,
+          lot_no,
+          blk_no,
+          owner,
+          area,
+          plusCode,
+          geojson,
         } = placemarkData.SimpleData;
   
         const dataToSave = {
-          id,
-          applicant,
+          title: title_no,
+          surveyNumber: surv_no,
+          lotNumber: lot_no,
+          blkNumber: blk_no,
           area,
-          blk_no,
-          date_enact,
-          date_pass,
-          lot_no,
-          map_no,
-          ord_no,
-          owner,
-          plot_edit,
-          plotted_ba,
-          projtype,
-          purpose,
-          res_no,
-          surv_no,
-          t_date,
-          title_no,
-          zone_class,
-          plotted_by,
-          pgplot_by,
-          date_time,
-          coordinate: placemarkCoordinates,
-          centroid,
-          pluscode,
+          ownerName: owner,
+          plusCode: props.plusCode,
+          geojson: geojson,
         };
   
-        fetch('/kmlDetails', {
+        fetch('/GisDetail', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -335,7 +261,7 @@ const KmlUploadForm = (props) => {
                 style={{ color: 'white', height: '10%' }}
                 />
                 <button onClick={handleSaveToDatabase}>Save to Database</button>
-                <button onClick={handleSaveAllChanges}>Save All Changes</button>
+                {/* <button onClick={handleSaveAllChanges}>Save All Changes</button> */}
                 <button onClick={props.closeKmlTable}>Cancel</button>
                 </div>
 
@@ -349,4 +275,4 @@ const KmlUploadForm = (props) => {
       );
 };
 
-export default KmlUploadForm;
+export default KmlTable;

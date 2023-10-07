@@ -188,10 +188,7 @@ function calculateCenterCoordinate(coordinates) {
   var plusCodes = new PlusCodes();
 var centroidPlusCode = plusCodes.encode(centerLng, centerLat, 12);
 return [centerLat, centerLng, centroidPlusCode];
-
-
 }
-
 
     // Fetch data from '/GisDetail' and add polygons to the map
     fetch('/GisDetail')
@@ -363,12 +360,11 @@ return [centerLat, centerLng, centroidPlusCode];
     }
 
     
-    //KML multiple Polygons draw when uploaded
+    //KML multiple Polygons when uploaded
 const updateMapWithGeoJSON = (geojsonData) => {
   if (drawnLayerRef.current) {
     map.removeLayer(drawnLayerRef.current);
   }
-  console.log('geojsonData2', geojsonData);
   const geojsonLayer = L.geoJSON(geojsonData, {
     onEachFeature: function(feature, layer) {
       const latlngs = layer.getLatLngs()[0];
@@ -420,6 +416,7 @@ const updateMapWithGeoJSON = (geojsonData) => {
 if (props.kmlData) {
   updateMapWithGeoJSON(props.kmlData);
 }
+
 
 
     // draw Polygon

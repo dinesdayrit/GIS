@@ -83,8 +83,6 @@ const Home = (props) => {
   
   };
 
-
-
   const editOnCancel = () => {
     setShowEditForm(false);
   };
@@ -108,6 +106,7 @@ const Home = (props) => {
   const showMonument = () =>{
     setShowMonumentForm(true);
   }
+
 
   return (
     <div className={styles.home}>
@@ -159,6 +158,8 @@ const Home = (props) => {
           
 
           />}
+
+
 
       <div className={styles.mapWrapper}>
         <LeafletMap
