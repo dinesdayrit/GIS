@@ -82,13 +82,38 @@ const KmlTable = (props) => {
     
     };
 
+    // const generateTableRows = (data, headerNames) => {
+    //   const displayHeaders = ['id', 'applicant', 'area', 'blk_no', 'lot_no', 'owner', 'res_no', 'surv_no', 't_date', 'title_no', 'coordinates'];
+    
+    //   const filteredHeaderNames = headerNames.filter(name => displayHeaders.includes(name));
+      
+    //   const headerRow = filteredHeaderNames.map((name) => <th key={name}>{name}</th>); 
+      
+    //   const bodyRows = data.map((item, index) => (
+    //     <tr key={index}>
+    //       {filteredHeaderNames.map((name) => (
+    //         <td
+    //           key={name}
+    //           contentEditable={true}
+    //           onBlur={(e) => handleCellEdit(e, index, name)}
+    //           suppressContentEditableWarning={true} // Suppress the warning
+    //         >
+    //           {editedData[index] && editedData[index][name] ? editedData[index][name] : item.SimpleData[name]}
+    //         </td>
+    //       ))}
+    //     </tr>
+    //   ));
+    
+    //   return [headerRow, ...bodyRows];
+    // };
+
     const generateTableRows = (data, headerNames) => {
       const displayHeaders = ['id', 'applicant', 'area', 'blk_no', 'lot_no', 'owner', 'res_no', 'surv_no', 't_date', 'title_no'];
-    
+
       const filteredHeaderNames = headerNames.filter(name => displayHeaders.includes(name));
-      
-      const headerRow = filteredHeaderNames.map((name) => <th key={name}>{name}</th>);
-      
+  
+      const headerRow = [...filteredHeaderNames.map((name) => <th key={name}>{name}</th>)];
+  
       const bodyRows = data.map((item, index) => (
         <tr key={index}>
           {filteredHeaderNames.map((name) => (
@@ -102,8 +127,9 @@ const KmlTable = (props) => {
             </td>
           ))}
         </tr>
+     
       ));
-    
+  
       return [headerRow, ...bodyRows];
     };
 
@@ -207,7 +233,13 @@ const KmlTable = (props) => {
       for (let r = 0; r < extractedData.length; r++) {
         const placemarkData = extractedData[r];
         const placemarkCoordinates = extractedCoordinates[r];
-  
+    
+      
+      const coordinatePairs = placemarkCoordinates.map(pair => {
+        const [long, lat] = pair.split(',').map(Number);
+        return [long, lat];
+      });
+
         const {
           title_no,
           surv_no,
@@ -215,10 +247,9 @@ const KmlTable = (props) => {
           blk_no,
           owner,
           area,
-          plusCode,
-          geojson,
         } = placemarkData.SimpleData;
-        
+
+
   
         const dataToSave = {
           title: title_no,
@@ -228,7 +259,14 @@ const KmlTable = (props) => {
           area,
           ownerName: owner,
           plusCode: props.plusCode,
-          geojson: extractedCoordinates,
+          geojson: {
+            type: 'Feature',
+            geometry: {
+              type: 'Polygon',
+              coordinates: [coordinatePairs],
+            },
+          },
+          status: 'For Approval',
         };
 
         fetch('/GisDetail', {
