@@ -11,11 +11,14 @@ const KmlUploadForm = (props) => {
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
     const [editableData, setEditableData] = useState([]);
     const [editedData, setEditedData] = useState({});
+    const [coordinatesForTable, setCoordinatesForTable] = useState([]);
 
     useEffect(() => {
       if (extractedData && extractedData.length > 0) {
         setEditableData([...extractedData]);
       }
+  
+     
     }, [extractedData]);
 
     // const handleKMLUpload = (e) => {
@@ -52,12 +55,16 @@ const KmlUploadForm = (props) => {
             const kmlData = event.target.result;
             const convertedGeoJSON = toGeoJSON.kml(new DOMParser().parseFromString(kmlData, 'text/xml'));
             props.onKMLUpload(convertedGeoJSON);
+            console.log('convertedGeoJSON:', convertedGeoJSON);
     
             // Accessing coordinates from the GeoJSON
-            const coordinates = extractCoordinatesFromGeoJSON(convertedGeoJSON);
-    
-            console.log('Coordinates:', coordinates);
-    
+            const coordinates = extractCoordinatesFromGeoJSON();
+            console.log("kani na ngyud", coordinates);
+            
+           
+      
+
+          
             const { extractedData, headerNames } = extractKMLData(kmlData);
             setExtractedData(extractedData);
             const rows = generateTableRows(extractedData, headerNames);
@@ -71,17 +78,19 @@ const KmlUploadForm = (props) => {
     };
     
       // Function to extract coordinates from GeoJSON
-         const extractCoordinatesFromGeoJSON = (geoJSON) => {
-          const coordinates = [];
+      const extractCoordinatesFromGeoJSON = (geoJSON) => {
+      const coordinates = [];
     
       if (geoJSON && geoJSON.features) {
         geoJSON.features.forEach((feature) => {
           if (feature.geometry && feature.geometry.coordinates) {
             coordinates.push(feature.geometry.coordinates);
           }
+          return coordinates;
         });
       }
-    
+     
+     
       return coordinates;
     };
     
@@ -137,14 +146,14 @@ const KmlUploadForm = (props) => {
               key={name}
               contentEditable={true}
               onBlur={(e) => handleCellEdit(e, index, name)}
-              suppressContentEditableWarning={true} // Suppress the warning
+              suppressContentEditableWarning={true}
             >
               {editedData[index] && editedData[index][name]
                 ? editedData[index][name]
-                     : item.SimpleData[name]}
+                : item.SimpleData[name]}
             </td>
           ))}
-          <td> {`[${item.coordinates}]`}</td>
+          <td> {coordinatesForTable[index] ? `[${coordinatesForTable[index].join(', ')}]` : ''}</td> 
         </tr>
       ));
     

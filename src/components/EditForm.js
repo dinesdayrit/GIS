@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
 
 
-
-
-
 const EditForm = (props) => {
   const [title, setTitle] = useState('');
   const [titleDate, setTitleDate] = useState('');
@@ -30,10 +27,11 @@ const EditForm = (props) => {
   const [pin, setPin] = useState('');
   const [brgycodes, setBrgycodes] = useState([]);
   const [selectedBrgy, setSelectedBrgy] = useState('');
-  const [selectedBrgyCode, setSelectedBrgyCode] = useState('');
+  const [selectedBrgyCode, setSelectedBrgyCode] = useState('0000');
   const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
-  const [selectedSectionCode, setSelectedSectionCode] = useState('');
+  const [selectedDistrictCode, setSelectedDistrictCode] = useState('0');
+  const [selectedSectionCode, setSelectedSectionCode] = useState('0');
+  const [selectedParcelCode, setSelectedParcelCode] = useState('0');
 
 useEffect(() => {
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -186,7 +184,7 @@ useEffect(() => {
             setSelectedDistrictCode(matchingBrgycode.districtcode);
           } 
 
-          const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-`.trim();
+          const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
           setDefaultCode(generatedPin);
       })
       .catch((error) => {
@@ -194,7 +192,7 @@ useEffect(() => {
         alert('Error fetching brgycodes:', error);
       });
      
-  }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode]);
+  }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
 
   const handleBrgyChange = (e) => {
     const selectedBrgyValue = e.target.value;
@@ -398,9 +396,11 @@ useEffect(() => {
           left: '10px',
           backgroundColor: 'whitesmoke',
           padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
         }}
       >
-      Assign PIN
+      PIN
       </p>
        <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
       <div>
@@ -418,18 +418,27 @@ useEffect(() => {
     </select>
       </div>
 
-      <div>
+      {/* <div>
         <p>District*</p>
         <input 
           name='district'
           defaultValue={selectedDistrict}
         />
-      </div>
+      </div> */}
       <div>
         <p>Section*</p>
         <input 
           name='section'
           onChange={(e) => setSelectedSectionCode(e.target.value)}
+          
+        />
+      </div>
+
+      <div>
+        <p>Parcel*</p>
+        <input 
+          name='parcel'
+          onChange={(e) => setSelectedParcelCode (e.target.value)}
           
         />
       </div>
@@ -439,10 +448,10 @@ useEffect(() => {
      
       <input 
           name='pin' 
-          defaultValue={defaultCode} 
-          // onChange={(e) => {
-          //   setPin(e.target.value);
-          // }}
+          value={defaultCode} 
+          onChange={(e) => {
+            setPin(e.target.value);
+          }}
       />
        <div className={styles['button-wrapper']}>
         <button type="submit" style={{width: "40%"}}>SAVE</button>

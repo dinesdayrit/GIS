@@ -549,8 +549,8 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           readOnly
         /> */}
         
-        <div style={{display: 'flex', justifyContent: 'flex-end', marginRight: '10%'}}>
-        <button type="submit" style={{width: '35%'}}>SAVE</button>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <button type="submit" style={{width: '80%'}}>SAVE</button>
     
         </div>
       </form>

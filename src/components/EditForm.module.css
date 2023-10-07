@@ -104,7 +104,7 @@ gap: 10px;
  }
 
 
-@media (max-width: 1920px) {
+ @media (max-width: 1920px) {
   .popup-form-container {
     position: absolute;
     right: 10px;
@@ -114,10 +114,11 @@ gap: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-    width: 33%;
-    height: 90vh;
+    width: 35%;
+    height: 92.3vh;
     z-index: 9999; 
     overflow-y: auto; 
   }
   
 }
+  
