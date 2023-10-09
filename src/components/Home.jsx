@@ -23,7 +23,7 @@ const Home = (props) => {
 
   const handleKMLUpload = (convertedGeoJSON) => {
     setGeojsonData(convertedGeoJSON);
-    console.log('geojsonData', geojsonData);
+    console.log('geojsonData NI', geojsonData);
   };
 
 
