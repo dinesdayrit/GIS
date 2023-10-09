@@ -3,7 +3,7 @@ import styles from './KmlUploadForm.module.css';
 import 'leaflet-draw';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import toGeoJSON from 'togeojson';
-import * as turf from '@turf/turf'; // Use the wildcard import to import all functions
+
 
 const KmlTable = (props) => {
     const [kmlDetailsSaved, setKmlDetailsSaved] = useState(false);
