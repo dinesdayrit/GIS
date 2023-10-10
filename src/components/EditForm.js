@@ -33,6 +33,7 @@ const EditForm = (props) => {
   const [selectedSectionCode, setSelectedSectionCode] = useState('0');
   const [selectedParcelCode, setSelectedParcelCode] = useState('0');
 
+
 useEffect(() => {
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
   if (storedUserDetails && storedUserDetails.role === "user") {
@@ -83,7 +84,7 @@ useEffect(() => {
       setStatus('APPROVED');
       setIsApproved(true);
     } else {
-      setStatus('For Approval');
+      setStatus('FOR APPROVAL');
       setTextStatusColor('red');
       setIsApproved(false);
     }
@@ -139,7 +140,7 @@ useEffect(() => {
     setStatus('APPROVED');
     setTextStatusColor('blue');
     setIsApproved(false);
-   
+    props.updatePolygonStyle(polygonDetails.title);
 
     // Send a PUT request to update the status in the backend
     fetch(`/approved/${polygonDetails.title}`, {
@@ -157,7 +158,7 @@ useEffect(() => {
         console.log(data);
         alert('APPROVED');
         console.log('isApproved',isApproved);
-        // Handle the response from the server as needed
+        window.location.href = "/home";
       })
       .catch((error) => {
         console.error('Error updating status:', error);
@@ -203,7 +204,7 @@ useEffect(() => {
     <div className={styles['popup-form-container']}>
    
       <form onSubmit={handleUpdate}>
-      <div style={{ border: 'green solid', padding: '10px' }}>
+      <div style={{ border: '2px gray solid', padding: '10px' }}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
         <label>Title no.*</label>
@@ -361,7 +362,7 @@ useEffect(() => {
         <input
           type="text"
           name="plusCode"
-          defaultValue={props.plusCode}
+          value={props.plusCode}
           readOnly
 
         />
@@ -388,7 +389,9 @@ useEffect(() => {
         </div>
         
       </form>
-      <div style={{ border: 'green solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+
+{/* 
+      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
           position: 'absolute',
@@ -418,13 +421,14 @@ useEffect(() => {
     </select>
       </div>
 
-      {/* <div>
+      <div>
         <p>District*</p>
         <input 
           name='district'
           defaultValue={selectedDistrict}
         />
-      </div> */}
+      </div>
+      
       <div>
         <p>Section*</p>
         <input 
@@ -457,15 +461,20 @@ useEffect(() => {
         <button type="submit" style={{width: "40%"}}>SAVE</button>
         </div>
     </div>
+   */}
   
-      <div style={{display: 'flex', marginTop: '5%'}}>
+      <div style={{display: 'flex', marginTop: '10%', alignItems: 'center' }}>
+    
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
+    
+     
       {!isApproved && isAdmin &&( 
-          <button style={{ marginLeft: '20px' }} onClick={handleApprove}>
-            APPROVE
+          <button style={{ verticalAlign: 'middle' , marginLeft: '5px'}} onClick={handleApprove} >
+          &#10003; CONFIRM
           </button>
         )}
         </div>
+       
      
       
     </div>

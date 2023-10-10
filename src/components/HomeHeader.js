@@ -46,25 +46,28 @@ const handleMenu = () => {
       <header>
         <nav className={styles.navbar}>
         <div className={styles["navbar-left"]}>
-            <img src={logoIcon} alt="Logo" className={styles.logo} style={{ height: '45px' }}/>
+            <img src={logoIcon} alt="Logo" className={styles.logo} style={{ height: '50px' }}/>
             
-             <h1>Davao City</h1>
+             <h3>DAVAO CITY</h3>
            
           </div>
           <div className={styles["navbar-right"]}>
             <div className={styles.dropdown}>
-              <button className={styles.dropbtn} onClick={handleMenu}>Menu</button>
+            
+              <button className={styles.dropbtn} onClick={handleMenu}>MENU</button>
+    
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>Plot Parcel</button>
                 <button onClick={handleKmlFileUpload}>Upload KML </button>
                 {/* <button >Edit/Update</button> */}
+                <button>Assign PIN</button>
                 <button onClick={handleMonument}>List of Monuments</button>
                 {userDetails && <button>{userDetails.name} {userDetails.role}</button>}
+                <button onClick={handleLogout}>Log Out</button>
             
                 
               </div>
             </div>
-            <button className={styles.logout} onClick={handleLogout}>Logout</button>
           </div>
         </nav>
       </header>

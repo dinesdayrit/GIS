@@ -19,7 +19,7 @@ const Home = (props) => {
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
   const [showKmlForm, setShowKmlForm] = useState(false);
   const [geojsonData, setGeojsonData] = useState('');
-
+  
 
   const handleKMLUpload = (convertedGeoJSON) => {
     setGeojsonData(convertedGeoJSON);
@@ -72,6 +72,7 @@ const Home = (props) => {
 
   };
 
+
   // const selectedDrawing = () => {
   //   setShowPopupForm(true);
   // };
@@ -106,7 +107,13 @@ const Home = (props) => {
   const showMonument = () =>{
     setShowMonumentForm(true);
   }
-
+  const updatePolygonStyle = (polygonCoordinates) => {
+    // Implement your logic to update the polygon style here
+    console.log('Updating polygon style with coordinates:', polygonCoordinates);
+    // Example: You can change the color of the polygon based on some conditions
+    // You may need to modify this logic according to your requirements
+    return 'blue'; // Return the updated style (e.g., 'blue' for a blue polygon)
+  };
 
   return (
     <div className={styles.home}>
@@ -147,6 +154,7 @@ const Home = (props) => {
           selectedCoordinates={selectedCoordinates}
           handleShapeClick={handleShapeClick}
           plusCode = {plusCode}
+          updatePolygonStyle={updatePolygonStyle}
         
 
 
@@ -170,6 +178,7 @@ const Home = (props) => {
           handlePlusCode ={handlePlusCode}
           tieLineCoordinates = {tieLineCoordinates}
           kmlData={geojsonData}
+          updatePolygonStyle={updatePolygonStyle}
         />
       </div>
     </div>

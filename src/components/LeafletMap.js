@@ -1,4 +1,4 @@
-import React, { useEffect, useRef} from 'react';
+import React, { useEffect, useRef, useState} from 'react';
 import { Map, TileLayer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -91,7 +91,7 @@ L.control.zoom({ position: 'topright' }).addTo(map);
 
       // EsriSat
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
+      maxZoom: 19.8,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     }).addTo(map);
     
@@ -221,6 +221,8 @@ return [centerLat, centerLng, centroidPlusCode];
           const tctDate = gisDetail.tctdate;
           const status = gisDetail.status;
 
+          
+          
           if (geojsonObject) {
           const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
 
@@ -228,6 +230,8 @@ return [centerLat, centerLng, centroidPlusCode];
           if(status === 'APPROVED') {
             polygon = L.polygon(latlngs, { color: 'blue' });
           } 
+          
+                    
             
           const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
             
@@ -252,15 +256,16 @@ return [centerLat, centerLng, centroidPlusCode];
             
             polygon.bindPopup(popupContent).on('click')
             
+            const polygonBounds = polygon.getBounds();
+            const polygonCenter = polygonBounds.getCenter();
 
-            const markerLatLng = polygon.getBounds().getCenter();
-            const textMarker = L.marker(markerLatLng, {
+            const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
-              className: 'text-marker',
-               html: title, 
-               }),
-                 });
-
+                className: 'text-marker',
+                html: `<span style="font-weight: 0.5px;">${title}</span>`,
+              }),
+            });
+            
                 polygon.on('popupopen', () => { 
                   props.handleShapeClick(polygonCoordinates); 
                   props.handlePlusCode(centroidPlusCode);
@@ -269,7 +274,7 @@ return [centerLat, centerLng, centroidPlusCode];
                 // const editButton = document.querySelector('.edit-button');
                 // editButton.addEventListener('click', () => {
                 // // Call the handleEditClick function with the provided data
-  
+
             props.handleEditClick({
             title,
             titleDate,
@@ -492,7 +497,7 @@ if (props.kmlData) {
   
   }, [props.polygonCoordinates, props.kmlData]);
 
-  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1'}}></div>;
+  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
 };
 
 export default LeafletMap;

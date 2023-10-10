@@ -258,7 +258,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
    
       <form onSubmit={handleSubmit}>
 
-      <div style={{border: 'green solid', borderRadius: '%', padding: '10px', marginBottom: '20px'}}>
+      <div style={{border: '2px gray solid', borderRadius: '%', padding: '10px', marginBottom: '20px'}}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>
         <label>Title no.*</label>
@@ -270,6 +270,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           onChange={(e) => {
             setTitle(e.target.value);
           }}
+          required
         />
          </div>
          <div>
@@ -290,6 +291,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           name="surveyNumber"
           placeholder='Survey number'
           onChange={(e) => setSurveyNumber(e.target.value)}
+          required
         />
     
         
@@ -343,7 +345,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
 
       </div>
         
-      <div style={{border: 'green solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
+      <div style={{border: '2px gray solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
         <label
         style={{
           position: 'absolute',
@@ -428,7 +430,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           value={combinedOwnerName}
       
         /> */}
-        <div style={{border: 'green solid', borderRadius: 'auto%', padding: '10px',marginBottom: '15px'}}>
+        <div style={{border: '2px gray solid', borderRadius: 'auto%', padding: '10px',marginBottom: '15px'}}>
         <div className={styles.inputWrapper}>
         <div style={{width: '90%'}}>
         <label>OCT No.*</label>
@@ -476,7 +478,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         </div>
         </div>
       
-        <div style={{border: 'green solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
+        <div style={{border: '2px gray solid', borderRadius: '%', padding: '10px',position: 'relative', marginBottom: '15px'}}>
         <label
         style={{
           position: 'absolute',

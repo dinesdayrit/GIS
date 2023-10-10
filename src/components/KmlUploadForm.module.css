@@ -12,6 +12,7 @@
     height: 90vh;
     z-index: 9999; 
     overflow-y: auto;
+    margin-top: 10px;
    
   }
   

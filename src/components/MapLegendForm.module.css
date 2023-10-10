@@ -6,10 +6,10 @@
     padding: 10px;
     border-radius: 5px;
     /* box-shadow: 0 2px 5px rgba(252, 246, 246, 2); */
-    border: 1px black solid;
+    border: 1px gray solid;
     display: flex;
     flex-direction: column;
     width: max-content;
     background-color: rgba(252, 246, 246, 0.7); 
-    
+   
   }

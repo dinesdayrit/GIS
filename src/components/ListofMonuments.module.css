@@ -9,9 +9,10 @@
     border-radius: 5px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
     width: 30%;
-    height: 90vh;
+    height: 91vh;
     z-index: 9999; 
     overflow-y: auto;
+    margin-top: 10px;
    
   }
   
