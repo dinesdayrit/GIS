@@ -7,6 +7,8 @@
     align-items: center;
     height: 30px;
    
+
+
   }
 
   h3 {
@@ -27,15 +29,15 @@
   .navbar-right {
     display: flex;
     align-items: center;
-    margin-top: 20px;
-   
+    margin-top: 8px;
+  
   }
   
   /* Style the dropdown */
   .dropdown {
     position: relative;
     display: inline-block;
-
+  
   }
   
   
@@ -47,6 +49,7 @@
     margin-top: auto;
     margin-right: 20px;
     font-weight: bold;
+    
   }
 
 
@@ -59,6 +62,8 @@
     z-index: 999;
     transform: translate(-5%);
     right: 0;
+    margin-bottom: 5px;
+  
   }
   
   .dropdown-content button {
@@ -78,13 +83,42 @@
   .dropdown-content button:hover {
     background-color: whitesmoke;
     font-weight: bold;
-    
-
   }
   
   .dropdown:hover .dropdown-content {
     display: block;
   }
   
+  .hamburgerIcon {
+    width: 30px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: transform 0.2s, opacity 0;
+  }
+  
+  
+  .hamburgerIcon .bar1,
+  .hamburgerIcon .bar2,
+  .hamburgerIcon .bar3 {
+    width: 100%;
+    height: 3px;
+    background-color: black;
+    margin: 4px 0;
+  }
+
+
+  .hamburgerIcon.open .bar1 {
+    transform: rotate(-40deg) translate(-5px, 5px);
+  }
+  
+  .hamburgerIcon.open .bar2 {
+    opacity: 0;
+  }
+  
+  .hamburgerIcon.open .bar3 {
+    transform: rotate(40deg) translate(-5px, -5px);
+  }
+
 
   

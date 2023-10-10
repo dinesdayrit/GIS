@@ -5,6 +5,7 @@ import logoIcon from '../assets/Davao_City.png'
 
 const HomeHeader = (props) => {
   const [userDetails, setUserDetails] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     // Retrieve user details from local storage
@@ -13,15 +14,10 @@ const HomeHeader = (props) => {
   }, []);
 
 
-const handleMenu = () => {
-
-  props.formOnCancel();
-  
-}
-
 
   const handleAddParcel = () => {
       props.onAddParcelClick();
+      setIsDropdownOpen(true);
       
       };
 
@@ -38,9 +34,13 @@ const handleMenu = () => {
     };
     const handleKmlFileUpload = () => {
        props.onKMLUpload();
+
     }; 
 
-
+    const handleMenuClick = () => {
+      setIsDropdownOpen(false);
+      props.formOnCancel();
+    }
   return (
     <Fragment>
       <header>
@@ -53,9 +53,14 @@ const handleMenu = () => {
           </div>
           <div className={styles["navbar-right"]}>
             <div className={styles.dropdown}>
-            
-              <button className={styles.dropbtn} onClick={handleMenu}>MENU</button>
-    
+          
+              <button className={`${styles.dropbtn} ${isDropdownOpen ? styles.open : ''}`} onClick={handleMenuClick}>
+              <div className={`${styles.hamburgerIcon} ${isDropdownOpen ? styles.open : ''}`}>
+              <div className={styles.bar1}></div>
+              <div className={styles.bar2}></div>
+              <div className={styles.bar3}></div>
+              </div>
+              </button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>Plot Parcel</button>
                 <button onClick={handleKmlFileUpload}>Upload KML </button>
