@@ -43,7 +43,7 @@
   
   .dropbtn {
     background-color: white;
-    color: black;
+    color: transparent;
     border: none;
     cursor: pointer;
     margin-top: auto;
@@ -110,6 +110,7 @@
 
   .hamburgerIcon.open .bar1 {
     transform: rotate(-40deg) translate(-5px, 5px);
+    background-color: #4CAF50;
   }
   
   .hamburgerIcon.open .bar2 {
@@ -118,6 +119,7 @@
   
   .hamburgerIcon.open .bar3 {
     transform: rotate(40deg) translate(-5px, -5px);
+    background-color: #4CAF50;
   }
 
 

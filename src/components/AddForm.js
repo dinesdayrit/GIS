@@ -552,7 +552,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         /> */}
         
         <div style={{display: 'flex', justifyContent: 'center'}}>
-        <button type="submit" style={{width: '80%'}}>SAVE</button>
+        <button type="submit" style={{width: '60%'}}>SAVE</button>
     
         </div>
       </form>

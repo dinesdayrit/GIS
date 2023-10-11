@@ -262,7 +262,7 @@ return [centerLat, centerLng, centroidPlusCode];
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: 0.5px;">${title}</span>`,
+                html: `<span style="font-weight: 0.5px; font-size: 10px">${title}</span>`,
               }),
             });
             
@@ -298,8 +298,23 @@ return [centerLat, centerLng, centroidPlusCode];
         });
     // });
 
-              
-            textMarker.addTo(map);
+    
+
+            map.on('zoomend', () => {
+           
+              const currentZoom = map.getZoom();
+              const minZoomToShowText = 19;
+          
+              if (currentZoom >= minZoomToShowText) {
+                if (!map.hasLayer(textMarker)) {
+                  map.addLayer(textMarker);
+                }
+              } else {
+                if (map.hasLayer(textMarker)) {
+                  map.removeLayer(textMarker);
+                }
+              }
+            });
           
             polygon.addTo(map);
             polygon.addTo(editableLayers);

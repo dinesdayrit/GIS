@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
+import DatePicker from 'react-datepicker';
 
 
 const EditForm = (props) => {
@@ -220,9 +221,17 @@ useEffect(() => {
          </div>
          <div>
          <label>Date</label>
+         {/* <DatePicker 
+        selected={titleDate} 
+        placeholderText='MMM dd, yyyy'
+        onChange={(titleDate) => setTitleDate(titleDate)}
+        dateFormat="MMM d, yyyy"
+       
+        /> */}
         <input
         defaultValue ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
+        placeholder="MMM d, yyyy"
         />
         </div>
         </div>
@@ -309,6 +318,7 @@ useEffect(() => {
         <input
         defaultValue ={octDate}
         onChange={(e) => setOctDate(e.target.value)}
+        placeholder="MMM d, yyyy"
         />
         </div>
         </div>
@@ -330,6 +340,7 @@ useEffect(() => {
         <input
         defaultValue ={tctDate}
         onChange={(e) => setTctDate(e.target.value)}
+        placeholder="MMM d, yyyy"
         />
         </div>
         </div>
@@ -469,7 +480,7 @@ useEffect(() => {
     
      
       {!isApproved && isAdmin &&( 
-          <button style={{ verticalAlign: 'middle' , marginLeft: '5px'}} onClick={handleApprove} >
+          <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} onClick={handleApprove} >
           &#10003; CONFIRM
           </button>
         )}

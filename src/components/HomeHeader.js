@@ -60,6 +60,7 @@ const HomeHeader = (props) => {
               <div className={styles.bar2}></div>
               <div className={styles.bar3}></div>
               </div>
+              MENU
               </button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>Plot Parcel</button>
