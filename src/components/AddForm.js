@@ -104,7 +104,6 @@ useEffect(() => {
   }, [props.selectedCoordinates]);
   
 
-
   const generateGeoJSON = () => {
     const feature = {
       type: 'Feature',
