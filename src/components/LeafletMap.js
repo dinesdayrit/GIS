@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Map, TileLayer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -195,7 +195,7 @@ function calculateCenterCoordinate(coordinates) {
   var centerLat = sumLat / coordinates.length;
   var centerLng = sumLng / coordinates.length;
   var plusCodes = new PlusCodes();
-var centroidPlusCode = plusCodes.encode(centerLng, centerLat, 12);
+  var centroidPlusCode = plusCodes.encode(centerLng, centerLat, 12);
 return [centerLat, centerLng, centroidPlusCode];
 }
 
@@ -237,7 +237,6 @@ return [centerLat, centerLng, centroidPlusCode];
             
           var centerCoordinate = calculateCenterCoordinate(polygonCoordinates);
           var centroidPlusCode = centerCoordinate[2];
-            
 
             var popupContent = `
               <p>Title: ${title}</p>
@@ -291,10 +290,7 @@ return [centerLat, centerLng, centroidPlusCode];
             technicalDescription,
             technicaldescremarks,
             status,
-
-  
             })
-
         });
     // });
 
@@ -365,10 +361,6 @@ return [centerLat, centerLng, centroidPlusCode];
             
         polygon.on('pm:edit', updatePolygonInfo);
       
-  
-
-          
-
       editableLayers.addLayer(polygon);
     }
     drawnLayerRef.current.addTo(map);
@@ -389,11 +381,14 @@ return [centerLat, centerLng, centroidPlusCode];
     }
 
     
-    //KML multiple Polygons when uploaded
+//KML multiple Polygons when uploaded
 const updateMapWithGeoJSON = (geojsonData) => {
   if (drawnLayerRef.current) {
     map.removeLayer(drawnLayerRef.current);
   }
+
+  const multiplePlusCodes = [];
+
   const geojsonLayer = L.geoJSON(geojsonData, {
     onEachFeature: function(feature, layer) {
       const latlngs = layer.getLatLngs()[0];
@@ -403,6 +398,15 @@ const updateMapWithGeoJSON = (geojsonData) => {
       const multipleCenterLng = multipleCenterCoordinate[0];
       const multipleCentroidPlusCode = multipleCenterCoordinate[2];
       const multipleAreaInSqMeters = calculatePolygonArea(multipleCoordinates);
+
+
+      if (props.onGeoJSONUpdate) {
+        props.onGeoJSONUpdate({
+          geojson: geojsonData,
+          pluscode: multiplePlusCodes,
+        });
+      }
+      multiplePlusCodes.push(multipleCentroidPlusCode);
 
       const popupContent = `
         <pre>Area: ${multipleAreaInSqMeters} sq.m. </pre>
@@ -432,13 +436,14 @@ const updateMapWithGeoJSON = (geojsonData) => {
         `;
 
         layer.setPopupContent(updatedPopupContent);
+        props.handlePlusCode(updatedCentroidPlusCode);
       });
     }
   });
 
   drawnLayerRef.current = geojsonLayer;
-
-  map.fitBounds(geojsonLayer.getBounds());
+  props.onPlusCodesUpdate(multiplePlusCodes);
+  map.fitBounds(drawnLayerRef.current.getBounds());
   geojsonLayer.addTo(map);
 };
 
@@ -446,7 +451,7 @@ if (props.kmlData) {
   updateMapWithGeoJSON(props.kmlData);
 }
 
-
+//End KML
 
     // draw Polygon
     if (props.polygonCoordinates.length > 0) {
@@ -471,7 +476,7 @@ if (props.kmlData) {
       polygon.bindPopup(popupContent)
 
       props.handlePlusCode(centroidPlusCode);
-      props.handleShapeClick(polygonCoordinates);
+      props.handleShapeClick(polygonCoordinates, centroidPlusCode);
       map.fitBounds(polygon.getBounds()); 
 
       function updatePolygonInfo() {

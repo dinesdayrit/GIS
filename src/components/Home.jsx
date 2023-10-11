@@ -15,19 +15,25 @@ const Home = (props) => {
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
   const [tieLineCoordinates, setTieLineCoordinates] = useState([]);
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
-  const [plusCode, setPlusCode] = useState([]);
+  const [plusCode, setPlusCode] = useState('');
   const [selectedPolygonDetails, setSelectedPolygonDetails] = useState('');
   const [showKmlForm, setShowKmlForm] = useState(false);
   const [geojsonData, setGeojsonData] = useState('');
-  
+  const [plusCodes, setPlusCodes] = useState([]);
+
 
   const handleKMLUpload = (convertedGeoJSON) => {
     setGeojsonData(convertedGeoJSON);
-    console.log('geojsonData NI', geojsonData);
+    console.log('geojsonData', convertedGeoJSON);
   };
 
-
-
+  const handlePlusCodesUpdate = (plusCodes) => {
+    console.log('Received Plus Codes:', plusCodes); // debug waa ni
+    // Handle the multiple Plus codes here
+    setPlusCodes(plusCodes);
+    console.log('Multiple Plus Codes:', plusCodes); // debug waa ni
+  };
+  
   const toggleKmlTable = () => {
     setShowKmlForm(true);
   };
@@ -67,9 +73,6 @@ const Home = (props) => {
 
   const togglePopupForm = () => {
     setShowPopupForm(!showPopupForm);
-    setPlusCode("");
-    
-
   };
 
 
@@ -126,11 +129,16 @@ const Home = (props) => {
     />
      
       {showKmlForm && (
-              <KmlUploadForm
-                plusCode={plusCode}
-                onKMLUpload={handleKMLUpload}
-                closeKmlTable={closeKmlTable}
-            />
+            <KmlUploadForm
+              plusCode={plusCode}
+              plusCodes={plusCodes}
+              handlePlusCode ={handlePlusCode}
+              onKMLUpload={handleKMLUpload}
+              closeKmlTable={closeKmlTable}
+              geojson={geojsonData}
+              handleShapeClick={handleShapeClick}
+              handlePlusCodesUpdate={handlePlusCodesUpdate}
+          />
               )}
 
       {showPopupForm && (
@@ -142,9 +150,7 @@ const Home = (props) => {
           onCustomCoordinatesChange={(coordinates) => setSelectedCoordinates(coordinates)}
           handleShapeClick={handleShapeClick}
           handlePlusCode ={handlePlusCode}
-          onTieLineDraw={handleTieLineDraw}
-       
-          
+          onTieLineDraw={handleTieLineDraw}  
         />
       )}
       {showEditForm && 
@@ -154,7 +160,6 @@ const Home = (props) => {
           selectedCoordinates={selectedCoordinates}
           handleShapeClick={handleShapeClick}
           plusCode = {plusCode}
-          updatePolygonStyle={updatePolygonStyle}
         
 
 
@@ -175,10 +180,10 @@ const Home = (props) => {
           handleShapeClick={handleShapeClick}
           handleEditClick={handleEditClick}
           editOnCancel = {editOnCancel}
-          handlePlusCode ={handlePlusCode}
+          handlePlusCode ={setPlusCode}
           tieLineCoordinates = {tieLineCoordinates}
           kmlData={geojsonData}
-          updatePolygonStyle={updatePolygonStyle}
+          onPlusCodesUpdate={handlePlusCodesUpdate}
         />
       </div>
     </div>
