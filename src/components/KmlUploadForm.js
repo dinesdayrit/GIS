@@ -290,7 +290,7 @@ const KmlTable = (props) => {
                 name="kmlFile"
                 accept=".kml"
                 onChange={handleKMLUpload}
-                style={{ color: 'white', height: '10%' }}
+                style={{ color: 'black', height: '10%' }}
                 />
                 <button onClick={handleSaveToDatabase}>Save to Database</button>
                 {/* <button onClick={handleSaveAllChanges}>Save All Changes</button> */}
