@@ -9,12 +9,10 @@ const KmlTable = (props) => {
     const [kmlDetailsSaved, setKmlDetailsSaved] = useState(false);
     const [tableRows, setTableRows] = useState([]);
     const [extractedData, setExtractedData] = useState(null);
-    const [geojson, setGeoJSON] = useState('');
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
     const [editableData, setEditableData] = useState([]);
     const [editedData, setEditedData] = useState({});
-    const [plusCodes, setPlusCodes] = useState(null);
-    const [plusCodesArray, setPlusCodesArray] = useState([]);
+    const [multipleCentroidPlusCode, setMultipleCentroidPlusCode] = useState('');
 
     useEffect(() => {
       if (extractedData && extractedData.length > 0) {
@@ -34,13 +32,8 @@ const KmlTable = (props) => {
             props.onKMLUpload(convertedGeoJSON);
           
             const { extractedData, extractedCoordinates, headerNames } = extractKMLData(kmlData);
-
-            const plusCodesArray = Array(extractedData.length).fill(plusCodes);
-
             setExtractedData(extractedData);
             setExtractedCoordinates(extractedCoordinates);
-            setPlusCodesArray(plusCodesArray);
-            
             const rows = generateTableRows(extractedData, headerNames);
             setTableRows(rows);
             
@@ -82,7 +75,7 @@ const KmlTable = (props) => {
         });
     
         extractedData.push(data);
-        // console.log(`Coordinates for Placemark ${index}:`, data.coordinates);
+        console.log(`Coordinates for Placemark ${index}:`, data.coordinates);
       });
       
       return { extractedData, extractedCoordinates, headerNames: Array.from(headerNames) };
@@ -226,12 +219,24 @@ const KmlTable = (props) => {
         const placemarkData = extractedData[r];
         const placemarkCoordinates = extractedCoordinates[r];
         const plusCodesForData = props.plusCodes[r];
+    
+      const cleanedData = placemarkCoordinates.filter(item => item.trim() !== "");
+      const coordinatePairs = cleanedData.map(pair => {
+        const [long, lat] = pair.split(',').map(Number);
+        return [long, lat];
+      });
 
-        const coordinatePairs = placemarkCoordinates.map(pair => {
-          const [long, lat] = pair.split(',').map(Number);
-          return [long, lat];
-        });
-  
+      const geojsonFeature = {
+        type: 'Feature',
+        geometry: {
+          type: 'Polygon', 
+          coordinates: [coordinatePairs], 
+        },
+      };
+      
+    
+      const geojsonString = JSON.stringify(geojsonFeature);
+
         const {
           title_no,
           surv_no,
@@ -251,13 +256,7 @@ const KmlTable = (props) => {
           area,
           ownerName: owner,
           plusCode: plusCodesForData,
-          geojson: {
-            type: 'Feature',
-            geometry: {
-              type: 'Polygon',
-              coordinates: [coordinatePairs],
-            },
-          },
+          geojson: geojsonString,
           status: 'For Approval',
         };
 
