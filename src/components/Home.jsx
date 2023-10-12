@@ -99,6 +99,7 @@ const Home = (props) => {
     setShowMonumentForm(false);
     setShowPinAssignForm(false);
     setShowMonumentForm(false);
+    setShowKmlForm(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
@@ -123,7 +124,7 @@ const Home = (props) => {
     onLogoutClick={props.onLogout}
     formOnCancel = {formOnCancel}
     onMonumentClick ={showMonument}
-    onKMLUpload={toggleKmlTable}
+    onKMLUploadClick={toggleKmlTable}
     onAssignPinClick= {handlePinClick}
    
     />

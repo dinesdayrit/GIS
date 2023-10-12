@@ -34,7 +34,7 @@ const HomeHeader = (props) => {
 
     };
     const handleKmlFileUpload = () => {
-       props.onKMLUpload();
+       props.onKMLUploadClick();
        setIsDropdownOpen(true);
     }; 
 
