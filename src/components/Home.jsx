@@ -6,12 +6,13 @@ import EditForm from "./EditForm";
 import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
 import KmlUploadForm from "./KmlUploadForm";
-
+import AssignPinForm from "./AssignPinForm";
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showMonumentForm, setShowMonumentForm] = useState(false);
+  const [showPinAssignForm, setShowPinAssignForm] = useState(false);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
   const [tieLineCoordinates, setTieLineCoordinates] = useState([]);
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
@@ -75,22 +76,26 @@ const Home = (props) => {
     setShowPopupForm(!showPopupForm);
   };
 
-
-  // const selectedDrawing = () => {
-  //   setShowPopupForm(true);
-  // };
+;
 
   const handleEditClick = (polygonDetails) => {
     setSelectedPolygonDetails(polygonDetails);
     setShowEditForm(true);
-    console.log("kani",selectedPolygonDetails);
-  
+    console.log("kani",selectedPolygonDetails)
   };
 
   const editOnCancel = () => {
     setShowEditForm(false);
   };
 
+  const handlePinClick = () => {
+    setShowPinAssignForm(true);
+    console.log("click PIN");
+  };
+
+  const PinOnCancel = () => {
+    setShowPinAssignForm(false);
+  };
   
   const formOnCancel = () => {
     setShowPopupForm(false);
@@ -110,13 +115,7 @@ const Home = (props) => {
   const showMonument = () =>{
     setShowMonumentForm(true);
   }
-  const updatePolygonStyle = (polygonCoordinates) => {
-    // Implement your logic to update the polygon style here
-    console.log('Updating polygon style with coordinates:', polygonCoordinates);
-    // Example: You can change the color of the polygon based on some conditions
-    // You may need to modify this logic according to your requirements
-    return 'blue'; // Return the updated style (e.g., 'blue' for a blue polygon)
-  };
+
 
   return (
     <div className={styles.home}>
@@ -126,6 +125,7 @@ const Home = (props) => {
     formOnCancel = {formOnCancel}
     onMonumentClick ={showMonument}
     onKMLUpload={toggleKmlTable}
+    onAssignPinClick= {handlePinClick}
     />
      
       {showKmlForm && (
@@ -151,6 +151,7 @@ const Home = (props) => {
           handleShapeClick={handleShapeClick}
           handlePlusCode ={handlePlusCode}
           onTieLineDraw={handleTieLineDraw}  
+          
         />
       )}
       {showEditForm && 
@@ -171,8 +172,12 @@ const Home = (props) => {
           
 
           />}
-
-
+    {showPinAssignForm && 
+        <AssignPinForm
+            polygonDetails={selectedPolygonDetails}
+            selectedCoordinates={selectedCoordinates}
+            plusCode = {plusCode}
+          />}
 
       <div className={styles.mapWrapper}>
         <LeafletMap

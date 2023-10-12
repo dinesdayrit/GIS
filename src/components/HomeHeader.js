@@ -41,6 +41,11 @@ const HomeHeader = (props) => {
       setIsDropdownOpen(false);
       props.formOnCancel();
     }
+
+    const handdlePinClick = () => {
+      props.onAssignPinClick();
+    }
+    
   return (
     <Fragment>
       <header>
@@ -63,13 +68,25 @@ const HomeHeader = (props) => {
               MENU
               </button>
               <div className={styles["dropdown-content"]}>
-                <button onClick={handleAddParcel}>Plot Parcel</button>
-                <button onClick={handleKmlFileUpload}>Upload KML </button>
+                <button onClick={handleAddParcel}>
+                <i class="fa-solid fa-draw-polygon" style={{ marginRight: '8px' }}></i>
+                Plot Parcel</button>
+                <button onClick={handleKmlFileUpload}>
+                <i class="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
+                Upload KML </button>
                 {/* <button >Edit/Update</button> */}
-                <button>Assign PIN</button>
-                <button onClick={handleMonument}>List of Monuments</button>
-                {userDetails && <button>{userDetails.name} {userDetails.role}</button>}
-                <button onClick={handleLogout}>Log Out</button>
+                <button onClick={handdlePinClick}>
+                <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
+                Assign PIN</button>
+                <button onClick={handleMonument}>
+                <i className="fas fa-list-alt" style={{ marginRight: '8px' }}></i>
+                List of Monuments</button>
+                {userDetails && <button>
+                <i className="fas fa-user-alt" style={{ marginRight: '8px' }}></i>
+                {userDetails.name} {userDetails.role}</button>}
+                <button onClick={handleLogout}>
+                <i className="fas fa-sign-out-alt" style={{ marginRight: '8px' }}></i>
+                Log Out</button>
             
                 
               </div>

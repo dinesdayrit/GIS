@@ -477,7 +477,7 @@ if (props.kmlData) {
 
       props.handlePlusCode(centroidPlusCode);
       props.handleShapeClick(polygonCoordinates, centroidPlusCode);
-      map.fitBounds(polygon.getBounds()); 
+      map.fitBounds(polygon.getBounds(), { maxZoom: 19});
 
       function updatePolygonInfo() {
         const updatedPolygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);

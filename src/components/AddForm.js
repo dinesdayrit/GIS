@@ -414,7 +414,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           type='text'
           name="businessName"
           // value={businessName}
-          placeholder='Business Name'
+          placeholder='other entity name'
           onChange={(e) => setBusinessName(e.target.value)}
         />
         </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
-import DatePicker from 'react-datepicker';
+// import DatePicker from 'react-datepicker';
 
 
 const EditForm = (props) => {
@@ -24,15 +24,7 @@ const EditForm = (props) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
-  const [defaultCode, setDefaultCode] = useState('');
-  const [pin, setPin] = useState('');
-  const [brgycodes, setBrgycodes] = useState([]);
-  const [selectedBrgy, setSelectedBrgy] = useState('');
-  const [selectedBrgyCode, setSelectedBrgyCode] = useState('0000');
-  const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [selectedDistrictCode, setSelectedDistrictCode] = useState('0');
-  const [selectedSectionCode, setSelectedSectionCode] = useState('0');
-  const [selectedParcelCode, setSelectedParcelCode] = useState('0');
+
 
 
 useEffect(() => {
@@ -141,7 +133,7 @@ useEffect(() => {
     setStatus('APPROVED');
     setTextStatusColor('blue');
     setIsApproved(false);
-    props.updatePolygonStyle(polygonDetails.title);
+    
 
     // Send a PUT request to update the status in the backend
     fetch(`/approved/${polygonDetails.title}`, {
@@ -167,39 +159,7 @@ useEffect(() => {
       });
   };
  
-  useEffect(() => {
-    // Fetch brgycode data and set it in the brgycodes state
-    fetch('/brgycode')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Fetched brgycode:', data);
-        setBrgycodes(data);
-
-        const matchingBrgycode = brgycodes.find(
-        (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
-        );
-        console.log('matchingBrgycode', matchingBrgycode);
-      
-          if (matchingBrgycode) {
-            setSelectedBrgyCode(matchingBrgycode.brgycode);
-            setSelectedDistrict(matchingBrgycode.admindistrict);
-            setSelectedDistrictCode(matchingBrgycode.districtcode);
-          } 
-
-          const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
-          setDefaultCode(generatedPin);
-      })
-      .catch((error) => {
-        console.error('Error fetching brgycodes:', error);
-        alert('Error fetching brgycodes:', error);
-      });
-     
-  }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
-
-  const handleBrgyChange = (e) => {
-    const selectedBrgyValue = e.target.value;
-    setSelectedBrgy(selectedBrgyValue);
-  };
+  
   
   return (
     <div className={styles['popup-form-container']}>
@@ -400,79 +360,6 @@ useEffect(() => {
         </div>
         
       </form>
-
-{/* 
-      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
-      <p
-        style={{
-          position: 'absolute',
-          top: '-10px',
-          left: '10px',
-          backgroundColor: 'whitesmoke',
-          padding: '0 5px',
-          marginBottom: '10px',
-          fontSize:  '14px',
-        }}
-      >
-      PIN
-      </p>
-       <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
-      <div>
-        <p>Brgy*</p>
-        <select
-        name='brgy'
-        onChange={handleBrgyChange}
-         value={selectedBrgy}
-    >
-      {brgycodes.map((targetBrgycode) => (
-        <option key={targetBrgycode.id} value={targetBrgycode.brgy}>
-          {targetBrgycode.brgy}
-        </option>
-      ))}
-    </select>
-      </div>
-
-      <div>
-        <p>District*</p>
-        <input 
-          name='district'
-          defaultValue={selectedDistrict}
-        />
-      </div>
-      
-      <div>
-        <p>Section*</p>
-        <input 
-          name='section'
-          onChange={(e) => setSelectedSectionCode(e.target.value)}
-          
-        />
-      </div>
-
-      <div>
-        <p>Parcel*</p>
-        <input 
-          name='parcel'
-          onChange={(e) => setSelectedParcelCode (e.target.value)}
-          
-        />
-      </div>
-      
-      </div> 
-
-     
-      <input 
-          name='pin' 
-          value={defaultCode} 
-          onChange={(e) => {
-            setPin(e.target.value);
-          }}
-      />
-       <div className={styles['button-wrapper']}>
-        <button type="submit" style={{width: "40%"}}>SAVE</button>
-        </div>
-    </div>
-   */}
   
       <div style={{display: 'flex', marginTop: '10%', alignItems: 'center' }}>
     
@@ -481,7 +368,8 @@ useEffect(() => {
      
       {!isApproved && isAdmin &&( 
           <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} onClick={handleApprove} >
-          &#10003; CONFIRM
+          <i class="fa-solid fa-check" style={{marginRight: "5px"}}></i>
+          CONFIRM
           </button>
         )}
         </div>
