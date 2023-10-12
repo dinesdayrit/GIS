@@ -30,22 +30,27 @@ const HomeHeader = (props) => {
     const handleMonument = () => {
 
       props.onMonumentClick();
+      setIsDropdownOpen(true);
 
     };
     const handleKmlFileUpload = () => {
        props.onKMLUpload();
-
+       setIsDropdownOpen(true);
     }; 
 
     const handleMenuClick = () => {
       setIsDropdownOpen(false);
       props.formOnCancel();
+      
+      
     }
 
     const handdlePinClick = () => {
       props.onAssignPinClick();
+      setIsDropdownOpen(true);
+      
     }
-    
+
   return (
     <Fragment>
       <header>

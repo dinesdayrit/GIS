@@ -29,10 +29,9 @@ const Home = (props) => {
   };
 
   const handlePlusCodesUpdate = (plusCodes) => {
-    console.log('Received Plus Codes:', plusCodes); // debug waa ni
+   
     // Handle the multiple Plus codes here
     setPlusCodes(plusCodes);
-    console.log('Multiple Plus Codes:', plusCodes); // debug waa ni
   };
   
   const toggleKmlTable = () => {
@@ -93,12 +92,12 @@ const Home = (props) => {
     console.log("click PIN");
   };
 
-  const PinOnCancel = () => {
-    setShowPinAssignForm(false);
-  };
+
   
   const formOnCancel = () => {
     setShowPopupForm(false);
+    setShowMonumentForm(false);
+    setShowPinAssignForm(false);
     setShowMonumentForm(false);
   };
 
@@ -126,6 +125,7 @@ const Home = (props) => {
     onMonumentClick ={showMonument}
     onKMLUpload={toggleKmlTable}
     onAssignPinClick= {handlePinClick}
+   
     />
      
       {showKmlForm && (
