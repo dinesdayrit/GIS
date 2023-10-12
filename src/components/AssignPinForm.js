@@ -19,7 +19,7 @@ const AssignPinForm = (props) => {
     const [pin, setPin] = useState('');
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
-    const [selectedBrgyCode, setSelectedBrgyCode] = useState('0000');
+    const [selectedBrgyCode, setSelectedBrgyCode] = useState('000');
     const [selectedDistrict, setSelectedDistrict] = useState('');
     const [selectedDistrictCode, setSelectedDistrictCode] = useState('0');
     const [selectedSectionCode, setSelectedSectionCode] = useState('0');
@@ -56,7 +56,7 @@ const AssignPinForm = (props) => {
             console.log('matchingBrgycode', matchingBrgycode);
           
               if (matchingBrgycode) {
-                setSelectedBrgyCode(matchingBrgycode.brgycode);
+                setSelectedBrgyCode(matchingBrgycode.brgycodelast3);
                 setSelectedDistrict(matchingBrgycode.admindistrict);
                 setSelectedDistrictCode(matchingBrgycode.districtcode);
               } 
@@ -79,7 +79,7 @@ const AssignPinForm = (props) => {
     return (
     <div className={styles['popup-form-container']}>
     
-              <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+     <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
           position: 'absolute',
@@ -93,13 +93,17 @@ const AssignPinForm = (props) => {
       >
       PIN
       </p>
-       <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
+
+    <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
+    
       <div>
         <p>Brgy*</p>
         <select
         name='brgy'
         onChange={handleBrgyChange}
-         value={selectedBrgy}
+        defaultValue= {selectedBrgy}
+        
+       
     >
       {brgycodes.map((targetBrgycode) => (
         <option key={targetBrgycode.id} value={targetBrgycode.brgy}>
@@ -109,15 +113,17 @@ const AssignPinForm = (props) => {
     </select>
       </div>
 
-      <div>
+      <div style={{width: '70%'}}>
         <p>District*</p>
         <input 
           name='district'
-          defaultValue={selectedDistrict}
+          value={selectedDistrict}
+          readOnly
+       
         />
       </div>
       
-      <div>
+      <div >
         <p>Section*</p>
         <input 
           name='section'
@@ -131,6 +137,7 @@ const AssignPinForm = (props) => {
         <input 
           name='parcel'
           onChange={(e) => setSelectedParcelCode (e.target.value)}
+          
           
         />
       </div>
@@ -147,6 +154,8 @@ const AssignPinForm = (props) => {
       />
 
     </div>
+
+
     <div style={{ border: '2px gray solid', padding: '10px', marginTop: '15px' }}>
       <div className={styles.inputWrapper}>
       <div style={{width: '100%'}}>

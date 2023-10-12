@@ -38,10 +38,6 @@ const Home = (props) => {
     setShowKmlForm(true);
   };
 
-  const closeKmlTable = () => {
-    setShowKmlForm(false);
-  };
-
   const handleTieLineDraw = (coordinates) => {
     console.log('click')
     try {
@@ -135,7 +131,6 @@ const Home = (props) => {
               plusCodes={plusCodes}
               handlePlusCode ={handlePlusCode}
               onKMLUpload={handleKMLUpload}
-              closeKmlTable={closeKmlTable}
               geojson={geojsonData}
               handleShapeClick={handleShapeClick}
               handlePlusCodesUpdate={handlePlusCodesUpdate}

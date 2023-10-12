@@ -294,7 +294,7 @@ const KmlTable = (props) => {
                 />
                 <button onClick={handleSaveToDatabase}>Save to Database</button>
                 {/* <button onClick={handleSaveAllChanges}>Save All Changes</button> */}
-                <button onClick={props.closeKmlTable}>Cancel</button>
+                
                 </div>
 
                 <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
