@@ -13,7 +13,17 @@
     z-index: 9999; 
     overflow-y: auto;
     margin-top: 10px;
-   
+  }
+
+  .popup-form-container input {
+    width: 40%;
+    padding: 7.5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    color: black;
+    font-weight: bold;
+    text-align: center;
   }
   
  
@@ -40,6 +50,22 @@
   .popup-form-container table tr {
     background-color: white;
 
+  }
+
+  .popup-form-container button {
+    background-color: #0056b3; 
+    color: #fff;
+    border: none;
+    height: 26%;
+    padding: 10px 20px;
+    margin-left: 0.7em;
+    border-radius: 10px;
+    cursor: pointer;
+    align-items: center;
+  }
+  
+  .popup-form-container button:hover {
+    background-color: #007bff;
   }
 
   
