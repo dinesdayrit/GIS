@@ -29,8 +29,6 @@ const Home = (props) => {
   };
 
   const handlePlusCodesUpdate = (plusCodes) => {
-   
-    // Handle the multiple Plus codes here
     setPlusCodes(plusCodes);
   };
   
