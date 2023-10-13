@@ -15,7 +15,6 @@ const AssignPinForm = (props) => {
     const [octDate, setOctDate] = useState('');
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
-    const [defaultCode, setDefaultCode] = useState('');
     const [pin, setPin] = useState('');
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
@@ -62,13 +61,14 @@ const AssignPinForm = (props) => {
               } 
     
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
-              setDefaultCode(generatedPin);
+              setPin(generatedPin);
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
             alert('Error fetching brgycodes:', error);
           });
          
+      
       }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
     
       const handleBrgyChange = (e) => {
@@ -76,9 +76,53 @@ const AssignPinForm = (props) => {
         setSelectedBrgy(selectedBrgyValue);
       };
 
+
+    const handleSubmit = (e) =>{
+      e.preventDefault();
+
+      const formData = {
+        pin: pin,
+        plusCode: props.plusCode,
+        title: title,
+        titleDate: titleDate,
+        surveyNumber: surveyNumber,
+        lotNumber: lotNumber,
+        blkNumber: blkNumber,
+        area: area,
+        boundary: boundary,
+        ownerName: ownerName,
+        oct: oct,
+        octDate: octDate,
+        tct: tct,
+        tctDate: tctDate,
+        status: 'For Approval',
+        
+      };
+  
+      fetch('/tmod', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "New PIN Assigned");
+        if (data.status === "ok") {
+          alert("New PIN Assigned");
+         
+        } else {
+          alert("Something went wrong");
+        }
+      });
+
+    };
+
+
     return (
     <div className={styles['popup-form-container']}>
-    
+    <form onSubmit={handleSubmit} >
      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
@@ -147,7 +191,7 @@ const AssignPinForm = (props) => {
         
       <input 
           name='pin' 
-          value={defaultCode} 
+          value={pin} 
           onChange={(e) => {
             setPin(e.target.value);
           }}
@@ -294,6 +338,7 @@ const AssignPinForm = (props) => {
     <div className={styles['button-wrapper']} style={{marginTop: "10px"}}>
         <button type="submit" style={{width: "40%"}}>SAVE</button>
     </div>
+    </form>
     </div>
     )
 }

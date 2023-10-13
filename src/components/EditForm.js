@@ -172,7 +172,7 @@ useEffect(() => {
         <input
           type="text"
           name="title"
-          defaultValue={title}
+          value={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -189,7 +189,7 @@ useEffect(() => {
        
         /> */}
         <input
-        defaultValue ={titleDate}
+        value ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
         placeholder="MMM d, yyyy"
         />
@@ -200,7 +200,7 @@ useEffect(() => {
         <input
           type="text"
           name="surveyNumber"
-          defaultValue={surveyNumber}
+          value={surveyNumber}
           onChange={(e) => setSurveyNumber(e.target.value)}
           required
         />
@@ -210,7 +210,7 @@ useEffect(() => {
     <input
       type="text"
       name="lotNumber"
-      defaultValue={lotNumber}
+      value={lotNumber}
       onChange={(e) => setLotNumber(e.target.value)}
       required
     />
@@ -221,7 +221,7 @@ useEffect(() => {
         <input
       type="text"
       name="blkNumber"
-      defaultValue={blkNumber}
+      value={blkNumber}
       onChange={(e) => setBlkNumber(e.target.value)}
       required
       />
@@ -231,7 +231,7 @@ useEffect(() => {
         <input
           type="text"
           name="area"
-          defaultValue={area}
+          value={area}
           onChange={(e) => setArea(e.target.value)}
           required />
 
@@ -244,7 +244,7 @@ useEffect(() => {
         rows={6}
         type="text"
         name="boundary"
-        defaultValue={boundary}
+        value={boundary}
         onChange={(e) => {
         setBoundary(e.target.value);
         }}
@@ -256,7 +256,7 @@ useEffect(() => {
       <input
           type="text"
           name="ownerName"
-          defaultValue={ownerName}
+          value={ownerName}
           onChange={(e) => setOwnerName(e.target.value)}
           required />
       
@@ -267,7 +267,7 @@ useEffect(() => {
         <input
           type="text"
           name="OCT"
-          defaultValue={oct}
+          value={oct}
           onChange={(e) => {
             setOct(e.target.value);
           }}
@@ -276,7 +276,7 @@ useEffect(() => {
          <div>
          <label>Date</label>
         <input
-        defaultValue ={octDate}
+        value ={octDate}
         onChange={(e) => setOctDate(e.target.value)}
         placeholder="MMM d, yyyy"
         />
@@ -289,7 +289,7 @@ useEffect(() => {
         <input
           type="text"
           name="tct"
-          defaultValue={tct}
+          value={tct}
           onChange={(e) => {
             setTct(e.target.value);
           }}
@@ -298,7 +298,7 @@ useEffect(() => {
          <div>
          <label>Date</label>
         <input
-        defaultValue ={tctDate}
+        value ={tctDate}
         onChange={(e) => setTctDate(e.target.value)}
         placeholder="MMM d, yyyy"
         />
