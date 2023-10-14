@@ -119,8 +119,11 @@ const KmlTable = (props) => {
       });
 
       const geojsonFeature = {
+        type: 'Feature',
+        geometry: {
           type: 'Polygon', 
-          coordinates: [coordinatePairs],
+          coordinates: [coordinatePairs], 
+        },
       };
 
       const geojsonString = JSON.stringify(geojsonFeature);
