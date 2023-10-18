@@ -14,7 +14,7 @@ import ReactDOM from 'react-dom';
 
 const LeafletMap = (props) => {
   // const [selectedCoordinates, setSelectedCoordinates] = useState(null);
-  // const mapRef = useRef(null);
+  const mapRef = useRef(null);
   const drawnLayerRef = useRef(L.featureGroup());
   // const drawControlRef = useRef(null);
 
@@ -28,6 +28,8 @@ const LeafletMap = (props) => {
 
 // Add the zoom control to the top-right corner
 L.control.zoom({ position: 'topright' }).addTo(map);
+
+mapRef.current = map;
 
 
   var wmsTechDescOptions = {
@@ -199,6 +201,7 @@ function calculateCenterCoordinate(coordinates) {
 return [centerLat, centerLng, centroidPlusCode];
 }
 
+
     // Fetch data from '/GisDetail' and add polygons to the map
     fetch('/GisDetail')
       .then(response => response.json())
@@ -225,14 +228,19 @@ return [centerLat, centerLng, centroidPlusCode];
           
           if (geojsonObject) {
           const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+  
+             const polygonColor = status === 'APPROVED' ? 'blue' : 'red';
+             const polygon = L.polygon(latlngs, { color: polygonColor });
 
-          let polygon = L.polygon(latlngs, { color: 'red' });
-          if(status === 'APPROVED') {
-            polygon = L.polygon(latlngs, { color: 'blue' });
-          } 
-          
-                    
+          if (props.isPolygonApproved && geojsonObject) {
+             map.fitBounds(polygon.getBounds(), { maxZoom: 19});
             
+          }
+
+            
+          polygon.addTo(map);
+          polygon.addTo(editableLayers);
+
           const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
             
           var centerCoordinate = calculateCenterCoordinate(polygonCoordinates);
@@ -274,7 +282,7 @@ return [centerLat, centerLng, centroidPlusCode];
                 // editButton.addEventListener('click', () => {
                 // // Call the handleEditClick function with the provided data
 
-            props.handleEditClick({
+            props.parcelDetails({
             title,
             titleDate,
             surveyNumber,
@@ -515,9 +523,11 @@ if (props.kmlData) {
     };
 
   
-  }, [props.polygonCoordinates, props.kmlData]);
+  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData ]);
 
-  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
+  console.log("props.isPolygonApproved", props.isPolygonApproved )
+
+  return <div id="leaflet-map" style={{ width: '100%', height: '90vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
 };
 
 export default LeafletMap;

@@ -1,5 +1,5 @@
 import LeafletMap from "./LeafletMap"
-import React, { useState } from "react";
+import React, { useState  } from "react";
 import styles from './Home.module.css';
 import AddForm from './AddForm';
 import EditForm from "./EditForm";
@@ -21,6 +21,11 @@ const Home = (props) => {
   const [showKmlForm, setShowKmlForm] = useState(false);
   const [geojsonData, setGeojsonData] = useState('');
   const [plusCodes, setPlusCodes] = useState([]);
+  const [isPolygonApproved, setIsPolygonApproved] = useState(false);
+ 
+
+
+
 
 
   const handleKMLUpload = (convertedGeoJSON) => {
@@ -72,10 +77,14 @@ const Home = (props) => {
 ;
 
   const handleEditClick = (polygonDetails) => {
-    setSelectedPolygonDetails(polygonDetails);
+   
     setShowEditForm(true);
-    console.log("kani",selectedPolygonDetails)
   };
+
+  const parcelDetails = (polygonDetails) => {
+    setSelectedPolygonDetails(polygonDetails);
+    console.log("kani",selectedPolygonDetails)
+  }
 
   const editOnCancel = () => {
     setShowEditForm(false);
@@ -94,12 +103,14 @@ const Home = (props) => {
     setShowPinAssignForm(false);
     setShowMonumentForm(false);
     setShowKmlForm(false);
+    setShowEditForm(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
     setSelectedCoordinates(clickedCoordinates);
     // console.log("mao ni" + clickedCoordinates);
     // selectedDrawing();
+    
   };
 
   const handlePlusCode = (clickedplusCode) => {
@@ -109,6 +120,12 @@ const Home = (props) => {
   const showMonument = () =>{
     setShowMonumentForm(true);
   }
+
+  const handlePolygonApproval = () => {
+    setIsPolygonApproved(true);
+    console.log("handlePolygonApproval sa home", isPolygonApproved)
+  };
+
 
 
   return (
@@ -120,6 +137,7 @@ const Home = (props) => {
     onMonumentClick ={showMonument}
     onKMLUploadClick={toggleKmlTable}
     onAssignPinClick= {handlePinClick}
+    onEditFormOpen = {handleEditClick}
    
     />
      
@@ -155,6 +173,10 @@ const Home = (props) => {
           selectedCoordinates={selectedCoordinates}
           handleShapeClick={handleShapeClick}
           plusCode = {plusCode}
+          // polygonId={selectedPolygonDetails.id}
+        onPolygonApproval={handlePolygonApproval}
+       
+  
         
 
 
@@ -171,18 +193,23 @@ const Home = (props) => {
             polygonDetails={selectedPolygonDetails}
             selectedCoordinates={selectedCoordinates}
             plusCode = {plusCode}
+          
           />}
 
       <div className={styles.mapWrapper}>
         <LeafletMap
           polygonCoordinates={polygonCoordinates}
           handleShapeClick={handleShapeClick}
-          handleEditClick={handleEditClick}
+          // handleEditClick={handleEditClick}
+          parcelDetails = {parcelDetails}
           editOnCancel = {editOnCancel}
           handlePlusCode ={setPlusCode}
           tieLineCoordinates = {tieLineCoordinates}
           kmlData={geojsonData}
           onPlusCodesUpdate={handlePlusCodesUpdate}
+          isPolygonApproved={isPolygonApproved}
+         
+       
         />
       </div>
     </div>

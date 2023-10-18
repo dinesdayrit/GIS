@@ -26,6 +26,7 @@ const AssignPinForm = (props) => {
 
 
     useEffect(() => {
+      if (polygonDetails) {
         setTitle(polygonDetails.title);
         setTitleDate(polygonDetails.titleDate);
         setSurveyNumber(polygonDetails.surveyNumber);
@@ -38,6 +39,7 @@ const AssignPinForm = (props) => {
         setOctDate(polygonDetails.octDate);
         setTct(polygonDetails.tct);
         setTctDate(polygonDetails.tctDate);
+      }
       }, [props.selectedCoordinates]);
 
 

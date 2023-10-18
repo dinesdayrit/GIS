@@ -37,6 +37,7 @@ useEffect(() => {
 }, []);
   
   useEffect(() => {
+    if (polygonDetails) {
     generateGeoJSON();
     polygonStatus();
     setTitle(polygonDetails.title);
@@ -53,6 +54,7 @@ useEffect(() => {
     setTctDate(polygonDetails.tctDate);
     // setTechnicalDescription(polygonDetails.technicalDescription);
     // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
+    }
     console.log('isadmin', isAdmin);
   }, [props.selectedCoordinates]);
 
@@ -72,7 +74,7 @@ useEffect(() => {
   };
 
   const polygonStatus = () => {
-    if(polygonDetails.status === 'APPROVED') {
+    if(polygonDetails && polygonDetails.status === 'APPROVED') {
       setTextStatusColor('blue')
       setStatus('APPROVED');
       setIsApproved(true);
@@ -129,12 +131,6 @@ useEffect(() => {
 
 
   const handleApprove = () => {
-    // Update the status in the component state
-    setStatus('APPROVED');
-    setTextStatusColor('blue');
-    setIsApproved(false);
-    
-
     // Send a PUT request to update the status in the backend
     fetch(`/approved/${polygonDetails.title}`, {
       method: 'PUT',
@@ -143,19 +139,21 @@ useEffect(() => {
       },
       body: JSON.stringify({
         status: 'APPROVED',
-        // Include other fields you want to update if needed
+      
       }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        alert('APPROVED');
+        // alert('APPROVED');
+        props.onPolygonApproval();
         console.log('isApproved',isApproved);
-        window.location.href = "/home";
+        setStatus('APPROVED');
+        setTextStatusColor('blue');
+        setIsApproved(true);
       })
       .catch((error) => {
         console.error('Error updating status:', error);
-        // Handle the error as needed
       });
   };
  
@@ -188,6 +186,7 @@ useEffect(() => {
         dateFormat="MMM d, yyyy"
        
         /> */}
+        
         <input
         value ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
@@ -367,7 +366,8 @@ useEffect(() => {
     
      
       {!isApproved && isAdmin &&( 
-          <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} onClick={handleApprove} >
+          <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} 
+          onClick={handleApprove} >
           <i class="fa-solid fa-check" style={{marginRight: "5px"}}></i>
           CONFIRM
           </button>

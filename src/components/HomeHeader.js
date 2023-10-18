@@ -51,6 +51,11 @@ const HomeHeader = (props) => {
       
     }
 
+    const handleEdit = () => {
+      props.onEditFormOpen();
+      setIsDropdownOpen(true);
+    }
+
   return (
     <Fragment>
       <header>
@@ -79,7 +84,9 @@ const HomeHeader = (props) => {
                 <button onClick={handleKmlFileUpload}>
                 <i class="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
                 Upload KML </button>
-                {/* <button >Edit/Update</button> */}
+                <button onClick={handleEdit}>
+                <i class="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
+                Edit/Update</button>
                 <button onClick={handdlePinClick}>
                 <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
                 Assign PIN</button>
