@@ -79,47 +79,81 @@ const AssignPinForm = (props) => {
       };
 
 
-    const handleSubmit = (e) =>{
-      e.preventDefault();
-
-      const formData = {
-        pin: pin,
-        plusCode: props.plusCode,
-        title: title,
-        titleDate: titleDate,
-        surveyNumber: surveyNumber,
-        lotNumber: lotNumber,
-        blkNumber: blkNumber,
-        area: area,
-        boundary: boundary,
-        ownerName: ownerName,
-        oct: oct,
-        octDate: octDate,
-        tct: tct,
-        tctDate: tctDate,
-        status: 'For Approval',
-        
+      const handleSubmit = (e) => {
+        e.preventDefault();
+      
+        // Check if the PIN is already assigned
+        fetch(`/checkPin/${pin}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.exists) {
+              alert("Error: PIN is already assigned.");
+            } else {
+              // The PIN is not assigned, proceed with saving
+              const formData = {
+                pin: pin,
+                plusCode: props.plusCode,
+                title: title,
+                titleDate: titleDate,
+                surveyNumber: surveyNumber,
+                lotNumber: lotNumber,
+                blkNumber: blkNumber,
+                area: area,
+                boundary: boundary,
+                ownerName: ownerName,
+                oct: oct,
+                octDate: octDate,
+                tct: tct,
+                tctDate: tctDate,
+                status: 'For Approval',
+              };
+      
+              // Save to rptas table
+              fetch('/tmod', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  console.log(data, "New PIN Assigned");
+                  if (data.status === "ok") {
+                    // Update the status on title_table
+                    fetch(`/approved/${polygonDetails.title}`, {
+                      method: 'PUT',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        status: 'PIN ASSIGNED',
+                      }),
+                    })
+                      .then((response) => response.json())
+                      .then((data) => {
+                        console.log(data);
+                        alert('PIN ASSIGNED');
+                        window.location.href = "/home";
+                      })
+                      .catch((error) => {
+                        console.error('Error updating status:', error);
+                      });
+                  } else {
+                    alert("Something went wrong");
+                  }
+                });
+            }
+          })
+          .catch((error) => {
+            console.error('Error checking PIN:', error);
+          });
       };
-  
-      fetch('/tmod', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data, "New PIN Assigned");
-        if (data.status === "ok") {
-          alert("New PIN Assigned");
-         
-        } else {
-          alert("Something went wrong");
-        }
-      });
-
-    };
 
 
     return (

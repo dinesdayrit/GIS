@@ -228,8 +228,18 @@ return [centerLat, centerLng, centroidPlusCode];
           
           if (geojsonObject) {
           const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
-  
-             const polygonColor = status === 'APPROVED' ? 'blue' : 'red';
+
+          let polygonColor;
+
+          if (status === 'APPROVED') {
+          polygonColor = 'blue';
+           } else if (status === 'PIN ASSIGNED') {
+          polygonColor = 'yellow';
+            } else if (status === 'PIN APPROVED') {
+         polygonColor = 'green';
+          } else {
+            polygonColor = 'red';
+          }
              const polygon = L.polygon(latlngs, { color: polygonColor });
 
           if (props.isPolygonApproved && geojsonObject) {
@@ -266,10 +276,18 @@ return [centerLat, centerLng, centroidPlusCode];
             const polygonBounds = polygon.getBounds();
             const polygonCenter = polygonBounds.getCenter();
 
+            let markerColor;
+
+            if (status === 'PIN ASSIGNED' ) {
+              markerColor = 'black'
+            } else {
+              markerColor = 'white'
+            }
+
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: 0.5px; font-size: 10px">${title}</span>`,
+                html: `<span style="font-weight: bold; color: ${markerColor}">${title}</span>`,
               }),
             });
             
@@ -307,7 +325,7 @@ return [centerLat, centerLng, centroidPlusCode];
             map.on('zoomend', () => {
            
               const currentZoom = map.getZoom();
-              const minZoomToShowText = 19;
+              const minZoomToShowText = 18.5;
           
               if (currentZoom >= minZoomToShowText) {
                 if (!map.hasLayer(textMarker)) {
@@ -527,7 +545,7 @@ if (props.kmlData) {
 
   console.log("props.isPolygonApproved", props.isPolygonApproved )
 
-  return <div id="leaflet-map" style={{ width: '100%', height: '90vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
+  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
 };
 
 export default LeafletMap;
