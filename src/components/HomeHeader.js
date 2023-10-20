@@ -86,7 +86,7 @@ const HomeHeader = (props) => {
                 Upload KML </button>
                 <button onClick={handleEdit}>
                 <i class="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
-                Edit/Update</button>
+                Edit/Update/Approve</button>
                 <button onClick={handdlePinClick}>
                 <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
                 Assign PIN</button>

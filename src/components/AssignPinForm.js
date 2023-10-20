@@ -23,7 +23,9 @@ const AssignPinForm = (props) => {
     const [selectedDistrictCode, setSelectedDistrictCode] = useState('0');
     const [selectedSectionCode, setSelectedSectionCode] = useState('0');
     const [selectedParcelCode, setSelectedParcelCode] = useState('0');
-
+    const [assignedPins, setAssignedPins] = useState([]);
+    const [savedPin, setSavedPin] = useState('');
+    const [isPinAssigned, setIsPinAssigned] = useState(false);
 
     useEffect(() => {
       if (polygonDetails) {
@@ -42,6 +44,35 @@ const AssignPinForm = (props) => {
       }
       }, [props.selectedCoordinates]);
 
+      useEffect(() =>{
+        fetch('/tmod')
+          .then((response) => response.json())
+          .then((data) => {
+            console.log('Fetched tmod:', data);
+            setAssignedPins(data);
+    
+            const matchingPin = assignedPins.find(
+            (targetPin) => targetPin.title === title
+            );
+         
+          
+              if (matchingPin) {
+                
+                setSavedPin(matchingPin.pin);
+                setPin(matchingPin.pin);
+                setIsPinAssigned(true);
+              } else if(!matchingPin){
+                setSavedPin("NO ASSIGNED PIN YET");
+                setIsPinAssigned(false);
+              }
+
+          })
+          .catch((error) => {
+            console.error('Error fetching PINS:', error);
+            alert('Error fetching PINS:', error);
+          });
+       
+      },[title])
 
     useEffect(() => {
         // Fetch brgycode data and set it in the brgycodes state
@@ -125,6 +156,8 @@ const AssignPinForm = (props) => {
                 .then((data) => {
                   console.log(data, "New PIN Assigned");
                   if (data.status === "ok") {
+
+
                     // Update the status on title_table
                     fetch(`/approved/${polygonDetails.title}`, {
                       method: 'PUT',
@@ -155,9 +188,79 @@ const AssignPinForm = (props) => {
           });
       };
 
+      const updateStatusOnTitleTable = () => {
+        // Update the status on title_table
+  fetch(`/approved/${polygonDetails.title}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      status: 'PIN APPROVED',
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      alert('PIN ASSIGNED');
+      window.location.href = "/home";
+    })
+    .catch((error) => {
+      console.error('Error updating status:', error);
+    });
+      };
+
+
+      const handleApprovePin = () => {
+        updateStatusOnTitleTable();
+
+        //update status on rptas table
+        fetch(`/approvedpin/${savedPin}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'APPROVED',
+          
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert('APPROVED ASSIGNED PIN RPTAS');
+            
+          })
+          .catch((error) => {
+            console.error('Error updating PIN status:', error);
+          });
+
+      };
 
     return (
     <div className={styles['popup-form-container']}>
+{isPinAssigned &&( 
+<div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+<p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+        }}
+      >
+      PIN
+      </p>
+     <input 
+        value={savedPin}
+        readOnly
+     />
+     <button onClick={handleApprovePin}>APPROVED</button>
+</div>
+)}
     <form onSubmit={handleSubmit} >
      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
@@ -358,9 +461,6 @@ const AssignPinForm = (props) => {
         />
         </div>
         </div>
-
-
-
 
         <label>Plus Code*</label>
         <input
