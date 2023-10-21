@@ -202,8 +202,6 @@ const AssignPinForm = (props) => {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      alert('PIN ASSIGNED');
-      window.location.href = "/home";
     })
     .catch((error) => {
       console.error('Error updating status:', error);
@@ -228,7 +226,7 @@ const AssignPinForm = (props) => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            alert('APPROVED ASSIGNED PIN RPTAS');
+            alert('APPROVED ASSIGNED PIN');
             
           })
           .catch((error) => {
