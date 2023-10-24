@@ -11,6 +11,7 @@ import { PlusCodes } from 'olc-plus-codes';
 import * as turf from '@turf/turf';
 import MapLegendForm from './MapLegendForm';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 const LeafletMap = (props) => {
   // const [selectedCoordinates, setSelectedCoordinates] = useState(null);
@@ -203,10 +204,17 @@ return [centerLat, centerLng, centroidPlusCode];
 
 
     // Fetch data from '/GisDetail' and add polygons to the map
-    fetch('/GisDetail')
-      .then(response => response.json())
-      .then(gisDetails => {
-        gisDetails.forEach(gisDetail => {
+    const token =  localStorage.getItem('authToken');
+    console.log(`Bearer ${token}`);
+
+    axios.get('/GisDetail', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    })
+    .then(response => response.data)
+    .then(gisDetails => {
+      gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
           const title = gisDetail.title;
           const titleDate = gisDetail.titledate;

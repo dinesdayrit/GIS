@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import styles from "./AssignPinForm.module.css"
+import axios from "axios";
 
 const AssignPinForm = (props) => {
     const { polygonDetails } = props;
@@ -19,14 +20,15 @@ const AssignPinForm = (props) => {
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
     const [selectedBrgyCode, setSelectedBrgyCode] = useState('000');
-    const [selectedDistrict, setSelectedDistrict] = useState('');
-    const [selectedDistrictCode, setSelectedDistrictCode] = useState('0');
-    const [selectedSectionCode, setSelectedSectionCode] = useState('0');
-    const [selectedParcelCode, setSelectedParcelCode] = useState('0');
+    const [selectedDistrict, setSelectedDistrict] = useState('00');
+    const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
+    const [selectedSectionCode, setSelectedSectionCode] = useState('000');
+    const [selectedParcelCode, setSelectedParcelCode] = useState('');
     const [assignedPins, setAssignedPins] = useState([]);
     const [savedPin, setSavedPin] = useState('');
     const [isPinAssigned, setIsPinAssigned] = useState(false);
-
+    const token =  localStorage.getItem('authToken');
+    
     useEffect(() => {
       if (polygonDetails) {
         setTitle(polygonDetails.title);
@@ -45,8 +47,12 @@ const AssignPinForm = (props) => {
       }, [props.selectedCoordinates]);
 
       useEffect(() =>{
-        fetch('/tmod')
-          .then((response) => response.json())
+        axios.get('/tmod', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        })
+          .then(response => response.data)
           .then((data) => {
             console.log('Fetched tmod:', data);
             setAssignedPins(data);
@@ -95,20 +101,54 @@ const AssignPinForm = (props) => {
     
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
               setPin(generatedPin);
+
+              autoPopulateParcelCode();
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
             alert('Error fetching brgycodes:', error);
           });
-         
+        
       
-      }, [selectedBrgy, selectedBrgyCode,selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
+
+      }, [selectedBrgy, selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
+
     
       const handleBrgyChange = (e) => {
         const selectedBrgyValue = e.target.value;
         setSelectedBrgy(selectedBrgyValue);
+        autoPopulateParcelCode();
       };
+      
+      const autoPopulateParcelCode = () => {
+        const inputPrefix = pin.substring(0, 15);
+      
+        const matchingPins = assignedPins.filter((pinParcel) =>
+          pinParcel.pin.startsWith(inputPrefix)
+        );
+      
+        if (matchingPins.length > 0) {
+          const maxLastTwoDigits = matchingPins.reduce((max, pinParcel) => {
+            const lastTwoDigits = parseInt(pinParcel.pin.substring(15, 17), 10);
 
+            return lastTwoDigits > max ? lastTwoDigits : max;
+          }, 0);
+    
+          const newLastTwoDigits = (maxLastTwoDigits + 1) % 100;
+
+          if (newLastTwoDigits === 0) {
+            alert('You have reached the maximum number of parcels in this section. Create a new section.');
+          }
+      
+          const newLastTwoDigitsStr = newLastTwoDigits.toString().padStart(2, '0');
+      
+          setSelectedParcelCode(newLastTwoDigitsStr);
+        } else {
+          setSelectedParcelCode('01');
+        }
+      };
+      
+      
 
       const handleSubmit = (e) => {
         e.preventDefault();
@@ -202,8 +242,6 @@ const AssignPinForm = (props) => {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      alert('PIN ASSIGNED');
-      window.location.href = "/home";
     })
     .catch((error) => {
       console.error('Error updating status:', error);
@@ -228,7 +266,7 @@ const AssignPinForm = (props) => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            alert('APPROVED ASSIGNED PIN RPTAS');
+            alert('APPROVED ASSIGNED PIN');
             
           })
           .catch((error) => {
@@ -258,7 +296,7 @@ const AssignPinForm = (props) => {
         value={savedPin}
         readOnly
      />
-     <button onClick={handleApprovePin}>APPROVED</button>
+     <button onClick={handleApprovePin}>APPROVE</button>
 </div>
 )}
     <form onSubmit={handleSubmit} >
@@ -319,6 +357,7 @@ const AssignPinForm = (props) => {
         <p>Parcel*</p>
         <input 
           name='parcel'
+          value={selectedParcelCode}
           onChange={(e) => setSelectedParcelCode (e.target.value)}
           
           
