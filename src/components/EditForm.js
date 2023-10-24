@@ -369,7 +369,7 @@ useEffect(() => {
           <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} 
           onClick={handleApprove} >
           <i class="fa-solid fa-check" style={{marginRight: "5px"}}></i>
-          CONFIRM
+          APPROVE
           </button>
         )}
         </div>
