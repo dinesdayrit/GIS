@@ -208,7 +208,29 @@ const handleFileUpload = (e) => {
         if (result.data.length > 0) {
           const headerToData = result.data[0];
 
-          const numberOfPointsValue = headerToData['numberofpoints'] || '';
+          const extractedData = {
+            title: headerToData['Title'],
+            titleDate: headerToData['TitleDate'],
+            surveyNumber: headerToData['SurveyNumber'],
+            lotNumber: headerToData['LotNumber'],
+            blkNumber: headerToData['BlkNumber'],
+            area: headerToData['Area'],
+            boundary: headerToData['Boundary'],
+            lName: headerToData['LastName'],
+            fName: headerToData['FirstName'],
+            mi: headerToData['MiddleName'],
+            suffix: headerToData['Suffix'],
+            businessName: headerToData['BusinessName'],
+            oct: headerToData['OCT'],
+            octDate: headerToData['OCTDate'],
+            prevTct: headerToData['PrevTCT'],
+            tctDate: headerToData['TCTDate'],
+            remarks: headerToData['Remarks'],
+          };
+
+          props.onCsvDataChange(extractedData);
+
+          const numberOfPointsValue = headerToData['NumberOfPoints'] || '';
           setNumberOfPoints(numberOfPointsValue);
 
           const tieLines = result.data.map((row) => ({
@@ -220,9 +242,9 @@ const handleFileUpload = (e) => {
           }));
 
           setFormData({
-            monument: headerToData['monument'] || '',
-            eastingValue: headerToData['easting'] || '',
-            northingValue: headerToData['northing'] || '',
+            monument: headerToData['Monument'] || '',
+            eastingValue: headerToData['Easting'] || '',
+            northingValue: headerToData['Northing'] || '',
             numberOfPoints: numberOfPointsValue,
             tieLines,
           });
@@ -316,6 +338,7 @@ const handleFileUpload = (e) => {
       <input style ={{width: '15%'}}
           type="text"
           name="numberOfPoints"
+          value={numberOfPoints}
           onSelect={handleAddTieLine}
           onChange={(e) => setNumberOfPoints(e.target.value)}
           

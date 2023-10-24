@@ -36,7 +36,49 @@ const AddForm = (props) => {
   }]);
   const [businessName, setBusinessName] = useState('');
   const [remarks, setRemarks] = useState('');
+  const [csvData, setCsvData] = useState(null);
+  const [csvTitleDate, setCsvTitleDate] = useState('');
+  const [csvOctDate, setCsvOctDate] = useState('');
+  const [csvTctDate, setCsvTctDate] = useState('');
 
+
+
+  //Extracted CSV Plotting Form to AddForm Data
+  useEffect(() => {
+    if (csvData && csvData.titleDate) {
+      setTitle(csvData.title || '');
+
+    const dateFromCSV = new Date(csvData.titleDate);
+      setCsvTitleDate(dateFromCSV);
+
+      setSurveyNumber(csvData.surveyNumber || '');
+      setLotNumber(csvData.lotNumber || '');
+      setBlkNumber(csvData.blkNumber || '');
+      setArea(csvData.area || '');
+      setBoundary(csvData.boundary || '');
+      setOct(csvData.oct || '');
+
+      const octDateFromCSV = new Date(csvData.octDate); // Parse the octDate from CSV
+      setCsvOctDate(octDateFromCSV);
+
+      setPrevTct(csvData.prevTct || '');
+      
+      const tctDateFromCSV = new Date(csvData.tctDate);
+      setCsvTctDate(tctDateFromCSV);
+
+      setOwnerNames([
+        {
+          lName: csvData.lName || '',
+          fName: csvData.fName || '',
+          mi: csvData.mi || '',
+          suffix: csvData.suffix || '',
+        },
+      ]);
+      setBusinessName(csvData.businessName || '');
+      setRemarks(csvData.remarks || '');
+    }
+  }, [csvData]);
+  
   
   
   const handleAddOwnerName = () => {
@@ -251,6 +293,12 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
     });
   };
 
+  //Extracted Data from CSV file
+  const handleCsvDataChange = (extractedData) => {
+    setCsvData(extractedData);
+    console.log('From CSV Data extracted:', extractedData);
+  };
+
   return (
     
     <div className={styles['popup-form-container']}>
@@ -266,6 +314,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           type="text"
           name="title"
           placeholder='Title number'
+          value={title}
           onChange={(e) => {
             setTitle(e.target.value);
           }}
@@ -275,9 +324,9 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
          <div>
          <label>Date*</label>
         <DatePicker 
-        selected={titleDate} 
+        selected={titleDate || csvTitleDate}
         placeholderText='MMM dd, yyyy'
-        onChange={(titleDate) => setTitleDate(titleDate)}
+        onChange={(date) => setTitleDate(date)}
         dateFormat="MMM d, yyyy"
         />
         </div>
@@ -289,6 +338,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           type="text"
           name="surveyNumber"
           placeholder='Survey number'
+          value={surveyNumber}
           onChange={(e) => setSurveyNumber(e.target.value)}
           required
         />
@@ -300,7 +350,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
     <input
       type="text"
       name="lotNumber"
-      // value={lotNumber}
+      value={lotNumber}
       placeholder='Lot no.'
       onChange={(e) => setLotNumber(e.target.value)}
     />
@@ -311,7 +361,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <input
       type="text"
       name="blkNumber"
-      // value={blkNumber}
+      value={blkNumber}
       placeholder='Block no.'
       onChange={(e) => setBlkNumber(e.target.value)}
       />
@@ -324,6 +374,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           type="text"
           name="area"
           placeholder='Lot Area(sqm)'
+          value={area}
           onChange={(e) => setArea(e.target.value)}
           required />
 
@@ -336,6 +387,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         type="text"
         name="boundary"
         placeholder='Boundaries'
+        value={boundary}
         onChange={(e) => {
         setBoundary(e.target.value);
         }}
@@ -357,15 +409,14 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         >Owner (Name/Business name)* </label>
        
        {/* <p>(Last name, First name, Middle Initials, Suffix)</p> */}
-        {ownerNames.map((ownerName, index) => (
+       {ownerNames.map((ownerName, index) => (
           <div key={index} className={styles.inputWrapper}>
-        
-          <input
+            <input
               type="text"
               name="lName"
               placeholder="Last Name"
               style={{ width: '25%' }}
-              // value={ownerName.lName}
+              value={ownerName.lName}
               onChange={(e) => handleOwnerNameChange(index, 'lName', e.target.value)}
             />
             <input
@@ -373,7 +424,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="fName"
               placeholder="First Name"
               style={{ width: '25%' }}
-              // value={ownerName.fName}
+              value={ownerName.fName}
               onChange={(e) => handleOwnerNameChange(index, 'fName', e.target.value)}
             />
             <input
@@ -381,7 +432,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="mi"
               placeholder="MI"
               style={{ width: '25%' }}
-              // value={ownerName.mi}
+              value={ownerName.mi}
               onChange={(e) => handleOwnerNameChange(index, 'mi', e.target.value)}
             />
             <input
@@ -389,7 +440,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
               name="suffix"
               placeholder="Suffix"
               style={{ width: '25%' }}
-              // value={ownerName.suffix}
+              value={ownerName.suffix}
               onChange={(e) => handleOwnerNameChange(index, 'suffix', e.target.value)}
             />
             <button
@@ -401,6 +452,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             </button>
           </div>
         ))}
+
         <button
           type="button"
           onClick={handleAddOwnerName}
@@ -413,8 +465,8 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <input 
           type='text'
           name="businessName"
-          // value={businessName}
-          placeholder='other entity name'
+          value={businessName}
+          placeholder='Other Entity Name'
           onChange={(e) => setBusinessName(e.target.value)}
         />
         </div>
@@ -436,7 +488,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <input
           type='text'
           name="oct"
-          // value={oct}
+          value={oct}
           placeholder='OCT'
           onChange={(e) => setOct(e.target.value)}
         />
@@ -445,7 +497,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <div>
         <label>Date</label>
         <DatePicker 
-        selected={octDate} 
+        selected={octDate || csvOctDate} 
         placeholderText='MMM dd, yyyy'
         onChange={(octDate) => setOctDate(octDate)}
         dateFormat="MMM d, yyyy"
@@ -459,7 +511,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <input
           type='text'
           name="prevTct"
-          // value={prevTct}
+          value={prevTct}
           placeholder='Previous TCT'
           onChange={(e) => setPrevTct(e.target.value)}
         />
@@ -468,7 +520,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <div>
         <label>Date</label>
         <DatePicker 
-        selected={tctDate} 
+        selected={tctDate || csvTctDate} 
         placeholderText='MMM dd, yyyy'  
         onChange={(tctDate) => setTctDate(tctDate)}
         dateFormat="MMM d, yyyy"
@@ -488,6 +540,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         }}
         >Technical Description</label>
         <Plottingform 
+        onCsvDataChange={handleCsvDataChange}
         onGridCoordinatesChange={handleGridCoordinatesChange}
         onTieLineCoordinates={handleTieLineCoordinatesChange}
         onTechnicalDescriptionChange={(newTechnicalDescription) =>
@@ -516,6 +569,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           type="text"
           name="remarks"
           placeholder='Techical description Remarks'
+          value={remarks}
           onChange={(e) => {
             setRemarks(e.target.value);
           }}
