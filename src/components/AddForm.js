@@ -37,6 +37,7 @@ const AddForm = (props) => {
   const [businessName, setBusinessName] = useState('');
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
+  const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
 
 
@@ -268,6 +269,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       plusCode: props.plusCode,
       geojson: geojson,
       status: 'For Approval',
+      username: storedUserDetails.name,
       
     };
 
