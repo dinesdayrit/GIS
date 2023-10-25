@@ -37,6 +37,7 @@ const AddForm = (props) => {
   const [businessName, setBusinessName] = useState('');
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
+  const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
 
 
@@ -299,6 +300,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       plusCode: props.plusCode,
       geojson: geojson,
       status: 'For Approval',
+      username: storedUserDetails.name,
       
     };
 
@@ -441,7 +443,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           <div key={index} className={styles.inputWrapper}>
             <input
               type="text"
-              name="lName"
+              name='lName'
               placeholder="Last Name"
               style={{ width: '25%' }}
               value={ownerName.lName}
@@ -449,7 +451,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="fName"
+              name='fName'
               placeholder="First Name"
               style={{ width: '25%' }}
               value={ownerName.fName}
@@ -457,7 +459,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="mi"
+              name='mi'
               placeholder="MI"
               style={{ width: '25%' }}
               value={ownerName.mi}
@@ -465,7 +467,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="suffix"
+              name='suffix'
               placeholder="Suffix"
               style={{ width: '25%' }}
               value={ownerName.suffix}
