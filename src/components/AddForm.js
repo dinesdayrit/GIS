@@ -37,19 +37,15 @@ const AddForm = (props) => {
   const [businessName, setBusinessName] = useState('');
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
-  const [csvTitleDate, setCsvTitleDate] = useState('');
-  const [csvOctDate, setCsvOctDate] = useState('');
-  const [csvTctDate, setCsvTctDate] = useState('');
-
 
 
   //Extracted CSV Plotting Form to AddForm Data
   useEffect(() => {
-    if (csvData && csvData.titleDate) {
+    if (csvData) {
       setTitle(csvData.title || '');
 
-    const dateFromCSV = new Date(csvData.titleDate);
-      setCsvTitleDate(dateFromCSV);
+      const dateFromCSV = new Date(csvData.titleDate);
+      setTitleDate(dateFromCSV);
 
       setSurveyNumber(csvData.surveyNumber || '');
       setLotNumber(csvData.lotNumber || '');
@@ -58,13 +54,13 @@ const AddForm = (props) => {
       setBoundary(csvData.boundary || '');
       setOct(csvData.oct || '');
 
-      const octDateFromCSV = new Date(csvData.octDate); // Parse the octDate from CSV
-      setCsvOctDate(octDateFromCSV);
+      const octDateFromCSV = new Date(csvData.octDate);
+      setOctDate(octDateFromCSV);
 
       setPrevTct(csvData.prevTct || '');
       
       const tctDateFromCSV = new Date(csvData.tctDate);
-      setCsvTctDate(tctDateFromCSV);
+      setTctDate(tctDateFromCSV);
 
       setOwnerNames([
         {
@@ -324,7 +320,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
          <div>
          <label>Date*</label>
         <DatePicker 
-        selected={titleDate || csvTitleDate}
+        selected={titleDate}
         placeholderText='MMM dd, yyyy'
         onChange={(date) => setTitleDate(date)}
         dateFormat="MMM d, yyyy"
@@ -413,7 +409,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           <div key={index} className={styles.inputWrapper}>
             <input
               type="text"
-              name="lName"
+              name='lName'
               placeholder="Last Name"
               style={{ width: '25%' }}
               value={ownerName.lName}
@@ -421,7 +417,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="fName"
+              name='fName'
               placeholder="First Name"
               style={{ width: '25%' }}
               value={ownerName.fName}
@@ -429,7 +425,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="mi"
+              name='mi'
               placeholder="MI"
               style={{ width: '25%' }}
               value={ownerName.mi}
@@ -437,7 +433,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
             />
             <input
               type="text"
-              name="suffix"
+              name='suffix'
               placeholder="Suffix"
               style={{ width: '25%' }}
               value={ownerName.suffix}
@@ -497,7 +493,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <div>
         <label>Date</label>
         <DatePicker 
-        selected={octDate || csvOctDate} 
+        selected={octDate} 
         placeholderText='MMM dd, yyyy'
         onChange={(octDate) => setOctDate(octDate)}
         dateFormat="MMM d, yyyy"
@@ -520,7 +516,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
         <div>
         <label>Date</label>
         <DatePicker 
-        selected={tctDate || csvTctDate} 
+        selected={tctDate} 
         placeholderText='MMM dd, yyyy'  
         onChange={(tctDate) => setTctDate(tctDate)}
         dateFormat="MMM d, yyyy"
