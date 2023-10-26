@@ -73,7 +73,7 @@ const KmlTable = (props) => {
     };
 
     const generateTableRows = (data, headerNames) => {
-      const displayHeaders = ['id', 'applicant', 'area', 'blk_no', 'lot_no', 'owner', 'res_no', 'surv_no', 't_date', 'title_no'];
+      const displayHeaders = ['title_no','t_date', 'surv_no', 'lot_no', 'blk_no', 'area', 'boundary', 'owner', 'oct', 'oct_date', 'prev_tct', 'prtct_date', 'applicant'];
     
       const filteredHeaderNames = headerNames.filter(name => displayHeaders.includes(name));
     
@@ -135,15 +135,27 @@ const KmlTable = (props) => {
           blk_no,
           owner,
           area,
+          boundary,
+          oct,
+          oct_date,
+          prev_tct,
+          prtct_date,
+          t_date,
         } = placemarkData.SimpleData;
 
         const dataToSave = {
           title: title_no,
+          titleDate: t_date,
           surveyNumber: surv_no,
           lotNumber: lot_no,
           blkNumber: blk_no,
           area,
           ownerName: owner,
+          boundary: boundary,
+          oct: oct,
+          octDate: oct_date,
+          tct: prev_tct,
+          tctDate: prtct_date,
           plusCode: plusCodesForData,
           geojson: geojsonString,
           status: 'For Approval',
