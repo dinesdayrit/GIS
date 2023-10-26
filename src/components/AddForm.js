@@ -38,7 +38,7 @@ const AddForm = (props) => {
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
-
+  const token =  localStorage.getItem('authToken');
 
 
   //Extracted CSV Plotting Form to AddForm Data
@@ -308,6 +308,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData),
     })

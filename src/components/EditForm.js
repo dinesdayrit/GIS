@@ -24,7 +24,7 @@ const EditForm = (props) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
-
+  const token =  localStorage.getItem('authToken');
 
 
 useEffect(() => {
@@ -112,6 +112,7 @@ useEffect(() => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData),
     })
