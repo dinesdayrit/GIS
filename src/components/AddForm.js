@@ -38,16 +38,27 @@ const AddForm = (props) => {
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
-
+  const token =  localStorage.getItem('authToken');
 
 
   //Extracted CSV Plotting Form to AddForm Data
   useEffect(() => {
     if (csvData) {
+
       setTitle(csvData.title || '');
 
-      const dateFromCSV = new Date(csvData.titleDate);
-      setTitleDate(dateFromCSV);
+      if (csvData.titleDate) {
+        const dateFromCSV = new Date(csvData.titleDate);
+  
+        if (!isNaN(dateFromCSV)) {
+          setTitleDate(dateFromCSV);
+        } else {
+          alert('Invalid date format in titleDate');
+          setTitleDate('');
+        }
+      } else {
+        setTitleDate('');
+      }
 
       setSurveyNumber(csvData.surveyNumber || '');
       setLotNumber(csvData.lotNumber || '');
@@ -56,13 +67,33 @@ const AddForm = (props) => {
       setBoundary(csvData.boundary || '');
       setOct(csvData.oct || '');
 
-      const octDateFromCSV = new Date(csvData.octDate);
-      setOctDate(octDateFromCSV);
+      if (csvData.octDate) {
+        const octDateFromCSV = new Date(csvData.octDate);
+  
+        if (!isNaN(octDateFromCSV)) {
+          setOctDate(octDateFromCSV);
+        } else {
+          alert('Invalid date format in octDate');
+          setOctDate('');
+        }
+      } else {
+        setOctDate('');
+      }
 
       setPrevTct(csvData.prevTct || '');
-      
-      const tctDateFromCSV = new Date(csvData.tctDate);
-      setTctDate(tctDateFromCSV);
+
+      if (csvData.tctDate) {
+        const tctDateFromCSV = new Date(csvData.tctDate);
+  
+        if (!isNaN(tctDateFromCSV)) {
+          setTctDate(tctDateFromCSV);
+        } else {
+          alert('Invalid date format in tctDate');
+          setTctDate('');
+        }
+      } else {
+        setTctDate('');
+      }
 
       setOwnerNames([
         {
@@ -277,6 +308,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData),
     })
