@@ -251,7 +251,7 @@ return [centerLat, centerLng, centroidPlusCode];
              const polygon = L.polygon(latlngs, { color: polygonColor });
 
           if (props.isPolygonApproved && geojsonObject) {
-             map.fitBounds(polygon.getBounds(), { maxZoom: 19});
+            //  map.fitBounds(polygon.getBounds(), { maxZoom: 19});
             
           }
 

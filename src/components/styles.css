@@ -16,6 +16,10 @@ body {
   background: whitesmoke;
   width: 100%;
   height: 100%;
+  background-image: url(../assets/eagle.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
 }
 
 .container {
@@ -24,10 +28,9 @@ body {
   text-align: center;
   align-content: center;
   width: 30%;
-  border: black solid;
+  /* border: black solid; */
   border-radius: 10px;
-  background-color: white;
-
+  background-color: rgba(252, 246, 246, 0.7); 
 }
 
 
