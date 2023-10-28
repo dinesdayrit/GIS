@@ -304,7 +304,7 @@ const handleFileUpload = (e) => {
         name="monument"
         placeholder='Monument'
         defaultValue={formData.monument}
-        onChange={(e) => handleChange(e)}
+        onChange={(e) => setFormData({ ...formData, monument: e.target.value })} 
       />
       </div>
 
