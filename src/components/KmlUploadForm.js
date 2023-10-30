@@ -10,6 +10,7 @@ const KmlTable = (props) => {
     const [tableRows, setTableRows] = useState([]);
     const [extractedData, setExtractedData] = useState(null);
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
+    const token =  localStorage.getItem('authToken');
 
     const handleKMLUpload = (e) => {
       const file = e.target.files[0];
@@ -165,6 +166,7 @@ const KmlTable = (props) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify(dataToSave),
         })

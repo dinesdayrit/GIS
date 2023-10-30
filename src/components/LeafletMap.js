@@ -114,9 +114,9 @@ mapRef.current = map;
 
     let overlayMaps = {
       
-      'wmsdavTechDesc': wmsdavTechDesc,
-      'wmsdavZoning2019' : wmsdavZoning2019,
-      'wmsdavBrgy': wmsdavBrgy
+      'Plotted TDs': wmsdavTechDesc,
+      'Zoning 2019-2028' : wmsdavZoning2019,
+      'Barangays': wmsdavBrgy
 
     };
 
@@ -251,7 +251,7 @@ return [centerLat, centerLng, centroidPlusCode];
              const polygon = L.polygon(latlngs, { color: polygonColor });
 
           if (props.isPolygonApproved && geojsonObject) {
-             map.fitBounds(polygon.getBounds(), { maxZoom: 19});
+            //  map.fitBounds(polygon.getBounds(), { maxZoom: 19});
             
           }
 

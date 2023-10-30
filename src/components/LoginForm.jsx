@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './styles.css';
 import logoIcon from '../assets/Davao_City.png';
 
@@ -55,6 +55,7 @@ const LoginForm = ({ onLogin }) => {
     <body>
     <div className='container'>
       <img src={logoIcon} alt="Logo"  style={{ height: '150px' , marginBottom: '5px'}}/>
+      <h1>GIS-APP</h1>
       <form onSubmit={handleSubmit} className='.LoginForm'>
         <input
           type='email'
@@ -78,9 +79,9 @@ const LoginForm = ({ onLogin }) => {
         
         <button type='submit' className='loginButton'>Login</button>
       </form>
-      <p>
+      {/* <p>
         Don't have an account? <Link to='/signup'>Sign Up</Link>
-      </p>
+      </p> */}
     </div>
     </body>
   );

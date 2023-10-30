@@ -49,7 +49,7 @@ const AssignPinForm = (props) => {
       useEffect(() =>{
         axios.get('/tmod', {
           headers: {
-            Authorization: `Bearer ${token}`
+            'x-api-key': 'thisIsOurTmodAPIKey',
           },
         })
           .then(response => response.data)
@@ -189,6 +189,7 @@ const AssignPinForm = (props) => {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(formData),
               })
