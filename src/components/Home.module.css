@@ -10,7 +10,7 @@
   
 .mapWrapper {
     width: 100%;
-    height: calc(100vh - 90px); 
+    height: calc(100vh - 85px); 
     margin-top: 15px;
     position: relative;
     z-index: 1;
