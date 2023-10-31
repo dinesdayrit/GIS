@@ -95,14 +95,14 @@ const AddForm = (props) => {
         setTctDate('');
       }
 
-      setOwnerNames([
-        {
-          lName: csvData.lName || '',
-          fName: csvData.fName || '',
-          mi: csvData.mi || '',
-          suffix: csvData.suffix || '',
-        },
-      ]);
+      const ownerNamesArray = csvData.lName.map((_, index) => ({
+        lName: csvData.lName[index] || '',
+        fName: csvData.fName[index] || '',
+        mi: csvData.mi[index] || '',
+        suffix: csvData.suffix[index] || '',
+      }));
+
+      setOwnerNames(ownerNamesArray);
       setBusinessName(csvData.businessName || '');
       setRemarks(csvData.remarks || '');
     }
@@ -241,11 +241,6 @@ useEffect(() => {
       // alert(`Error converting Tie line coordinates: ${error.message}`);
     }
   };
-  
-
-  
-  
-
 
   const handleDrawClick = () => {
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
@@ -327,7 +322,7 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
   //Extracted Data from CSV file
   const handleCsvDataChange = (extractedData) => {
     setCsvData(extractedData);
-    console.log('From CSV Data extracted:', extractedData);
+    // console.log('From CSV Data extracted:', extractedData);
   };
 
   return (

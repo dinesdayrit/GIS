@@ -208,6 +208,18 @@ const handleFileUpload = (e) => {
         if (result.data.length > 0) {
           const headerToData = result.data[0];
 
+          const lNameArray = [];
+          const fNameArray = [];
+          const miArray = [];
+          const suffixArray = [];
+
+          result.data.forEach((row) => {
+            lNameArray.push(row['LastName'] || '');
+            fNameArray.push(row['FirstName'] || '');
+            miArray.push(row['MiddleName'] || '');
+            suffixArray.push(row['Suffix'] || '');
+          });
+
           const extractedData = {
             title: headerToData['Title'],
             titleDate: headerToData['TitleDate'],
@@ -216,10 +228,10 @@ const handleFileUpload = (e) => {
             blkNumber: headerToData['BlkNumber'],
             area: headerToData['Area'],
             boundary: headerToData['Boundary'],
-            lName: headerToData['LastName'],
-            fName: headerToData['FirstName'],
-            mi: headerToData['MiddleName'],
-            suffix: headerToData['Suffix'],
+            lName: lNameArray,
+            fName: fNameArray,
+            mi: miArray,
+            suffix: suffixArray,
             businessName: headerToData['BusinessName'],
             oct: headerToData['OCT'],
             octDate: headerToData['OCTDate'],
@@ -250,6 +262,7 @@ const handleFileUpload = (e) => {
           });
 
           alert('Data uploaded from CSV file.');
+
         } else {
           alert('CSV file is empty or invalid.');
         }
