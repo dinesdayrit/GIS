@@ -70,7 +70,7 @@ const LoginForm = ({ onLogin }) => {
          </div>
 
          <div className='loginInput'>
-         <i class="fa-solid fa-lock"></i>
+         <i className="fa-solid fa-lock"></i>
         <input
           type='password'
           name='password'
