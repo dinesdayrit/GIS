@@ -333,7 +333,7 @@ return [centerLat, centerLng, centroidPlusCode];
             map.on('zoomend', () => {
            
               const currentZoom = map.getZoom();
-              const minZoomToShowText = 18.5;
+              const minZoomToShowText = 17;
           
               if (currentZoom >= minZoomToShowText) {
                 if (!map.hasLayer(textMarker)) {

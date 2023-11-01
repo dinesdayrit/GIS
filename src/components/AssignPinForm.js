@@ -297,8 +297,13 @@ const AssignPinForm = (props) => {
         value={savedPin}
         readOnly
      />
+
+     <div className={styles['button-wrapper']}>
      <button onClick={handleApprovePin}>APPROVE</button>
+
+     <button style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
 </div>
+  </div>
 )}
     <form onSubmit={handleSubmit} >
      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
