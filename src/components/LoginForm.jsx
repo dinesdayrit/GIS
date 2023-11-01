@@ -58,7 +58,7 @@ const LoginForm = ({ onLogin }) => {
       <h1>GIS-APP</h1>
       <form onSubmit={handleSubmit} className='.LoginForm'>
       <div className='loginInput'>
-      <i class="fa-regular fa-envelope"></i>
+      <i className="fa-regular fa-envelope"></i>
         <input
           type='email'
           name='email'
