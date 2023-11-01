@@ -52,11 +52,13 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <body>
+    
     <div className='container'>
       <img src={logoIcon} alt="Logo"  style={{ height: '150px' , marginBottom: '5px'}}/>
       <h1>GIS-APP</h1>
       <form onSubmit={handleSubmit} className='.LoginForm'>
+      <div className='loginInput'>
+      <i class="fa-regular fa-envelope"></i>
         <input
           type='email'
           name='email'
@@ -65,8 +67,10 @@ const LoginForm = ({ onLogin }) => {
           className='LoginFormInput'
           required
         />
+         </div>
 
-
+         <div className='loginInput'>
+         <i class="fa-solid fa-lock"></i>
         <input
           type='password'
           name='password'
@@ -75,6 +79,7 @@ const LoginForm = ({ onLogin }) => {
           className='LoginFormInput'
           required
         />
+        </div>
 
         
         <button type='submit' className='loginButton'>Login</button>
@@ -83,7 +88,7 @@ const LoginForm = ({ onLogin }) => {
         Don't have an account? <Link to='/signup'>Sign Up</Link>
       </p> */}
     </div>
-    </body>
+ 
   );
 };
 
