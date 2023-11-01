@@ -251,7 +251,7 @@ return [centerLat, centerLng, centroidPlusCode];
              const polygon = L.polygon(latlngs, { color: polygonColor });
 
           if (props.isPolygonApproved && geojsonObject) {
-             map.fitBounds(polygon.getBounds(), { maxZoom: 19});
+            //  map.fitBounds(polygon.getBounds(), { maxZoom: 19});
             
           }
 
@@ -553,7 +553,7 @@ if (props.kmlData) {
 
   console.log("props.isPolygonApproved", props.isPolygonApproved )
 
-  return <div id="leaflet-map" style={{ width: '100%', height: '91vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
+  return <div id="leaflet-map" style={{ width: '100%', height: '91.2vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
 };
 
 export default LeafletMap;

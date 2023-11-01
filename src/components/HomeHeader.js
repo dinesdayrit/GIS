@@ -79,13 +79,13 @@ const HomeHeader = (props) => {
               </button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>
-                <i class="fa-solid fa-draw-polygon" style={{ marginRight: '8px' }}></i>
+                <i className="fa-solid fa-draw-polygon" style={{ marginRight: '8px' }}></i>
                 Plot Parcel</button>
                 <button onClick={handleKmlFileUpload}>
-                <i class="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
+                <i className="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
                 Upload KML </button>
                 <button onClick={handleEdit}>
-                <i class="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
+                <i className="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
                 Edit/Update/Approve</button>
                 <button onClick={handdlePinClick}>
                 <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>

@@ -19,6 +19,7 @@ const Plottingform = (props) => {
     northingValue:'',
     tieLines: [createTieLine()],
   });
+  const [monumentData, setMonumentData] = useState(null);
   const [drawTieLine, setDrawTieLine] = useState("");
   const [results, setResults] = useState([]);
   // const [pointCount, setPointCount] = useState(0);
@@ -273,11 +274,7 @@ const handleFileUpload = (e) => {
       console.log('Matching Monument:', matchingMonument);
 
       if (matchingMonument) {
-        setFormData({
-          ...formData,
-          eastingValue: matchingMonument.easting,
-          northingValue: matchingMonument.northing,
-        });
+        setMonumentData(matchingMonument);
       }
     })
     .catch((error) => {
@@ -285,6 +282,15 @@ const handleFileUpload = (e) => {
     });
 }, [formData.monument]);
 
+useEffect(() => {
+  if (monumentData) {
+    setFormData({
+      ...formData,
+      eastingValue: monumentData.easting,
+      northingValue: monumentData.northing,
+    });
+  }
+}, [monumentData]);
 
   return (
     <div>
@@ -304,7 +310,7 @@ const handleFileUpload = (e) => {
         name="monument"
         placeholder='Monument'
         defaultValue={formData.monument}
-        onChange={(e) => handleChange(e)}
+        onChange={(e) => setFormData({ ...formData, monument: e.target.value })} 
       />
       </div>
 
