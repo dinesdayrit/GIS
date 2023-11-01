@@ -95,14 +95,13 @@ const AddForm = (props) => {
         setTctDate('');
       }
 
-      setOwnerNames([
-        {
-          lName: csvData.lName || '',
-          fName: csvData.fName || '',
-          mi: csvData.mi || '',
-          suffix: csvData.suffix || '',
-        },
-      ]);
+      const ownerNamesArray = csvData.lName.map((_, index) => ({
+        lName: csvData.lName[index] || '',
+        fName: csvData.fName[index] || '',
+        mi: csvData.mi[index] || '',
+        suffix: csvData.suffix[index] || '',
+      }));
+      setOwnerNames(ownerNamesArray);
       setBusinessName(csvData.businessName || '');
       setRemarks(csvData.remarks || '');
     }
@@ -241,6 +240,11 @@ useEffect(() => {
       // alert(`Error converting Tie line coordinates: ${error.message}`);
     }
   };
+  
+
+  
+  
+
 
   const handleDrawClick = () => {
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
