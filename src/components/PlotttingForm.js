@@ -200,6 +200,8 @@ const handleFileUpload = (e) => {
 
   const reader = new FileReader();
 
+
+
   reader.onload = (e) => {
     const content = e.target.result;
     Papa.parse(content, {
@@ -209,6 +211,7 @@ const handleFileUpload = (e) => {
         if (result.data.length > 0) {
           const headerToData = result.data[0];
 
+          
           const lNameArray = [];
           const fNameArray = [];
           const miArray = [];
