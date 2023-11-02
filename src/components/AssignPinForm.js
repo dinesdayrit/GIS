@@ -81,6 +81,7 @@ const AssignPinForm = (props) => {
       },[title])
 
     useEffect(() => {
+      
         // Fetch brgycode data and set it in the brgycodes state
         fetch('/brgycode')
           .then((response) => response.json())
@@ -102,7 +103,7 @@ const AssignPinForm = (props) => {
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
               setPin(generatedPin);
 
-              autoPopulateParcelCode();
+             
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
@@ -113,7 +114,10 @@ const AssignPinForm = (props) => {
 
       }, [selectedBrgy, selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
 
-    
+    useEffect(() =>{
+      autoPopulateParcelCode();
+    }, [pin]);
+
       const handleBrgyChange = (e) => {
         const selectedBrgyValue = e.target.value;
         setSelectedBrgy(selectedBrgyValue);
