@@ -276,6 +276,50 @@ const AssignPinForm = (props) => {
 
       };
 
+      const handleDeletePin = () => {
+      //add function to delete the PIN
+       if (window.confirm("Are you sure you want to delete this PIN?")) {
+        axios.delete(`/deleteByTitle/${title}`,{
+         headers: {
+               'Content-Type': 'application/json',
+               Authorization: `Bearer ${token}`,
+           },
+       })
+        .then((response) => {
+          if (response.status === 200) {
+            alert("PIN has been deleted successfully.");
+            
+          } else {
+            alert("Failed to delete the PIN. Please try again.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting PIN:", error);
+          alert("Error deleting PIN. Please try again.");
+        });
+    }
+        //update the status back to APPROVED on title_table
+        fetch(`/approved/${polygonDetails.title}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'APPROVED',
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error('Error updating status:', error);
+          });
+            
+      
+        setIsPinAssigned(false);
+      }
+
     return (
     <div className={styles['popup-form-container']}>
 {isPinAssigned &&( 
@@ -301,11 +345,13 @@ const AssignPinForm = (props) => {
      <div className={styles['button-wrapper']}>
      <button onClick={handleApprovePin}>APPROVE</button>
 
-     <button style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
+     <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
 </div>
   </div>
 )}
+
     <form onSubmit={handleSubmit} >
+  {!isPinAssigned &&(
      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
@@ -382,6 +428,7 @@ const AssignPinForm = (props) => {
       />
 
     </div>
+  )}
 
 
     <div style={{ border: '2px gray solid', padding: '10px', marginTop: '15px' }}>
