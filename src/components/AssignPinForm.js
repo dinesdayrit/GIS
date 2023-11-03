@@ -68,7 +68,7 @@ const AssignPinForm = (props) => {
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
               } else if(!matchingPin){
-                setSavedPin("NO ASSIGNED PIN YET");
+                // setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
               }
 
@@ -116,7 +116,7 @@ const AssignPinForm = (props) => {
 
     useEffect(() =>{
       autoPopulateParcelCode();
-    }, [pin]);
+    }, [pin, title, props.selectedCoordinates]);
 
       const handleBrgyChange = (e) => {
         const selectedBrgyValue = e.target.value;
@@ -201,7 +201,7 @@ const AssignPinForm = (props) => {
                 .then((data) => {
                   console.log(data, "New PIN Assigned");
                   if (data.status === "ok") {
-
+                  
 
                     // Update the status on title_table
                     fetch(`/approved/${polygonDetails.title}`, {
@@ -217,7 +217,9 @@ const AssignPinForm = (props) => {
                       .then((data) => {
                         console.log(data);
                         alert('PIN ASSIGNED');
-                        window.location.href = "/home";
+                        // window.location.href = "/home";
+                        setIsPinAssigned(true);
+                        
                       })
                       .catch((error) => {
                         console.error('Error updating status:', error);
