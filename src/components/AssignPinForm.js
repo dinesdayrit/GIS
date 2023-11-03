@@ -188,6 +188,10 @@ const AssignPinForm = (props) => {
               // The PIN is not assigned, proceed with saving
               const formData = {
                 pin: pin,
+                districtCode: selectedDistrictCode,
+                brgyCode: selectedBrgyCode,
+                sectionCode: selectedSectionCode,
+                parcelCode: selectedParcelCode,
                 plusCode: props.plusCode,
                 title: title,
                 titleDate: titleDate,
