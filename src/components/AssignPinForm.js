@@ -17,11 +17,12 @@ const AssignPinForm = (props) => {
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
     const [pin, setPin] = useState('');
+    const [districts, setDistricts] = useState([]);
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
     const [selectedBrgyCode, setSelectedBrgyCode] = useState('000');
-    const [selectedDistrict, setSelectedDistrict] = useState('00');
-    const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
+    const [selectedDistrict, setSelectedDistrict] = useState('');
+    const [selectedDistrictCode, setSelectedDistrictCode] = useState('00');
     const [selectedSectionCode, setSelectedSectionCode] = useState('000');
     const [selectedParcelCode, setSelectedParcelCode] = useState('');
     const [assignedPins, setAssignedPins] = useState([]);
@@ -68,7 +69,7 @@ const AssignPinForm = (props) => {
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
               } else if(!matchingPin){
-                // setSavedPin("NO ASSIGNED PIN YET");
+                setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
               }
 
@@ -80,25 +81,38 @@ const AssignPinForm = (props) => {
        
       },[title])
 
-    useEffect(() => {
+
+   useEffect(() => {
       
-        // Fetch brgycode data and set it in the brgycodes state
+        // Fetch brgycode data and set it in the districts state
         fetch('/brgycode')
           .then((response) => response.json())
           .then((data) => {
-            console.log('Fetched brgycode:', data);
-            setBrgycodes(data);
+            console.log('Fetched data:', data);
+            setDistricts(data);
     
-            const matchingBrgycode = brgycodes.find(
-            (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
+            const matchingDistricts = districts.filter(
+            (targetDistrict) => targetDistrict.admindistrict === selectedDistrict
             );
-            console.log('matchingBrgycode', matchingBrgycode);
+            console.log('matchingDistricts', matchingDistricts);
           
-              if (matchingBrgycode) {
-                setSelectedBrgyCode(matchingBrgycode.brgycodelast3);
-                setSelectedDistrict(matchingBrgycode.admindistrict);
-                setSelectedDistrictCode(matchingBrgycode.districtcode);
-              } 
+
+       
+            if (matchingDistricts.length > 0) {
+              // const brgycodes = matchingDistricts.map((district) => district.brgy);
+              setBrgycodes(matchingDistricts);
+              console.log('matchingDistrictsnaa', brgycodes);
+              const matchingBrgy = brgycodes.find(
+                      (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
+                      );
+
+               if (matchingBrgy) {
+                    setSelectedBrgyCode(matchingBrgy.brgycodelast3);
+                    setSelectedDistrictCode(matchingBrgy.districtcode);
+                } 
+
+          }
+
     
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
               setPin(generatedPin);
@@ -112,7 +126,9 @@ const AssignPinForm = (props) => {
         
       
 
-      }, [selectedBrgy, selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
+      }, [selectedBrgy, selectedBrgyCode ,selectedDistrict , selectedDistrictCode ,selectedSectionCode, selectedParcelCode]);
+
+      
 
     useEffect(() =>{
       autoPopulateParcelCode();
@@ -219,6 +235,7 @@ const AssignPinForm = (props) => {
                         alert('PIN ASSIGNED');
                         // window.location.href = "/home";
                         setIsPinAssigned(true);
+                        setSavedPin(pin);
                         
                       })
                       .catch((error) => {
@@ -324,6 +341,7 @@ const AssignPinForm = (props) => {
             
       
         setIsPinAssigned(false);
+        
       }
 
     return (
@@ -375,32 +393,48 @@ const AssignPinForm = (props) => {
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
     
-      <div>
+    <div >
+        <p>District*</p>
+        <select
+          name='district'
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+          
+        >
+        <option value="Select District">Select District</option>
+        <option value="Poblacion">Poblacion</option>
+        <option value="Agdao">Agdao</option>
+        <option value="Baguio">Baguio</option>
+        <option value="Buhangin">Buhangin</option>
+        <option value="Bunawan">Bunawan</option>
+        <option value="Calinan">Calinan</option>
+        <option value="Marilog">Marilog</option>
+        <option value="Paquibato">Paquibato</option>
+        <option value="Talomo">Talomo</option>
+        <option value="Toril">Toril</option>
+        <option value="Tugbok">Tugbok</option>
+   
+        </select>
+      </div>
+      <div >
+
         <p>Brgy*</p>
         <select
         name='brgy'
         onChange={handleBrgyChange}
-        defaultValue= {selectedBrgy}
-        
-       
+        defaultValue= {selectedBrgy}    
     >
+
+      <option value="Select Brgy">Select Brgy</option>
       {brgycodes.map((targetBrgycode) => (
         <option key={targetBrgycode.id} value={targetBrgycode.brgy}>
           {targetBrgycode.brgy}
         </option>
       ))}
     </select>
+
       </div>
 
-      <div style={{width: '70%'}}>
-        <p>District*</p>
-        <input 
-          name='district'
-          value={selectedDistrict}
-          readOnly
-       
-        />
-      </div>
+    
       
       <div >
         <p>Section*</p>
