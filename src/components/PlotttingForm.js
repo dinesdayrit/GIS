@@ -200,8 +200,6 @@ const handleFileUpload = (e) => {
 
   const reader = new FileReader();
 
-
-
   reader.onload = (e) => {
     const content = e.target.result;
     Papa.parse(content, {
@@ -209,21 +207,30 @@ const handleFileUpload = (e) => {
       skipEmptyLines: true, // dapat naka true para e disregard niya empty lines/rows
       complete: (result) => {
         if (result.data.length > 0) {
-          const headerToData = result.data[0];
+          const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
 
+          const filteredData = result.data.filter((row) => {
+            for (const col of columnsToFilter) {
+              if (!row[col]) {
+                return false;
+              }
+            }
+            return true;
+          });
+
+          if (filteredData.length > 0) {
+          const headerToData = filteredData[0];
           
           const lNameArray = [];
           const fNameArray = [];
           const miArray = [];
           const suffixArray = [];
-          result.data.forEach((row) => {
+          filteredData.forEach((row) => {
             lNameArray.push(row['LastName'] || '');
             fNameArray.push(row['FirstName'] || '');
             miArray.push(row['MiddleName'] || '');
             suffixArray.push(row['Suffix'] || '');
           });
-
-
 
           const extractedData = {
             title: headerToData['Title'],
@@ -269,6 +276,7 @@ const handleFileUpload = (e) => {
           alert('Data uploaded from CSV file.');
         } else {
           alert('CSV file is empty or invalid.');
+          }
         }
       },
     });
