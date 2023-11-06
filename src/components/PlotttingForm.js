@@ -363,7 +363,11 @@ useEffect(() => {
         name="monument"
         placeholder='Monument'
         defaultValue={formData.monument}
-        onChange={(e) => setFormData({ ...formData, monument: e.target.value })} 
+        onChange={(e) => setFormData({ ...formData, monument: e.target.value })}
+        onInput={(e) => {
+          e.target.value = e.target.value.toUpperCase();
+           setFormData({ ...formData, monument: e.target.value.toUpperCase() });
+           }}
       />
       </div>
 
