@@ -78,13 +78,13 @@ const KmlTable = (props) => {
     
       const filteredHeaderNames = headerNames.filter(name => displayHeaders.includes(name));
     
-      const headerRow = filteredHeaderNames.map(name => <th key={name}>{name}</th>);
+      const headerRow = filteredHeaderNames.map(name => <th key={name}>{name.toUpperCase()}</th>);
     
       const bodyRows = data.map((item, index) => (
         <tr key={index}>
           {filteredHeaderNames.map(name => (
             <td key={name}>
-              {index && index[name] ? index[name] : item.SimpleData[name]}
+              {index && index[name] ? index[name].toUpperCase() : item.SimpleData[name].toUpperCase()}
             </td>
           ))}
         </tr>
