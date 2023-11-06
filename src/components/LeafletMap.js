@@ -61,20 +61,7 @@ mapRef.current = map;
 
     var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
 
-    var wmsStreetsOptions = {
-      layers: 'Davao:Grp_Zoning2019_Det',
-      transparent: true,
-      tiled: false,
-      format: "image/png",
-      opacity: 1,
-      maxZoom: 20,
-      maxNativeZoom: 20,
-      crs: L.CRS.EPSG4326,
-      Identify: false
-      };
   
-      var wmsdavZoning2019 = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
-
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -115,7 +102,6 @@ mapRef.current = map;
     let overlayMaps = {
       
       'Plotted TDs': wmsdavTechDesc,
-      'Zoning 2019-2028' : wmsdavZoning2019,
       'Barangays': wmsdavBrgy
 
     };
