@@ -241,7 +241,7 @@ const AssignPinForm = (props) => {
                   
 
                     // Update the status on title_table
-                    fetch(`/approved/${polygonDetails.title}`, {
+                    fetch(`/approved/${polygonDetails.id}`, {
                       method: 'PUT',
                       headers: {
                         'Content-Type': 'application/json',
@@ -277,7 +277,7 @@ const AssignPinForm = (props) => {
 
       const updateStatusOnTitleTable = () => {
         // Update the status on title_table
-  fetch(`/approved/${polygonDetails.title}`, {
+  fetch(`/approved/${polygonDetails.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -345,7 +345,7 @@ const AssignPinForm = (props) => {
         });
     }
         //update the status back to APPROVED on title_table
-        fetch(`/approved/${polygonDetails.title}`, {
+        fetch(`/approved/${polygonDetails.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
