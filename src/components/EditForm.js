@@ -4,7 +4,7 @@ import styles from './EditForm.module.css';
 import axios from 'axios';
 
 const EditForm = (props) => { 
-  // const [id, setId] = useState('');
+  const [id, setId] = useState('');
   const [titleSearch, setTitleSearch] = useState ('');
   const [title, setTitle] = useState('');
   const [titleDate, setTitleDate] = useState('');
@@ -49,7 +49,7 @@ const handleSearchTitle = () => {
   );
 
  if(matchingTitleSearch){
-  // setId(matchingTitleSearch.id);
+  setId(matchingTitleSearch.id);
   setTitle(matchingTitleSearch.title);
   setTitleDate(matchingTitleSearch.titledate);
   setSurveyNumber(matchingTitleSearch.surveynumber);
@@ -63,7 +63,17 @@ const handleSearchTitle = () => {
   setTctDate(matchingTitleSearch.tctdate);
   setOct(matchingTitleSearch.oct);
   setOctDate(matchingTitleSearch.octdate);
-  
+  setStatus(matchingTitleSearch.status);
+  if(matchingTitleSearch.status === 'APPROVED'){
+    setTextStatusColor('blue')
+    setStatus('APPROVED');
+    setIsApproved(true);
+  } else {
+    setStatus('FOR APPROVAL');
+    setTextStatusColor('red');
+    setIsApproved(false);
+  }
+
  } else {
   alert("NO MATCH FOUND");
  }
@@ -80,8 +90,10 @@ useEffect(() => {
   
   useEffect(() => {
     if (polygonDetails) {
+    
     generateGeoJSON();
     polygonStatus();
+    setId(polygonDetails.id)
     setTitle(polygonDetails.title);
     setTitleDate(polygonDetails.titleDate);
     setSurveyNumber(polygonDetails.surveyNumber);
@@ -132,6 +144,7 @@ useEffect(() => {
     console.log("update clicked");
 
     const formData = {
+      id: id,
       title: title,
       titleDate: titleDate,
       surveyNumber: surveyNumber,
@@ -150,7 +163,7 @@ useEffect(() => {
       geojson: geojson,
     };
 
-    fetch(`/GisDetail/${polygonDetails.title}`, { //ilisan pani ug ID
+    fetch(`/GisDetail/${id}`, { 
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -175,7 +188,7 @@ useEffect(() => {
 
   const handleApprove = () => {
     // Send a PUT request to update the status in the backend
-    fetch(`/approved/${polygonDetails.title}`, {     //ilisan  ug ID
+    fetch(`/approved/${id}`, {     //ilisan  ug ID
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -208,9 +221,9 @@ useEffect(() => {
   return (
     <div className={styles['popup-form-container']}>
      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' , justifyContent: 'flex-end'}}>
-      <p style={{}}>Search Title:</p>
+      <p style={{fontSize: '.9em'}}>Search Title:</p>
       <input 
-       style={{width: '40%', marginLeft: '5px', height: '30px', marginRight: '5px'}}
+       style={{width: '40%', marginLeft: '5px', height: '35px', marginRight: '5px'}}
        type="text"
         name="title"
         value={titleSearch}

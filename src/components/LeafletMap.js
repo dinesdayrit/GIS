@@ -202,6 +202,7 @@ return [centerLat, centerLng, centroidPlusCode];
     .then(gisDetails => {
       gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
+          const id = gisDetail.id;
           const title = gisDetail.title;
           const titleDate = gisDetail.titledate;
           const surveyNumber = gisDetail.surveynumber;
@@ -295,6 +296,7 @@ return [centerLat, centerLng, centroidPlusCode];
                 // // Call the handleEditClick function with the provided data
 
             props.parcelDetails({
+            id,
             title,
             titleDate,
             surveyNumber,
