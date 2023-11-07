@@ -84,8 +84,9 @@ const KmlTable = (props) => {
         <tr key={index}>
           {filteredHeaderNames.map(name => (
             <td key={name}>
-              {index && index[name] ? index[name].toUpperCase() : item.SimpleData[name].toUpperCase()}
-            </td>
+            {item.SimpleData[name] ? item.SimpleData[name].toUpperCase() : ''}
+          </td>
+
           ))}
         </tr>
       ));
