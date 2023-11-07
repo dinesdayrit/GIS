@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
 // import DatePicker from 'react-datepicker';
+import axios from 'axios';
 
-
-const EditForm = (props) => {
+const EditForm = (props) => { 
+  // const [id, setId] = useState('');
+  const [titleSearch, setTitleSearch] = useState ('');
   const [title, setTitle] = useState('');
   const [titleDate, setTitleDate] = useState('');
   const [surveyNumber, setSurveyNumber] = useState('');
@@ -24,8 +26,48 @@ const EditForm = (props) => {
   const [isApproved, setIsApproved] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
+  const [titleSearchData, setTitleSearchData] = useState([]);
   const token =  localStorage.getItem('authToken');
 
+useEffect(() => {
+  axios.get('/GisDetail', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  })
+  .then(response => response.data)
+  .then((data) => {
+    console.log('Fetched titleSearchData:', data);
+    setTitleSearchData(data);
+  
+  }
+)},[titleSearch])
+
+const handleSearchTitle = () => {
+  const matchingTitleSearch = titleSearchData.find(
+    (search) => search.title === titleSearch
+  );
+
+ if(matchingTitleSearch){
+  // setId(matchingTitleSearch.id);
+  setTitle(matchingTitleSearch.title);
+  setTitleDate(matchingTitleSearch.titledate);
+  setSurveyNumber(matchingTitleSearch.surveynumber);
+  setLotNumber(matchingTitleSearch.lotnumber);
+  setBlkNumber(matchingTitleSearch.blknumber);
+  setArea(matchingTitleSearch.area);
+  setBoundary(matchingTitleSearch.boundary);
+  setGeoJSON(matchingTitleSearch.geojson);
+  setOwnerName(matchingTitleSearch.ownername);
+  setTct(matchingTitleSearch.prevtct);
+  setTctDate(matchingTitleSearch.tctdate);
+  setOct(matchingTitleSearch.oct);
+  setOctDate(matchingTitleSearch.octdate);
+  
+ } else {
+  alert("NO MATCH FOUND");
+ }
+}
 
 useEffect(() => {
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -108,7 +150,7 @@ useEffect(() => {
       geojson: geojson,
     };
 
-    fetch(`/GisDetail/${polygonDetails.title}`, {
+    fetch(`/GisDetail/${polygonDetails.title}`, { //ilisan pani ug ID
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -133,7 +175,7 @@ useEffect(() => {
 
   const handleApprove = () => {
     // Send a PUT request to update the status in the backend
-    fetch(`/approved/${polygonDetails.title}`, {
+    fetch(`/approved/${polygonDetails.title}`, {     //ilisan  ug ID
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -158,11 +200,28 @@ useEffect(() => {
       });
   };
  
-  
+    //Uppercase Inputs
+    const handleInputChange = (value, setStateFunction) => {
+      setStateFunction(value.toUpperCase());
+    };
   
   return (
     <div className={styles['popup-form-container']}>
-   
+     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' , justifyContent: 'flex-end'}}>
+      <p style={{}}>Search Title:</p>
+      <input 
+       style={{width: '40%', marginLeft: '5px', height: '30px', marginRight: '5px'}}
+       type="text"
+        name="title"
+        value={titleSearch}
+        placeholder='Search...'
+       onChange={(e) => handleInputChange (e.target.value, setTitleSearch)}
+      />
+      <button
+      style={{height: '35px', width: '30px'}}
+      onClick={handleSearchTitle}
+      ><i className="fa-solid fa-magnifying-glass"></i></button>
+      </div>
       <form onSubmit={handleUpdate}>
       <div style={{ border: '2px gray solid', padding: '10px' }}>
       <div className={styles.inputWrapper}>
@@ -184,10 +243,10 @@ useEffect(() => {
         selected={titleDate} 
         placeholderText='MMM dd, yyyy'
         onChange={(titleDate) => setTitleDate(titleDate)}
-        dateFormat="MMM d, yyyy"
+        dateFormat="YYYY/MM/dd"
        
-        /> */}
-        
+        />
+         */}
         <input
         value ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
@@ -369,7 +428,7 @@ useEffect(() => {
       {!isApproved && isAdmin &&( 
           <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} 
           onClick={handleApprove} >
-          <i class="fa-solid fa-check" style={{marginRight: "5px"}}></i>
+          <i className="fa-solid fa-check" style={{marginRight: "5px"}}></i>
           APPROVE
           </button>
         )}

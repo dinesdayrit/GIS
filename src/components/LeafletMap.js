@@ -191,7 +191,7 @@ return [centerLat, centerLng, centroidPlusCode];
 
     // Fetch data from '/GisDetail' and add polygons to the map
     const token =  localStorage.getItem('authToken');
-    console.log(`Bearer ${token}`);
+    // console.log(`Bearer ${token}`);
 
     axios.get('/GisDetail', {
       headers: {
