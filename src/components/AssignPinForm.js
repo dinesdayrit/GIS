@@ -47,7 +47,22 @@ const AssignPinForm = (props) => {
       }
       }, [props.selectedCoordinates]);
 
+    const fecthTmod = () => {
+      axios.get('/tmod', {
+        headers: {
+          'x-api-key': 'thisIsOurTmodAPIKey',
+        },
+      })
+        .then(response => response.data)
+        .then((data) => {
+          console.log('Fetched tmod:', data);
+          setAssignedPins(data);
+  
+        });
+
+    }
       useEffect(() =>{
+        
         axios.get('/tmod', {
           headers: {
             'x-api-key': 'thisIsOurTmodAPIKey',
@@ -59,7 +74,7 @@ const AssignPinForm = (props) => {
             setAssignedPins(data);
     
             const matchingPin = assignedPins.find(
-            (targetPin) => targetPin.title === title
+            (targetPin) => targetPin.pluscode === props.plusCode
             );
          
           
@@ -69,17 +84,19 @@ const AssignPinForm = (props) => {
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
               } else if(!matchingPin){
-                setSavedPin("NO ASSIGNED PIN YET");
+                // setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
               }
-
+  
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
             alert('Error fetching PINS:', error);
           });
+  
+          autoPopulateParcelCode();
        
-      },[title])
+      },[props.plusCode])
 
 
    useEffect(() => {
@@ -126,13 +143,13 @@ const AssignPinForm = (props) => {
         
       
 
-      }, [selectedBrgy, selectedBrgyCode ,selectedDistrict , selectedDistrictCode ,selectedSectionCode, selectedParcelCode]);
+      }, [selectedBrgy, selectedBrgyCode ,selectedDistrict , selectedDistrictCode ,selectedSectionCode, selectedParcelCode, props.plusCode]);
 
       
 
     useEffect(() =>{
       autoPopulateParcelCode();
-    }, [pin, title, props.selectedCoordinates]);
+    }, [pin, title, props.selectedCoordinates, props.plusCode]);
 
       const handleBrgyChange = (e) => {
         const selectedBrgyValue = e.target.value;
@@ -238,9 +255,11 @@ const AssignPinForm = (props) => {
                         console.log(data);
                         alert('PIN ASSIGNED');
                         // window.location.href = "/home";
+                        fecthTmod();
                         setIsPinAssigned(true);
                         setSavedPin(pin);
-                        
+                   
+                       
                       })
                       .catch((error) => {
                         console.error('Error updating status:', error);
@@ -315,7 +334,7 @@ const AssignPinForm = (props) => {
         .then((response) => {
           if (response.status === 200) {
             alert("PIN has been deleted successfully.");
-            
+            fecthTmod();
           } else {
             alert("Failed to delete the PIN. Please try again.");
           }
@@ -401,6 +420,7 @@ const AssignPinForm = (props) => {
         <p>District*</p>
         <select
           name='district'
+          defaultValue= {selectedDistrict}   
           onChange={(e) => setSelectedDistrict(e.target.value)}
           
         >
@@ -444,6 +464,7 @@ const AssignPinForm = (props) => {
         <p>Section*</p>
         <input 
           name='section'
+          defaultValue= {selectedSectionCode}  
           onChange={(e) => setSelectedSectionCode(e.target.value)}
           
         />

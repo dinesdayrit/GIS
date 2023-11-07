@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@turf/turf": "^6.5.0",
     "axios": "^1.5.1",
+    "dayjs": "^1.11.10",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "leaflet-geometryutil": "^0.10.2",
