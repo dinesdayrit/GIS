@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
+const dayjs = require('dayjs');
 
 const Plottingform = (props) => {
 
@@ -200,8 +201,6 @@ const handleFileUpload = (e) => {
 
   const reader = new FileReader();
 
-
-
   reader.onload = (e) => {
     const content = e.target.result;
     Papa.parse(content, {
@@ -209,40 +208,77 @@ const handleFileUpload = (e) => {
       skipEmptyLines: true, // dapat naka true para e disregard niya empty lines/rows
       complete: (result) => {
         if (result.data.length > 0) {
-          const headerToData = result.data[0];
+          const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
 
+          const filteredData = result.data.filter((row) => {
+            for (const col of columnsToFilter) {
+              if (!row[col]) {
+                return false;
+              }
+            }
+            return true;
+          });
+
+          if (filteredData.length > 0) {
+          const headerToData = filteredData[0];
+          const areaValue = parseFloat(headerToData['Area']);
+          const truncatedArea = areaValue.toFixed(3);
+
+          const parseDate = (dateString) => {
+            
+            if (!dateString) {
+              return null; // Return null if the dateString is empty or null
+            }
+            // Date format patterns to check
+            const dateFormats = [ 
+              "MM/DD/YYYY",
+              "DD/MM/YYYY",
+              "MMM DD, YYYY",
+              "YYYY/MM/DD",
+            ];
+          
+            // Try parsing the date using different formats
+            for (const format of dateFormats) {
+              const parsedDate = dayjs(dateString, { format });
+          
+              if (parsedDate.isValid()) {
+                // Convert the parsed date to the desired format 'YYYY/MM/DD'
+                return parsedDate.format("YYYY/MM/DD");
+              }
+            }
+            return null;
+          };
           
           const lNameArray = [];
           const fNameArray = [];
           const miArray = [];
           const suffixArray = [];
-          result.data.forEach((row) => {
-            lNameArray.push(row['LastName'] || '');
-            fNameArray.push(row['FirstName'] || '');
-            miArray.push(row['MiddleName'] || '');
-            suffixArray.push(row['Suffix'] || '');
+
+          filteredData.forEach((row) => {
+            lNameArray.push(row['LastName'].toUpperCase() || '');
+            fNameArray.push(row['FirstName'].toUpperCase() || '');
+            miArray.push(row['MiddleName'].toUpperCase() || '');
+            suffixArray.push(row['Suffix'].toUpperCase() || '');
           });
 
-
-
           const extractedData = {
-            title: headerToData['Title'],
-            titleDate: headerToData['TitleDate'],
-            surveyNumber: headerToData['SurveyNumber'],
-            lotNumber: headerToData['LotNumber'],
-            blkNumber: headerToData['BlkNumber'],
-            area: headerToData['Area'],
-            boundary: headerToData['Boundary'],
+            title: headerToData['Title'].toUpperCase(),
+            titleDate: parseDate(headerToData['TitleDate']),
+            surveyNumber: headerToData['SurveyNumber'].toUpperCase(),
+            lotNumber: headerToData['LotNumber'].toUpperCase(),
+            blkNumber: headerToData['BlkNumber'].toUpperCase(),
+            area: truncatedArea,
+            boundary: headerToData['Boundary'].toUpperCase(),
             lName: lNameArray,
             fName: fNameArray,
             mi: miArray,
             suffix: suffixArray,
-            businessName: headerToData['BusinessName'],
-            oct: headerToData['OCT'],
-            octDate: headerToData['OCTDate'],
-            prevTct: headerToData['PrevTCT'],
-            tctDate: headerToData['TCTDate'],
-            remarks: headerToData['Remarks'],
+            businessName: headerToData['BusinessName'].toUpperCase(),
+            oct: headerToData['OCT'].toUpperCase(),
+            octDate: parseDate(headerToData['OCTDate']),
+            prevTct: headerToData['PrevTCT'].toUpperCase(),
+            tctDate: parseDate(headerToData['TCTDate']),
+            remarks: headerToData['Remarks'].toUpperCase(),
           };
 
           props.onCsvDataChange(extractedData);
@@ -269,6 +305,7 @@ const handleFileUpload = (e) => {
           alert('Data uploaded from CSV file.');
         } else {
           alert('CSV file is empty or invalid.');
+          }
         }
       },
     });
@@ -326,7 +363,11 @@ useEffect(() => {
         name="monument"
         placeholder='Monument'
         defaultValue={formData.monument}
-        onChange={(e) => setFormData({ ...formData, monument: e.target.value })} 
+        onChange={(e) => setFormData({ ...formData, monument: e.target.value.toUpperCase() })}
+        onInput={(e) => {
+          e.target.value = e.target.value.toUpperCase();
+           setFormData({ ...formData, monument: e.target.value.toUpperCase() });
+           }}
       />
       </div>
 
