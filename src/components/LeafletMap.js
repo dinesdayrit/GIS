@@ -61,20 +61,7 @@ mapRef.current = map;
 
     var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
 
-    var wmsStreetsOptions = {
-      layers: 'Davao:Grp_Zoning2019_Det',
-      transparent: true,
-      tiled: false,
-      format: "image/png",
-      opacity: 1,
-      maxZoom: 20,
-      maxNativeZoom: 20,
-      crs: L.CRS.EPSG4326,
-      Identify: false
-      };
   
-      var wmsdavZoning2019 = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsStreetsOptions);
-
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -115,7 +102,6 @@ mapRef.current = map;
     let overlayMaps = {
       
       'Plotted TDs': wmsdavTechDesc,
-      'Zoning 2019-2028' : wmsdavZoning2019,
       'Barangays': wmsdavBrgy
 
     };
@@ -205,7 +191,7 @@ return [centerLat, centerLng, centroidPlusCode];
 
     // Fetch data from '/GisDetail' and add polygons to the map
     const token =  localStorage.getItem('authToken');
-    console.log(`Bearer ${token}`);
+    // console.log(`Bearer ${token}`);
 
     axios.get('/GisDetail', {
       headers: {
@@ -216,6 +202,7 @@ return [centerLat, centerLng, centroidPlusCode];
     .then(gisDetails => {
       gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
+          const id = gisDetail.id;
           const title = gisDetail.title;
           const titleDate = gisDetail.titledate;
           const surveyNumber = gisDetail.surveynumber;
@@ -255,6 +242,10 @@ return [centerLat, centerLng, centroidPlusCode];
             
           }
 
+          if (props.handleAssignPin && geojsonObject) {
+            map.fitBounds(polygon.getBounds(), { maxZoom: 19});
+          }
+
             
           polygon.addTo(map);
           polygon.addTo(editableLayers);
@@ -284,18 +275,13 @@ return [centerLat, centerLng, centroidPlusCode];
             const polygonBounds = polygon.getBounds();
             const polygonCenter = polygonBounds.getCenter();
 
-            let markerColor;
-
-            if (status === 'PIN ASSIGNED' ) {
-              markerColor = 'black'
-            } else {
-              markerColor = 'white'
-            }
 
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: bold; color: ${markerColor}">${title}</span>`,
+                html: `<span style="font-weight: bold; ">
+                 ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
+                </span>`,
               }),
             });
             
@@ -309,6 +295,7 @@ return [centerLat, centerLng, centroidPlusCode];
                 // // Call the handleEditClick function with the provided data
 
             props.parcelDetails({
+            id,
             title,
             titleDate,
             surveyNumber,
@@ -333,7 +320,7 @@ return [centerLat, centerLng, centroidPlusCode];
             map.on('zoomend', () => {
            
               const currentZoom = map.getZoom();
-              const minZoomToShowText = 18.5;
+              const minZoomToShowText = 17;
           
               if (currentZoom >= minZoomToShowText) {
                 if (!map.hasLayer(textMarker)) {
@@ -345,7 +332,40 @@ return [centerLat, centerLng, centroidPlusCode];
                 }
               }
             });
-          
+
+            if (status === 'PIN ASSIGNED' || status === 'PIN APPROVED') {
+              // Fetch the PIN from the "/tmod" endpoint using the centroidPlusCode
+              axios.get(`/tmod?pluscode=${centroidPlusCode}`, {
+                headers: {
+                  'x-api-key': 'thisIsOurTmodAPIKey',
+                },
+              })
+                .then(response => {
+              
+                  if (response.status === 200) {
+                      const matchingPin = response.data.find(
+                      (targetPin) => targetPin.pluscode === centroidPlusCode
+                      );
+
+                      if (matchingPin){
+                        const pin = matchingPin.sectioncode +"-"+ matchingPin.parcelid;
+                        
+                      textMarker.setIcon(L.divIcon({
+                        className: 'text-marker',
+                        html: `<span style="font-weight: bolder; color: blue">${pin}</span>`,
+                      }));
+                      }
+
+                  } else {
+                    console.error('Unexpected response status:', response.status);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error fetching PIN:', error);
+                });
+              
+            }
+
             polygon.addTo(map);
             polygon.addTo(editableLayers);
 

@@ -10,7 +10,7 @@ function App() {
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
-    console.log(isLoggedIn);
+    // console.log(isLoggedIn);
     if (authToken) {
       setIsLoggedIn(true);
       
