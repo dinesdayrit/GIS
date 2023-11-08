@@ -68,7 +68,6 @@ body {
   text-align: center;
   font-size: 18px;
   color: black;
-  font-weight: 300;
   border: transparent;
 }
 
@@ -124,4 +123,3 @@ body {
   line-height: 1.2;
   pointer-events: none; /* Prevent the marker from blocking interactions */
 }
-

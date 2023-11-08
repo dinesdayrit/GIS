@@ -17,11 +17,12 @@ const AssignPinForm = (props) => {
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
     const [pin, setPin] = useState('');
+    const [districts, setDistricts] = useState([]);
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
     const [selectedBrgyCode, setSelectedBrgyCode] = useState('000');
-    const [selectedDistrict, setSelectedDistrict] = useState('00');
-    const [selectedDistrictCode, setSelectedDistrictCode] = useState('');
+    const [selectedDistrict, setSelectedDistrict] = useState('');
+    const [selectedDistrictCode, setSelectedDistrictCode] = useState('00');
     const [selectedSectionCode, setSelectedSectionCode] = useState('000');
     const [selectedParcelCode, setSelectedParcelCode] = useState('');
     const [assignedPins, setAssignedPins] = useState([]);
@@ -46,7 +47,22 @@ const AssignPinForm = (props) => {
       }
       }, [props.selectedCoordinates]);
 
+    const fecthTmod = () => {
+      axios.get('/tmod', {
+        headers: {
+          'x-api-key': 'thisIsOurTmodAPIKey',
+        },
+      })
+        .then(response => response.data)
+        .then((data) => {
+          console.log('Fetched tmod:', data);
+          setAssignedPins(data);
+  
+        });
+
+    }
       useEffect(() =>{
+        
         axios.get('/tmod', {
           headers: {
             'x-api-key': 'thisIsOurTmodAPIKey',
@@ -58,7 +74,7 @@ const AssignPinForm = (props) => {
             setAssignedPins(data);
     
             const matchingPin = assignedPins.find(
-            (targetPin) => targetPin.title === title
+            (targetPin) => targetPin.pluscode === props.plusCode
             );
          
           
@@ -68,41 +84,57 @@ const AssignPinForm = (props) => {
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
               } else if(!matchingPin){
-                setSavedPin("NO ASSIGNED PIN YET");
+                // setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
               }
-
+  
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
             alert('Error fetching PINS:', error);
           });
+  
+          autoPopulateParcelCode();
        
-      },[title])
+      },[props.plusCode])
 
-    useEffect(() => {
-        // Fetch brgycode data and set it in the brgycodes state
+
+   useEffect(() => {
+      
+        // Fetch brgycode data and set it in the districts state
         fetch('/brgycode')
           .then((response) => response.json())
           .then((data) => {
-            console.log('Fetched brgycode:', data);
-            setBrgycodes(data);
+            console.log('Fetched data:', data);
+            setDistricts(data);
     
-            const matchingBrgycode = brgycodes.find(
-            (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
+            const matchingDistricts = districts.filter(
+            (targetDistrict) => targetDistrict.admindistrict === selectedDistrict
             );
-            console.log('matchingBrgycode', matchingBrgycode);
+            console.log('matchingDistricts', matchingDistricts);
           
-              if (matchingBrgycode) {
-                setSelectedBrgyCode(matchingBrgycode.brgycodelast3);
-                setSelectedDistrict(matchingBrgycode.admindistrict);
-                setSelectedDistrictCode(matchingBrgycode.districtcode);
-              } 
+
+       
+            if (matchingDistricts.length > 0) {
+              // const brgycodes = matchingDistricts.map((district) => district.brgy);
+              setBrgycodes(matchingDistricts);
+              console.log('matchingDistrictsnaa', brgycodes);
+              const matchingBrgy = brgycodes.find(
+                      (targetBrgycode) => targetBrgycode.brgy === selectedBrgy
+                      );
+
+               if (matchingBrgy) {
+                    setSelectedBrgyCode(matchingBrgy.brgycodelast3);
+                    setSelectedDistrictCode(matchingBrgy.districtcode);
+                } 
+
+          }
+
     
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
               setPin(generatedPin);
 
-              autoPopulateParcelCode();
+             
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
@@ -111,9 +143,14 @@ const AssignPinForm = (props) => {
         
       
 
-      }, [selectedBrgy, selectedBrgyCode , selectedSectionCode, selectedParcelCode]);
+      }, [selectedBrgy, selectedBrgyCode ,selectedDistrict , selectedDistrictCode ,selectedSectionCode, selectedParcelCode, props.plusCode]);
 
-    
+      
+
+    useEffect(() =>{
+      autoPopulateParcelCode();
+    }, [pin, title, props.selectedCoordinates, props.plusCode]);
+
       const handleBrgyChange = (e) => {
         const selectedBrgyValue = e.target.value;
         setSelectedBrgy(selectedBrgyValue);
@@ -168,6 +205,10 @@ const AssignPinForm = (props) => {
               // The PIN is not assigned, proceed with saving
               const formData = {
                 pin: pin,
+                districtCode: selectedDistrictCode,
+                brgyCode: selectedBrgyCode,
+                sectionCode: selectedSectionCode,
+                parcelCode: selectedParcelCode,
                 plusCode: props.plusCode,
                 title: title,
                 titleDate: titleDate,
@@ -197,10 +238,10 @@ const AssignPinForm = (props) => {
                 .then((data) => {
                   console.log(data, "New PIN Assigned");
                   if (data.status === "ok") {
-
+                  
 
                     // Update the status on title_table
-                    fetch(`/approved/${polygonDetails.title}`, {
+                    fetch(`/approved/${polygonDetails.id}`, {
                       method: 'PUT',
                       headers: {
                         'Content-Type': 'application/json',
@@ -213,7 +254,13 @@ const AssignPinForm = (props) => {
                       .then((data) => {
                         console.log(data);
                         alert('PIN ASSIGNED');
-                        window.location.href = "/home";
+                        // window.location.href = "/home";
+                        fecthTmod();
+                        setIsPinAssigned(true);
+                        setSavedPin(pin);
+                        props.handleAssignPin(props.plusCode);
+                   
+                       
                       })
                       .catch((error) => {
                         console.error('Error updating status:', error);
@@ -231,7 +278,7 @@ const AssignPinForm = (props) => {
 
       const updateStatusOnTitleTable = () => {
         // Update the status on title_table
-  fetch(`/approved/${polygonDetails.title}`, {
+  fetch(`/approved/${polygonDetails.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -276,6 +323,51 @@ const AssignPinForm = (props) => {
 
       };
 
+      const handleDeletePin = () => {
+      //add function to delete the PIN
+       if (window.confirm("Are you sure you want to delete this PIN?")) {
+        axios.delete(`/deleteByTitle/${title}`,{
+         headers: {
+               'Content-Type': 'application/json',
+               Authorization: `Bearer ${token}`,
+           },
+       })
+        .then((response) => {
+          if (response.status === 200) {
+            alert("PIN has been deleted successfully.");
+            fecthTmod();
+          } else {
+            alert("Failed to delete the PIN. Please try again.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error deleting PIN:", error);
+          alert("Error deleting PIN. Please try again.");
+        });
+    }
+        //update the status back to APPROVED on title_table
+        fetch(`/approved/${polygonDetails.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'APPROVED',
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((error) => {
+            console.error('Error updating status:', error);
+          });
+            
+      
+        setIsPinAssigned(false);
+        
+      }
+
     return (
     <div className={styles['popup-form-container']}>
 {isPinAssigned &&( 
@@ -297,10 +389,17 @@ const AssignPinForm = (props) => {
         value={savedPin}
         readOnly
      />
+
+     <div className={styles['button-wrapper']}>
      <button onClick={handleApprovePin}>APPROVE</button>
+
+     <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
 </div>
+  </div>
 )}
+
     <form onSubmit={handleSubmit} >
+  {!isPinAssigned &&(
      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
@@ -318,37 +417,55 @@ const AssignPinForm = (props) => {
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
     
-      <div>
+    <div >
+        <p>District*</p>
+        <select
+          name='district'
+          defaultValue= {selectedDistrict}   
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+          
+        >
+        <option value="Select District">Select District</option>
+        <option value="Poblacion">Poblacion</option>
+        <option value="Agdao">Agdao</option>
+        <option value="Baguio">Baguio</option>
+        <option value="Buhangin">Buhangin</option>
+        <option value="Bunawan">Bunawan</option>
+        <option value="Calinan">Calinan</option>
+        <option value="Marilog">Marilog</option>
+        <option value="Paquibato">Paquibato</option>
+        <option value="Talomo">Talomo</option>
+        <option value="Toril">Toril</option>
+        <option value="Tugbok">Tugbok</option>
+   
+        </select>
+      </div>
+      <div >
+
         <p>Brgy*</p>
         <select
         name='brgy'
         onChange={handleBrgyChange}
-        defaultValue= {selectedBrgy}
-        
-       
+        defaultValue= {selectedBrgy}    
     >
+
+      <option value="Select Brgy">Select Brgy</option>
       {brgycodes.map((targetBrgycode) => (
         <option key={targetBrgycode.id} value={targetBrgycode.brgy}>
           {targetBrgycode.brgy}
         </option>
       ))}
     </select>
+
       </div>
 
-      <div style={{width: '70%'}}>
-        <p>District*</p>
-        <input 
-          name='district'
-          value={selectedDistrict}
-          readOnly
-       
-        />
-      </div>
+    
       
       <div >
         <p>Section*</p>
         <input 
           name='section'
+          defaultValue= {selectedSectionCode}  
           onChange={(e) => setSelectedSectionCode(e.target.value)}
           
         />
@@ -377,6 +494,7 @@ const AssignPinForm = (props) => {
       />
 
     </div>
+  )}
 
 
     <div style={{ border: '2px gray solid', padding: '10px', marginTop: '15px' }}>
