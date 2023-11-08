@@ -22,15 +22,19 @@ const Home = (props) => {
   const [geojsonData, setGeojsonData] = useState('');
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
+  const [pinAssign , setPinAssign] = useState('')
  
 
 
 
-
+const handleAssignPin = (savedPin) => {
+  setPinAssign(savedPin);
+  console.log('naClick PIN', savedPin);
+}
 
   const handleKMLUpload = (convertedGeoJSON) => {
     setGeojsonData(convertedGeoJSON);
-    console.log('geojsonData', convertedGeoJSON);
+    // console.log('geojsonData', convertedGeoJSON);
   };
 
   const handlePlusCodesUpdate = (plusCodes) => {
@@ -193,6 +197,7 @@ const Home = (props) => {
             polygonDetails={selectedPolygonDetails}
             selectedCoordinates={selectedCoordinates}
             plusCode = {plusCode}
+            handleAssignPin = {handleAssignPin}
           
           />}
 
@@ -208,6 +213,7 @@ const Home = (props) => {
           kmlData={geojsonData}
           onPlusCodesUpdate={handlePlusCodesUpdate}
           isPolygonApproved={isPolygonApproved}
+          handleAssignPin={pinAssign}
          
        
         />

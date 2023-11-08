@@ -64,7 +64,7 @@ const handleSearchTitle = () => {
   setOct(matchingTitleSearch.oct);
   setOctDate(matchingTitleSearch.octdate);
   setStatus(matchingTitleSearch.status);
-  if(matchingTitleSearch.status === 'APPROVED'){
+  if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
     setIsApproved(true);
@@ -128,7 +128,7 @@ useEffect(() => {
   };
 
   const polygonStatus = () => {
-    if(polygonDetails && polygonDetails.status === 'APPROVED') {
+    if(polygonDetails && polygonDetails.status === 'APPROVED' || polygonDetails && polygonDetails.status === 'PIN ASSIGNED' || polygonDetails && polygonDetails.status ==='PIN APPROVED') {
       setTextStatusColor('blue')
       setStatus('APPROVED');
       setIsApproved(true);

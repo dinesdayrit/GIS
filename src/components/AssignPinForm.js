@@ -258,6 +258,7 @@ const AssignPinForm = (props) => {
                         fecthTmod();
                         setIsPinAssigned(true);
                         setSavedPin(pin);
+                        props.handleAssignPin();
                    
                        
                       })

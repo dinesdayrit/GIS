@@ -242,6 +242,10 @@ return [centerLat, centerLng, centroidPlusCode];
             
           }
 
+          if (props.handleAssignPin && geojsonObject) {
+            map.fitBounds(polygon.getBounds(), { maxZoom: 19});
+          }
+
             
           polygon.addTo(map);
           polygon.addTo(editableLayers);
@@ -271,18 +275,11 @@ return [centerLat, centerLng, centroidPlusCode];
             const polygonBounds = polygon.getBounds();
             const polygonCenter = polygonBounds.getCenter();
 
-            let markerColor;
-
-            if (status === 'PIN ASSIGNED' ) {
-              markerColor = 'black'
-            } else {
-              markerColor = 'white'
-            }
 
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: bold; color: ${markerColor}">
+                html: `<span style="font-weight: bold; ">
                  ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
                 </span>`,
               }),
@@ -344,15 +341,12 @@ return [centerLat, centerLng, centroidPlusCode];
                 },
               })
                 .then(response => {
-                  console.log('centroidPlusCode:', centroidPlusCode);
+              
                   if (response.status === 200) {
-                    console.log('mao ni ang data',response.data);
-
-                    const matchingPin = response.data.find(
+                      const matchingPin = response.data.find(
                       (targetPin) => targetPin.pluscode === centroidPlusCode
                       );
 
-                      console.log("matchingPin",matchingPin)
                       if (matchingPin){
                         const pin = matchingPin.sectioncode +"-"+ matchingPin.parcelid;
                         
@@ -575,7 +569,7 @@ if (props.kmlData) {
     };
 
   
-  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData ]);
+  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData, props.handleAssignPin ]);
 
   console.log("props.isPolygonApproved", props.isPolygonApproved )
 
