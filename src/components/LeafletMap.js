@@ -282,7 +282,9 @@ return [centerLat, centerLng, centroidPlusCode];
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: bold; color: ${markerColor}">${title}</span>`,
+                html: `<span style="font-weight: bold; color: ${markerColor}">
+                 ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
+                </span>`,
               }),
             });
             
@@ -333,7 +335,43 @@ return [centerLat, centerLng, centroidPlusCode];
                 }
               }
             });
-          
+
+            if (status === 'PIN ASSIGNED' || status === 'PIN APPROVED') {
+              // Fetch the PIN from the "/tmod" endpoint using the centroidPlusCode
+              axios.get(`/tmod?pluscode=${centroidPlusCode}`, {
+                headers: {
+                  'x-api-key': 'thisIsOurTmodAPIKey',
+                },
+              })
+                .then(response => {
+                  console.log('centroidPlusCode:', centroidPlusCode);
+                  if (response.status === 200) {
+                    console.log('mao ni ang data',response.data);
+
+                    const matchingPin = response.data.find(
+                      (targetPin) => targetPin.pluscode === centroidPlusCode
+                      );
+
+                      console.log("matchingPin",matchingPin)
+                      if (matchingPin){
+                        const pin = matchingPin.sectioncode +"-"+ matchingPin.parcelid;
+                        
+                      textMarker.setIcon(L.divIcon({
+                        className: 'text-marker',
+                        html: `<span style="font-weight: bolder; color: blue">${pin}</span>`,
+                      }));
+                      }
+
+                  } else {
+                    console.error('Unexpected response status:', response.status);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error fetching PIN:', error);
+                });
+              
+            }
+
             polygon.addTo(map);
             polygon.addTo(editableLayers);
 
