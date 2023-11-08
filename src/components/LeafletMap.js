@@ -569,7 +569,7 @@ if (props.kmlData) {
     };
 
   
-  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData, props.handleAssignPin ]);
+  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData ]);
 
   console.log("props.isPolygonApproved", props.isPolygonApproved )
 
