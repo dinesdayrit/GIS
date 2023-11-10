@@ -61,6 +61,20 @@ mapRef.current = map;
 
     var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
 
+    var davParPob = {
+      layers: 'Davao:Parcel_Poblacion',
+      transparent: true,
+      tiled: false,
+      format: "image/png",
+      opacity: 1,
+      maxZoom: 20,
+      maxNativeZoom: 20,
+      crs: L.CRS.EPSG4326,
+      Identify: false
+      };
+  
+      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob);
+
   
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -102,7 +116,8 @@ mapRef.current = map;
     let overlayMaps = {
       
       'Plotted TDs': wmsdavTechDesc,
-      'Barangays': wmsdavBrgy
+      'Barangays': wmsdavBrgy,
+      'PobDistTaxmaps' :wmsPobDistTaxmaps
 
     };
 

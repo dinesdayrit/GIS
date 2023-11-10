@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 
 const SignUpForm = () => {
+  const token =  localStorage.getItem('authToken');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,6 +26,7 @@ const SignUpForm = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(formData),
     })
