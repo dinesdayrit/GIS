@@ -324,7 +324,7 @@ useEffect(() => {
           type="text"
           name="ownerName"
           value={ownerName}
-          onChange={(e) => setOwnerName(e.target.value)}
+          onChange={(e) => handleInputChange (e.target.value, setOwnerName)}
           required />
       
 
@@ -335,9 +335,7 @@ useEffect(() => {
           type="text"
           name="OCT"
           value={oct}
-          onChange={(e) => {
-            setOct(e.target.value);
-          }}
+          onChange={(e) => handleInputChange (e.target.value, setOct)}
         />
          </div>
          <div>
