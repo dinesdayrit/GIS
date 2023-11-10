@@ -205,19 +205,22 @@ const handleFileUpload = (e) => {
     const content = e.target.result;
     Papa.parse(content, {
       header: true,
-      skipEmptyLines: true, // dapat naka true para e disregard niya empty lines/rows
+      skipEmptyLines: true,
       complete: (result) => {
-        if (result.data.length > 0) {
-          const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
 
-          const filteredData = result.data.filter((row) => {
-            for (const col of columnsToFilter) {
-              if (!row[col]) {
-                return false;
-              }
-            }
+        const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
+
+        if (result.data.length > 0) {
+
+          const filteredData = result.data.filter((row, index) => {
+          if (index === 0) {
+            
             return true;
-          });
+          }
+          const allColumnsEmpty = columnsToFilter.every((col) => !row[col]);
+          return !allColumnsEmpty;
+        });
+
 
           if (filteredData.length > 0) {
           const headerToData = filteredData[0];
@@ -227,22 +230,20 @@ const handleFileUpload = (e) => {
           const parseDate = (dateString) => {
             
             if (!dateString) {
-              return null; // Return null if the dateString is empty or null
+              return null;
             }
-            // Date format patterns to check
+           
             const dateFormats = [ 
               "MM/DD/YYYY",
               "DD/MM/YYYY",
               "MMM DD, YYYY",
-              "YYYY/MM/DD",
+              "YYYY-MM-DD",
             ];
           
-            // Try parsing the date using different formats
             for (const format of dateFormats) {
               const parsedDate = dayjs(dateString, { format });
           
               if (parsedDate.isValid()) {
-                // Convert the parsed date to the desired format 'YYYY/MM/DD'
                 return parsedDate.format("YYYY/MM/DD");
               }
             }
@@ -303,6 +304,7 @@ const handleFileUpload = (e) => {
           });
 
           alert('Data uploaded from CSV file.');
+
         } else {
           alert('CSV file is empty or invalid.');
           }
