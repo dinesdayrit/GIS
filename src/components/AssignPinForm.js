@@ -296,7 +296,6 @@ const AssignPinForm = (props) => {
     });
       };
 
-
       const handleApprovePin = () => {
         updateStatusOnTitleTable();
 
@@ -315,6 +314,7 @@ const AssignPinForm = (props) => {
           .then((data) => {
             console.log(data);
             alert('APPROVED ASSIGNED PIN');
+            //to save data on SMV Table
             
           })
           .catch((error) => {
