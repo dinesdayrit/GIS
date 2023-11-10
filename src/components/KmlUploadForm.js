@@ -199,6 +199,8 @@ const KmlTable = (props) => {
                 <button onClick={handleSaveToDatabase}>Save to Database</button>
                 </div>
 
+                {kmlDetailsSaved && <p style={{fontWeight: 'bold', color: '#4CAF50'}}>KML Data Saved!</p>}
+
                 <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>{tableRows[0]}</tr>
@@ -206,8 +208,6 @@ const KmlTable = (props) => {
                   <tbody>{tableRows.slice(1)}</tbody>
                 </table>
                 <br/>
-
-                {kmlDetailsSaved && <p style={{fontWeight: 'bold', color: '#4CAF50'}}>KML Data Saved!</p>}
         </div>
       );
 };
