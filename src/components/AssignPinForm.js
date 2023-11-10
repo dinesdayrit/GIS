@@ -28,8 +28,19 @@ const AssignPinForm = (props) => {
     const [assignedPins, setAssignedPins] = useState([]);
     const [savedPin, setSavedPin] = useState('');
     const [isPinAssigned, setIsPinAssigned] = useState(false);
+   
+    const [isAdmin, setIsAdmin] = useState(true);
     const token =  localStorage.getItem('authToken');
-    
+
+    useEffect(() => {
+      const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
+      if (storedUserDetails && storedUserDetails.role === "user") {
+        setIsAdmin(false);
+       
+      }
+     
+    }, []);
+
     useEffect(() => {
       if (polygonDetails) {
         setTitle(polygonDetails.title);
@@ -208,7 +219,7 @@ const AssignPinForm = (props) => {
                 districtCode: selectedDistrictCode,
                 brgyCode: selectedBrgyCode,
                 sectionCode: selectedSectionCode,
-                parcelCode: selectedParcelCode,
+                parcelCode: pin.slice(-2),
                 plusCode: props.plusCode,
                 title: title,
                 titleDate: titleDate,
@@ -296,9 +307,26 @@ const AssignPinForm = (props) => {
     });
       };
 
-      const handleApprovePin = () => {
-        updateStatusOnTitleTable();
+  const sendDataToSMV = async  () => {
+    const formData = {
+      rpt_geo_code: props.plusCode,
+      pin : pin,
+      area : area
+    }
+  
+    
+    try {
+      const response = await axios.post('/insertSMV', formData);
+      console.log(response.data);
+    } catch (error) {
+    
+      console.error('Error sending data to SMV:', error);
+   
+    }
+  }
 
+      const handleApprovePin = () => {
+        
         //update status on rptas table
         fetch(`/approvedpin/${savedPin}`, {
           method: 'PUT',
@@ -314,7 +342,9 @@ const AssignPinForm = (props) => {
           .then((data) => {
             console.log(data);
             alert('APPROVED ASSIGNED PIN');
-            //to save data on SMV Table
+            updateStatusOnTitleTable();
+            sendDataToSMV();
+          
             
           })
           .catch((error) => {
@@ -391,7 +421,13 @@ const AssignPinForm = (props) => {
      />
 
      <div className={styles['button-wrapper']}>
+
+     {isAdmin &&(
+      <>
      <button onClick={handleApprovePin}>APPROVE</button>
+     <button  style={{ backgroundColor: 'red'}}>return</button>
+     </>
+    )}
 
      <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
 </div>

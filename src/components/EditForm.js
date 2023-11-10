@@ -109,7 +109,7 @@ useEffect(() => {
     // setTechnicalDescription(polygonDetails.technicalDescription);
     // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     }
-    console.log('isadmin', isAdmin);
+    // console.log('isadmin', isAdmin);
   }, [props.selectedCoordinates]);
 
  
@@ -128,7 +128,12 @@ useEffect(() => {
   };
 
   const polygonStatus = () => {
-    if(polygonDetails && polygonDetails.status === 'APPROVED' || polygonDetails && polygonDetails.status === 'PIN ASSIGNED' || polygonDetails && polygonDetails.status ==='PIN APPROVED') {
+    if (
+      polygonDetails &&
+      ((polygonDetails.status === 'APPROVED' ||
+        polygonDetails.status === 'PIN ASSIGNED' ||
+        polygonDetails.status === 'PIN APPROVED'))
+     ) {
       setTextStatusColor('blue')
       setStatus('APPROVED');
       setIsApproved(true);
