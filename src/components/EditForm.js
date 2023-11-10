@@ -244,10 +244,7 @@ useEffect(() => {
           type="text"
           name="title"
           value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-          required
+          onChange={(e) => handleInputChange (e.target.value, setTitle)}
         />
          </div>
          <div>
@@ -273,7 +270,7 @@ useEffect(() => {
           type="text"
           name="surveyNumber"
           value={surveyNumber}
-          onChange={(e) => setSurveyNumber(e.target.value)}
+          onChange={(e) => handleInputChange (e.target.value, setSurveyNumber)}
           required
         />
      <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
@@ -283,7 +280,7 @@ useEffect(() => {
       type="text"
       name="lotNumber"
       value={lotNumber}
-      onChange={(e) => setLotNumber(e.target.value)}
+      onChange={(e) => handleInputChange (e.target.value, setLotNumber)}
       required
     />
       </div>
@@ -294,7 +291,7 @@ useEffect(() => {
       type="text"
       name="blkNumber"
       value={blkNumber}
-      onChange={(e) => setBlkNumber(e.target.value)}
+      onChange={(e) => handleInputChange (e.target.value, setBlkNumber)}
       required
       />
       </div>
@@ -317,9 +314,7 @@ useEffect(() => {
         type="text"
         name="boundary"
         value={boundary}
-        onChange={(e) => {
-        setBoundary(e.target.value);
-        }}
+        onChange={(e) => handleInputChange (e.target.value, setBoundary)}
         required
       />
       
@@ -329,7 +324,7 @@ useEffect(() => {
           type="text"
           name="ownerName"
           value={ownerName}
-          onChange={(e) => setOwnerName(e.target.value)}
+          onChange={(e) => handleInputChange (e.target.value, setOwnerName)}
           required />
       
 
@@ -340,9 +335,7 @@ useEffect(() => {
           type="text"
           name="OCT"
           value={oct}
-          onChange={(e) => {
-            setOct(e.target.value);
-          }}
+          onChange={(e) => handleInputChange (e.target.value, setOct)}
         />
          </div>
          <div>
