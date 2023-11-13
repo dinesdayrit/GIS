@@ -6,11 +6,16 @@ import logoIcon from '../assets/Davao_City.png'
 const HomeHeader = (props) => {
   const [userDetails, setUserDetails] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
 
   useEffect(() => {
     // Retrieve user details from local storage
     const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
     setUserDetails(storedUserDetails);
+    if (storedUserDetails && storedUserDetails.role === "user") {
+      setIsAdmin(false);
+     
+    }
   }, []);
 
 
@@ -81,21 +86,32 @@ const HomeHeader = (props) => {
                 <button onClick={handleAddParcel}>
                 <i className="fa-solid fa-draw-polygon" style={{ marginRight: '8px' }}></i>
                 Plot Parcel</button>
+
                 <button onClick={handleKmlFileUpload}>
                 <i className="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
                 Upload KML </button>
+
                 <button onClick={handleEdit}>
                 <i className="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
                 Edit/Update/Approve</button>
+
                 <button onClick={handdlePinClick}>
-                <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
-                Assign PIN</button>
+                {!isAdmin ? (
+                              <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
+                           ) : (
+                              <i className="fa-solid fa-square-check" style={{ marginRight: '8px' }}></i>
+                           )}
+                {!isAdmin ? 'Assign PIN' : 'PIN Approval'}
+                </button>
+
                 <button onClick={handleMonument}>
                 <i className="fas fa-list-alt" style={{ marginRight: '8px' }}></i>
                 List of Monuments</button>
+
                 {userDetails && <button>
                 <i className="fas fa-user-alt" style={{ marginRight: '8px' }}></i>
                 {userDetails.name} {userDetails.role}</button>}
+
                 <button onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt" style={{ marginRight: '8px' }}></i>
                 Log Out</button>
