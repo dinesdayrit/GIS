@@ -90,10 +90,12 @@ const HomeHeader = (props) => {
                 <button onClick={handleKmlFileUpload}>
                 <i className="fa-solid fa-file-import" style={{ marginRight: '8px' }}></i>
                 Upload KML </button>
-
+                  
                 <button onClick={handleEdit}>
                 <i className="fa-solid fa-pen-to-square" style={{ marginRight: '8px' }}></i>
-                Edit/Update/Approve</button>
+
+                {!isAdmin ? 'Edit/Update' : 'Plot Approval/Edit'}
+                </button>
 
                 <button onClick={handdlePinClick}>
                 {!isAdmin ? (

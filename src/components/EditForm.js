@@ -431,23 +431,30 @@ useEffect(() => {
         
       </form>
   
-      <div style={{display: 'flex', marginTop: '10%', alignItems: 'center' }}>
+      <div style={{display: 'flex', marginTop: '3%', alignItems: 'center' }}>
     
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
-    
-     
+      </div>
+
+      <div className={styles['button-wrapper']}>
+      
       {!isApproved && isAdmin &&( 
+        <>
           <button style={{ verticalAlign: 'middle' , marginLeft: '5px', background: 'rgba(15, 118, 214, 0.897)'}} 
           onClick={handleApprove} >
           <i className="fa-solid fa-check" style={{marginRight: "5px"}}></i>
           APPROVE
           </button>
+
+          <button  style={{ backgroundColor: 'red'}}>return</button>
+          </>
         )}
-        </div>
+      </div>
+   
        
      
       
-    </div>
+  </div>
   );
 };
 
