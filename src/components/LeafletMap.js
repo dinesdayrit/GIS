@@ -367,7 +367,7 @@ return [centerLat, centerLng, centroidPlusCode];
                         
                       textMarker.setIcon(L.divIcon({
                         className: 'text-marker',
-                        html: `<span style="font-weight: bolder; font-size: 1.25em; color: black; background: white">${pin}</span>`,
+                        html: `<span style="font-weight: bolder; font-size: 1.25em; color: black; text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;">${pin}</span>`,
                       }));
                       }
 
