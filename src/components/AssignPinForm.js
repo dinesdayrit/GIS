@@ -310,8 +310,7 @@ const AssignPinForm = (props) => {
   const sendDataToSMV = async  () => {
     const formData = {
       rpt_geo_code: props.plusCode,
-      pin : pin,
-      area : area
+      pin : savedPin,
     }
   
     
