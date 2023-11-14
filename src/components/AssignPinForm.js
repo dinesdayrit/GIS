@@ -55,25 +55,11 @@ const AssignPinForm = (props) => {
         setOctDate(polygonDetails.octDate);
         setTct(polygonDetails.tct);
         setTctDate(polygonDetails.tctDate);
+
       }
       }, [props.selectedCoordinates]);
 
-    const fecthTmod = () => {
-      axios.get('/tmod', {
-        headers: {
-          'x-api-key': 'thisIsOurTmodAPIKey',
-        },
-      })
-        .then(response => response.data)
-        .then((data) => {
-          console.log('Fetched tmod:', data);
-          setAssignedPins(data);
-  
-        });
-
-    }
       useEffect(() =>{
-        
         axios.get('/tmod', {
           headers: {
             'x-api-key': 'thisIsOurTmodAPIKey',
@@ -95,7 +81,7 @@ const AssignPinForm = (props) => {
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
               } else if(!matchingPin){
-                // setSavedPin("NO ASSIGNED PIN YET");
+                setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
               }
   
@@ -107,8 +93,23 @@ const AssignPinForm = (props) => {
   
           autoPopulateParcelCode();
        
-      },[props.plusCode])
+      },[props.plusCode, savedPin])
 
+    const fecthTmod = () => {
+      axios.get('/tmod', {
+        headers: {
+          'x-api-key': 'thisIsOurTmodAPIKey',
+        },
+      })
+        .then(response => response.data)
+        .then((data) => {
+          console.log('Fetched tmod:', data);
+          setAssignedPins(data);
+  
+        });
+
+    }
+      
 
    useEffect(() => {
       
