@@ -27,8 +27,9 @@ const AssignPinForm = (props) => {
     const [selectedParcelCode, setSelectedParcelCode] = useState('');
     const [assignedPins, setAssignedPins] = useState([]);
     const [savedPin, setSavedPin] = useState('');
+    const [pinStatus, setPinStatus] = useState('');
     const [isPinAssigned, setIsPinAssigned] = useState(false);
-   
+    const [isPolygonApproved, setIsPolygonApproved] = useState(false);
     const [isAdmin, setIsAdmin] = useState(true);
     const token =  localStorage.getItem('authToken');
 
@@ -37,6 +38,12 @@ const AssignPinForm = (props) => {
       if (storedUserDetails && storedUserDetails.role === "user") {
         setIsAdmin(false);
        
+      }
+     if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
+      setIsPolygonApproved(true);
+      }else{
+        setIsPolygonApproved(false);
+
       }
      
     }, []);
@@ -73,10 +80,10 @@ const AssignPinForm = (props) => {
             const matchingPin = assignedPins.find(
             (targetPin) => targetPin.pluscode === props.plusCode
             );
-         
-          
+            
+    
               if (matchingPin) {
-                
+                setPinStatus(matchingPin.status)
                 setSavedPin(matchingPin.pin);
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
@@ -353,6 +360,29 @@ const AssignPinForm = (props) => {
 
       };
 
+      //return
+      const handleReturn = () => {
+        fetch(`/approvedpin/${savedPin}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'RETURNED',
+          
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert('RETURNED');
+          })
+          .catch((error) => {
+            console.error('Error updating PIN status:', error);
+          });
+
+      }
+
       const handleDeletePin = () => {
       //add function to delete the PIN
        if (window.confirm("Are you sure you want to delete this PIN?")) {
@@ -400,9 +430,9 @@ const AssignPinForm = (props) => {
 
     return (
     <div className={styles['popup-form-container']}>
-{isPinAssigned &&( 
-<div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
-<p
+      {isPinAssigned &&( 
+      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+      <p
         style={{
           position: 'absolute',
           top: '-10px',
@@ -422,11 +452,13 @@ const AssignPinForm = (props) => {
 
      <div className={styles['button-wrapper']}>
 
-     {isAdmin &&(
+     {isAdmin ?(
       <>
-     <button onClick={handleApprovePin}>APPROVE</button>
-     <button  style={{ backgroundColor: 'red'}}>return</button>
+      <button onClick={handleApprovePin}>APPROVE</button>
+      <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
      </>
+     ) : (
+      <label>Status: {pinStatus}</label>
     )}
 
      <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
