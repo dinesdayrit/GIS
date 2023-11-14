@@ -242,8 +242,9 @@ return [centerLat, centerLng, centroidPlusCode];
           if (geojsonObject) {
           const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
           
-          /////////
+          ////Function to zoom to a specific polygon fetch start point
           const polygons = gisDetails.map(gisDetail => {
+            const geojsonObject = gisDetail.geojson;
             const id = gisDetail.id;
             const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
             const polygon = L.polygon(latlngs, { color: 'violet' });
@@ -251,8 +252,8 @@ return [centerLat, centerLng, centroidPlusCode];
 
               return { id, bounds};
             });
-        
-            console.log("setFetchedPolygons", polygons);
+            console.log("bounds", polygons)
+            
             // Function to zoom to a specific polygon
            const zoomToPolygon = (polygonId) => {
             const polygonToZoom = polygons.find(polygon => polygon.id === polygonId);
@@ -262,6 +263,8 @@ return [centerLat, centerLng, centroidPlusCode];
              if (polygonToZoom) {
             mapRef.current.fitBounds(polygonToZoom.bounds, { maxZoom: 19 });
              console.log(`Polygon with ID ${polygonId} is found.`);
+             console.log(`Polygon with IDs ${polygonToZoom.id} is found.`);
+             
           }  else {
          console.warn(`Polygon with ID ${polygonId} not found.`);
           console.log(`Polygon with ID ${polygonId} not found.`);
@@ -269,10 +272,10 @@ return [centerLat, centerLng, centroidPlusCode];
                }
            };
 
-props.leafletMapRef.current = {
-  zoomToPolygon,
-};
-            //////
+        props.leafletMapRef.current = {
+           zoomToPolygon,
+            };
+            ////////
           let polygonColor;
 
           if (status === 'APPROVED') {
