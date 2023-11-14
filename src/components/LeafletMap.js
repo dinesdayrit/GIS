@@ -45,7 +45,7 @@ mapRef.current = map;
     Identify: false
     };
 
-  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions);
+  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions).addTo(map);;
   
   var wmsBrgyOptions = {
     layers: 'Davao:Barangay',
@@ -59,7 +59,7 @@ mapRef.current = map;
     Identify: false
     };
 
-    var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
+    var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions).addTo(map);;
 
     var davParPob = {
       layers: 'Davao:Parcel_Poblacion',
@@ -73,7 +73,7 @@ mapRef.current = map;
       Identify: false
       };
   
-      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob);
+      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob).addTo(map);;
 
   
     // OSM
