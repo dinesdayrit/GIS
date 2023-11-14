@@ -68,8 +68,12 @@ const handleSearchTitle = () => {
     setTextStatusColor('blue')
     setStatus('APPROVED');
     setIsApproved(true);
-  } else {
+  } else if (matchingTitleSearch.status === 'For Approval') {
     setStatus('FOR APPROVAL');
+    setTextStatusColor('red');
+    setIsApproved(false);
+  } else {
+    setStatus('RETURNED');
     setTextStatusColor('red');
     setIsApproved(false);
   }
