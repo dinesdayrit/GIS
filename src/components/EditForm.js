@@ -64,6 +64,7 @@ const handleSearchTitle = () => {
   setOct(matchingTitleSearch.oct);
   setOctDate(matchingTitleSearch.octdate);
   setStatus(matchingTitleSearch.status);
+  props.onSearchTitle(matchingTitleSearch.id);
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
