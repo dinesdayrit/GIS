@@ -311,7 +311,6 @@ const AssignPinForm = (props) => {
     const formData = {
       rpt_geo_code: props.plusCode,
       pin : savedPin,
-      area : area
     }
   
     
