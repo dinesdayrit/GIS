@@ -137,8 +137,12 @@ useEffect(() => {
       setTextStatusColor('blue')
       setStatus('APPROVED');
       setIsApproved(true);
-    } else {
+    } else if(polygonDetails.status === 'For Approval'){
       setStatus('FOR APPROVAL');
+      setTextStatusColor('red');
+      setIsApproved(false);
+    } else {
+      setStatus('RETURNED');
       setTextStatusColor('red');
       setIsApproved(false);
     }
@@ -166,6 +170,7 @@ useEffect(() => {
       technicalDescription: polygonDetails.technicalDescription,
       technicaldescremarks: polygonDetails.technicaldescremarks,
       geojson: geojson,
+      status: 'For Approval'
     };
 
     fetch(`/GisDetail/${id}`, { 
@@ -193,7 +198,7 @@ useEffect(() => {
 
   const handleApprove = () => {
     // Send a PUT request to update the status in the backend
-    fetch(`/approved/${id}`, {     //ilisan  ug ID
+    fetch(`/approved/${id}`, {  
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -217,6 +222,31 @@ useEffect(() => {
         console.error('Error updating status:', error);
       });
   };
+
+
+
+  const handleReturn = () => {
+    fetch(`/approved/${id}`, {    
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        status: 'RETURNED',
+      
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setStatus('RETURNED');
+        setTextStatusColor('RED');
+        setIsApproved(false);
+      })
+      .catch((error) => {
+        console.error('Error updating status:', error);
+      });
+  }
  
     //Uppercase Inputs
     const handleInputChange = (value, setStateFunction) => {
@@ -446,7 +476,7 @@ useEffect(() => {
           APPROVE
           </button>
 
-          <button  style={{ backgroundColor: 'red'}}>return</button>
+          <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>Return</button>
           </>
         )}
       </div>
