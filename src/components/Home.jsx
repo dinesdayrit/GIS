@@ -1,5 +1,5 @@
 import LeafletMap from "./LeafletMap"
-import React, { useState  } from "react";
+import React, { useState, useEffect, useRef  } from "react";
 import styles from './Home.module.css';
 import AddForm from './AddForm';
 import EditForm from "./EditForm";
@@ -7,6 +7,7 @@ import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
 import KmlUploadForm from "./KmlUploadForm";
 import AssignPinForm from "./AssignPinForm";
+
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
@@ -23,9 +24,14 @@ const Home = (props) => {
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
   const [pinAssign , setPinAssign] = useState('')
- 
+  const [selectedPolygonId, setSelectedPolygonId] = useState(null);
+  const leafletMapRef = useRef();
 
-
+  useEffect(() => {
+    if (selectedPolygonId) {
+        leafletMapRef.current.zoomToPolygon(selectedPolygonId);
+    }
+  }, [selectedPolygonId]);
 
 const handleAssignPin = (savedPin) => {
   setPinAssign(savedPin);
@@ -85,6 +91,11 @@ const handleAssignPin = (savedPin) => {
     setShowEditForm(true);
   };
 
+  const handleSearchTitle = (polygonId) => {
+    setSelectedPolygonId(polygonId); 
+    console.log('polygonId', selectedPolygonId);
+  };
+  
   const parcelDetails = (polygonDetails) => {
     setSelectedPolygonDetails(polygonDetails);
     console.log("kani",selectedPolygonDetails)
@@ -179,6 +190,7 @@ const handleAssignPin = (savedPin) => {
           plusCode = {plusCode}
           // polygonId={selectedPolygonDetails.id}
         onPolygonApproval={handlePolygonApproval}
+        onSearchTitle={handleSearchTitle}
        
   
         
@@ -214,7 +226,9 @@ const handleAssignPin = (savedPin) => {
           onPlusCodesUpdate={handlePlusCodesUpdate}
           isPolygonApproved={isPolygonApproved}
           handleAssignPin={pinAssign}
-         
+          selectedPolygonId={selectedPolygonId}
+          leafletMapRef={leafletMapRef}
+          
        
         />
       </div>
