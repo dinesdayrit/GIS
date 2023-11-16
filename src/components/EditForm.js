@@ -18,6 +18,7 @@ const EditForm = (props) => {
   const [octDate, setOctDate] = useState('');
   const [tct, setTct] = useState('');
   const [tctDate, setTctDate] = useState('');
+  const [pluscode, setPluscode] = useState('');
   // const [technicalDescription, setTechnicalDescription] = useState('');
   // const [technicaldescremarks, setTechnicaldescremarks] = useState('');
   const [status, setStatus] = useState('')
@@ -65,6 +66,7 @@ const handleSearchTitle = () => {
   setOctDate(matchingTitleSearch.octdate);
   setStatus(matchingTitleSearch.status);
   props.onSearchTitle(matchingTitleSearch.id);
+  setPluscode(matchingTitleSearch.pluscode);
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
@@ -111,6 +113,7 @@ useEffect(() => {
     setOctDate(polygonDetails.octDate);
     setTct(polygonDetails.tct);
     setTctDate(polygonDetails.tctDate);
+    setPluscode(props.plusCode);
     // setTechnicalDescription(polygonDetails.technicalDescription);
     // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     }
@@ -438,7 +441,7 @@ useEffect(() => {
         <input
           type="text"
           name="plusCode"
-          value={props.plusCode}
+          value={pluscode}
           readOnly
 
         />
