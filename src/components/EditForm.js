@@ -28,6 +28,7 @@ const EditForm = (props) => {
   const [isAdmin, setIsAdmin] = useState(true);
   const { polygonDetails } = props;
   const [titleSearchData, setTitleSearchData] = useState([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
   const token =  localStorage.getItem('authToken');
 
 useEffect(() => {
@@ -260,10 +261,22 @@ useEffect(() => {
     const handleInputChange = (value, setStateFunction) => {
       setStateFunction(value.toUpperCase());
     };
-  
+    const handleSearchInputChange = (value, setStateFunction) => {
+      const filtered = titleSearchData.filter((search) =>
+        search.title.toLowerCase().includes(value.toLowerCase())
+      );
+    
+      setFilteredSuggestions(filtered);
+      setStateFunction(value.toUpperCase());
+    };
+    const handleSuggestionClick = (suggestion) => {
+      setTitleSearch(suggestion.title);
+      setFilteredSuggestions([]);
+    };
+
   return (
     <div className={styles['popup-form-container']}>
-     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' , justifyContent: 'flex-end'}}>
+     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
       <p style={{fontSize: '.9em'}}>Search Title:</p>
       <input 
        style={{width: '40%', marginLeft: '5px', height: '35px', marginRight: '5px'}}
@@ -271,12 +284,24 @@ useEffect(() => {
         name="title"
         value={titleSearch}
         placeholder='Search...'
-       onChange={(e) => handleInputChange (e.target.value, setTitleSearch)}
+       onChange={(e) => handleSearchInputChange (e.target.value, setTitleSearch)}
       />
       <button
       style={{height: '35px', width: '30px'}}
       onClick={handleSearchTitle}
       ><i className="fa-solid fa-magnifying-glass"></i></button>
+
+{titleSearch && filteredSuggestions.length > 0 && (
+  <ul style={{ position: 'absolute', top: '100%', left: '50', width: '50%', maxHeight: '300%', overflowY: 'auto',backgroundColor: '#fff', border: '1px solid #ccc', borderRadius: '4px', zIndex: '100', padding: '0', listStyleType: 'none' }}>
+    {filteredSuggestions.map((suggestion) => (
+      <li key={suggestion.id} onClick={() => handleSuggestionClick(suggestion)} style={{ padding: '8px', cursor: 'pointer', transition: 'background-color 0.3s', ':hover': { backgroundColor: 'gray' }, ':focus': { backgroundColor: 'gray' } }}>
+        <div>{suggestion.title}</div>
+        <div style={{ fontSize: '0.8em', color: '#888' }}>{suggestion.lotnumber}</div>
+      </li>
+        ))}
+      </ul>
+     )}
+
       </div>
       <form onSubmit={handleUpdate}>
       <div style={{ border: '2px gray solid', padding: '10px' }}>
@@ -303,7 +328,7 @@ useEffect(() => {
         <input
         value ={titleDate}
         onChange={(e) => setTitleDate(e.target.value)}
-        placeholder="MMM d, yyyy"
+        placeholder='YYYY/MM/DD'
         />
         </div>
         </div>
@@ -386,7 +411,7 @@ useEffect(() => {
         <input
         value ={octDate}
         onChange={(e) => setOctDate(e.target.value)}
-        placeholder="MMM d, yyyy"
+        placeholder='YYYY/MM/DD'
         />
         </div>
         </div>
@@ -408,7 +433,7 @@ useEffect(() => {
         <input
         value ={tctDate}
         onChange={(e) => setTctDate(e.target.value)}
-        placeholder="MMM d, yyyy"
+        placeholder='YYYY/MM/DD'
         />
         </div>
         </div>
