@@ -30,6 +30,7 @@ const AssignPinForm = (props) => {
     const [pinStatus, setPinStatus] = useState('');
     const [isPinAssigned, setIsPinAssigned] = useState(false);
     const [isPolygonApproved, setIsPolygonApproved] = useState(false);
+    const [isPinApproved, setIsPinApproved] = useState(false);
     const [isAdmin, setIsAdmin] = useState(true);
     const token =  localStorage.getItem('authToken');
 
@@ -45,6 +46,8 @@ const AssignPinForm = (props) => {
         setIsPolygonApproved(false);
 
       }
+
+
      
     }, []);
 
@@ -64,6 +67,13 @@ const AssignPinForm = (props) => {
         setTctDate(polygonDetails.tctDate);
 
       }
+            
+      if (polygonDetails.status === 'PIN APPROVED'){
+        setIsPinApproved(true);
+      } else {
+        setIsPinApproved(false);
+      }
+
       }, [props.selectedCoordinates]);
 
       useEffect(() =>{
@@ -351,6 +361,7 @@ const AssignPinForm = (props) => {
             alert('APPROVED ASSIGNED PIN');
             updateStatusOnTitleTable();
             sendDataToSMV();
+            setIsPinApproved(false);
           
             
           })
@@ -429,6 +440,7 @@ const AssignPinForm = (props) => {
       }
 
     return (
+
     <div className={styles['popup-form-container']}>
       {isPinAssigned &&( 
       <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
@@ -451,17 +463,23 @@ const AssignPinForm = (props) => {
      />
 
      <div className={styles['button-wrapper']}>
-
-     {isAdmin ?(
-      <>
+        
+     {isAdmin ? (
+       <>
+       {!isPinApproved && (
+         <>
       <button onClick={handleApprovePin}>APPROVE</button>
       <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
+      </>
+      )}
      </>
      ) : (
       <label>Status: {pinStatus}</label>
     )}
 
+    {!isPinApproved && (
      <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
+    )}
 </div>
   </div>
 )}
