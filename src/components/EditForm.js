@@ -43,6 +43,7 @@ useEffect(() => {
     setTitleSearchData(data);
   
   }
+
 )},[titleSearch])
 
 const handleSearchTitle = () => {
@@ -100,7 +101,7 @@ useEffect(() => {
     if (polygonDetails) {
     
     generateGeoJSON();
-    polygonStatus();
+    // polygonStatus();
     setId(polygonDetails.id)
     setTitle(polygonDetails.title);
     setTitleDate(polygonDetails.titleDate);
@@ -119,6 +120,7 @@ useEffect(() => {
     // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     }
     // console.log('isadmin', isAdmin);
+   
   }, [props.selectedCoordinates]);
 
  
@@ -136,27 +138,67 @@ useEffect(() => {
     setGeoJSON(JSON.stringify(feature, null, 2));
   };
 
-  const polygonStatus = () => {
-    if (
-      polygonDetails &&
-      ((polygonDetails.status === 'APPROVED' ||
-        polygonDetails.status === 'PIN ASSIGNED' ||
-        polygonDetails.status === 'PIN APPROVED'))
-     ) {
-      setTextStatusColor('blue')
-      setStatus('APPROVED');
-      setIsApproved(true);
-    } else if(polygonDetails.status === 'For Approval'){
-      setStatus('FOR APPROVAL');
-      setTextStatusColor('red');
-      setIsApproved(false);
-    } else {
-      setStatus('RETURNED');
-      setTextStatusColor('red');
-      setIsApproved(false);
-    }
-  }
+  // const polygonStatus = () => {
+  //   if (
+  //     polygonDetails &&
+  //     ((polygonDetails.status === 'APPROVED' ||
+  //       polygonDetails.status === 'PIN ASSIGNED' ||
+  //       polygonDetails.status === 'PIN APPROVED'))
+  //    ) {
+  //     setTextStatusColor('blue')
+  //     setStatus('APPROVED');
+  //     setIsApproved(true);
+  //   } else if(polygonDetails.status === 'For Approval'){
+  //     setStatus('FOR APPROVAL');
+  //     setTextStatusColor('red');
+  //     setIsApproved(false);
+  //   } else {
+  //     setStatus('RETURNED');
+  //     setTextStatusColor('red');
+  //     setIsApproved(false);
+  //   }
+  // }
+  ///////////////////
+  useEffect(() =>{
+    axios.get('/GisDetail', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    })
+      .then(response => response.data)
+      .then((data) => {
 
+        const matchingPluscode = data.find(
+          (targetPluscode) => targetPluscode.pluscode === pluscode
+        )
+
+        if (matchingPluscode){
+          if(matchingPluscode.status === 'APPROVED' ||
+          matchingPluscode.status === 'PIN ASSIGNED' ||
+          matchingPluscode.status === 'PIN APPROVED')
+          {
+          setTextStatusColor('blue')
+          setStatus('APPROVED');
+          setIsApproved(true);
+        }  else if (matchingPluscode.status === 'For Approval') {
+          setTextStatusColor('red')
+          setStatus('FOR APPROVAL');
+          setIsApproved(false);
+        } else {
+          setTextStatusColor('violet')
+          setStatus('RETURNED');
+          setIsApproved(false);
+        }
+      }
+      })
+      .catch((error) => {
+        console.error('Error fetching PINS:', error);
+        alert('Error fetching PINS:', error);
+      });
+
+   
+  },[props.plusCode])
+  //////////////
   const handleUpdate = (e) => {
     e.preventDefault();
     console.log("update clicked");
@@ -221,7 +263,7 @@ useEffect(() => {
       .then((data) => {
         console.log(data);
         // alert('APPROVED');
-        props.onPolygonApproval();
+        // props.onPolygonApproval();
         console.log('isApproved',isApproved);
         setStatus('APPROVED');
         setTextStatusColor('blue');
