@@ -55,7 +55,7 @@ const LoginForm = ({ onLogin }) => {
     
     <div className='container'>
       <img src={logoIcon} alt="Logo"  style={{ height: '150px' , marginBottom: '5px'}}/>
-      <h1>TAX MAPS</h1>
+      <h1>GIS - TAX MAPPING</h1>
       <form onSubmit={handleSubmit} className='.LoginForm'>
       <div className='loginInput'>
       <i className="fa-regular fa-envelope"></i>
