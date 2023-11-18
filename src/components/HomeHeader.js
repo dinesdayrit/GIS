@@ -43,6 +43,11 @@ const HomeHeader = (props) => {
        setIsDropdownOpen(true);
     }; 
 
+    const signUpForm = () => {
+      props.onToggleSignUpForm();
+      setIsDropdownOpen(true);
+    };
+
     const handleMenuClick = () => {
       setIsDropdownOpen(false);
       props.formOnCancel();
@@ -80,7 +85,7 @@ const HomeHeader = (props) => {
               <div className={styles.bar2}></div>
               <div className={styles.bar3}></div>
               </div>
-              MENU
+              
               </button>
               <div className={styles["dropdown-content"]}>
                 <button onClick={handleAddParcel}>
@@ -109,8 +114,8 @@ const HomeHeader = (props) => {
                 <button onClick={handleMonument}>
                 <i className="fas fa-list-alt" style={{ marginRight: '8px' }}></i>
                 List of Monuments</button>
-
-                {userDetails && <button>
+           
+                {userDetails && <button onClick={signUpForm}>
                 <i className="fas fa-user-alt" style={{ marginRight: '8px' }}></i>
                 {userDetails.name} {userDetails.role}</button>}
 

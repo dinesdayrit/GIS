@@ -7,6 +7,7 @@ import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
 import KmlUploadForm from "./KmlUploadForm";
 import AssignPinForm from "./AssignPinForm";
+import SignUpForm from "./SignUpForm";
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
@@ -23,6 +24,7 @@ const Home = (props) => {
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
   const [pinAssign , setPinAssign] = useState('')
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
  
 
 
@@ -43,6 +45,10 @@ const handleAssignPin = (savedPin) => {
   
   const toggleKmlTable = () => {
     setShowKmlForm(true);
+  };
+
+  const toggleSignUpForm = () => {
+    setShowSignUpForm(!showSignUpForm);
   };
 
   const handleTieLineDraw = (coordinates) => {
@@ -108,6 +114,7 @@ const handleAssignPin = (savedPin) => {
     setShowMonumentForm(false);
     setShowKmlForm(false);
     setShowEditForm(false);
+    setShowSignUpForm(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
@@ -134,6 +141,7 @@ const handleAssignPin = (savedPin) => {
 
   return (
     <div className={styles.home}>
+
     <HomeHeader 
     onAddParcelClick={togglePopupForm}
     onLogoutClick={props.onLogout}
@@ -142,6 +150,7 @@ const handleAssignPin = (savedPin) => {
     onKMLUploadClick={toggleKmlTable}
     onAssignPinClick= {handlePinClick}
     onEditFormOpen = {handleEditClick}
+    onToggleSignUpForm={toggleSignUpForm}
    
     />
      
@@ -192,6 +201,7 @@ const handleAssignPin = (savedPin) => {
           
 
           />}
+
     {showPinAssignForm && 
         <AssignPinForm
             polygonDetails={selectedPolygonDetails}
@@ -200,6 +210,12 @@ const handleAssignPin = (savedPin) => {
             handleAssignPin = {handleAssignPin}
           
           />}
+
+        {showSignUpForm && 
+              <SignUpForm 
+              
+              
+                />}
 
       <div className={styles.mapWrapper}>
         <LeafletMap

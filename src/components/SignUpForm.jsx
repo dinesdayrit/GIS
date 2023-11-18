@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styles from './SignUpForm.module.css';
 
 
 
@@ -8,7 +9,7 @@ const SignUpForm = () => {
     name: "",
     email: "",
     password: "",
-    role: "user"
+    role: "",
   });
   
   
@@ -45,13 +46,18 @@ const SignUpForm = () => {
 };
 
   return (
-    <div className='container'>
-    
+    <div className={styles['popup-form-container']}>
+    <label style={{textAlign: "center"}}>Create Account Type</label>
     <form onSubmit={handleSubmit} className='.LoginForm'>
-    <input  type="name" name="name" placeholder="full Name" onChange={handleChange} className='LoginFormInput' required/>
-      <input type="email" name="email" placeholder="email" onChange={handleChange} className='LoginFormInput' required/>
-      <input type="password" name="password" placeholder="password" onChange={handleChange} className='LoginFormInput' required/>
-      <button type="submit" className='loginButton'>Sign Up</button>
+    <label>User Type: </label>
+      <select id="" name="role" onChange={handleChange} value={formData.role} required>
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+      </select>
+    <input  type="name" name="name" placeholder="Name" onChange={handleChange} className='LoginFormInput' required/>
+      <input type="email" name="email" placeholder="Email" onChange={handleChange} className='LoginFormInput' required/>
+      <input type="password" name="password" placeholder="Password" onChange={handleChange} className='LoginFormInput' required/>
+      <button type="submit" className=''>Create Account</button>
     </form>
     </div>
   );

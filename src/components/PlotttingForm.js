@@ -204,6 +204,7 @@ const handleFileUpload = (e) => {
   reader.onload = (e) => {
     const content = e.target.result;
     Papa.parse(content, {
+      encoding: 'ISO-8859-1',
       header: true,
       skipEmptyLines: true,
       complete: (result) => {
@@ -313,7 +314,7 @@ const handleFileUpload = (e) => {
     });
   };
 
-  reader.readAsText(files[0]);
+  reader.readAsText(files[0], 'ISO-8859-1');
 };
 
  // Fetch data from /monuments
