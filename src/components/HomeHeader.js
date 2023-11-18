@@ -44,8 +44,12 @@ const HomeHeader = (props) => {
     }; 
 
     const signUpForm = () => {
+      if (isAdmin === true) {
       props.onToggleSignUpForm();
       setIsDropdownOpen(true);
+      } else {
+        setIsDropdownOpen(false);
+      }
     };
 
     const handleMenuClick = () => {

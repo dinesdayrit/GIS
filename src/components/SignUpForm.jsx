@@ -36,7 +36,6 @@ const SignUpForm = () => {
       console.log(data, "userRegister");
       if (data.status === "ok") {
         alert("Registration Successful");
-        window.location.href = "/";
       } else {
         alert("Something went wrong");
       }
