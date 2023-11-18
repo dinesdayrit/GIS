@@ -7,6 +7,7 @@ import HomeHeader from "./HomeHeader";
 import ListofMonuments from "./ListOfMonuments";
 import KmlUploadForm from "./KmlUploadForm";
 import AssignPinForm from "./AssignPinForm";
+import SignUpForm from "./SignUpForm";
 
 
 const Home = (props) => {
@@ -23,15 +24,13 @@ const Home = (props) => {
   const [geojsonData, setGeojsonData] = useState('');
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
-  const [pinAssign , setPinAssign] = useState('')
+  const [pinAssign , setPinAssign] = useState('');
   const [selectedPolygonId, setSelectedPolygonId] = useState(null);
   const leafletMapRef = useRef();
+  const [showSignUpForm, setShowSignUpForm] = useState('');
+ 
 
-  useEffect(() => {
-    if (selectedPolygonId) {
-        leafletMapRef.current.zoomToPolygon(selectedPolygonId);
-    }
-  }, [selectedPolygonId]);
+
 
 const handleAssignPin = (savedPin) => {
   setPinAssign(savedPin);
@@ -49,6 +48,10 @@ const handleAssignPin = (savedPin) => {
   
   const toggleKmlTable = () => {
     setShowKmlForm(true);
+  };
+
+  const toggleSignUpForm = () => {
+    setShowSignUpForm(!showSignUpForm);
   };
 
   const handleTieLineDraw = (coordinates) => {
@@ -119,6 +122,7 @@ const handleAssignPin = (savedPin) => {
     setShowMonumentForm(false);
     setShowKmlForm(false);
     setShowEditForm(false);
+    setShowSignUpForm(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
@@ -145,6 +149,7 @@ const handleAssignPin = (savedPin) => {
 
   return (
     <div className={styles.home}>
+
     <HomeHeader 
     onAddParcelClick={togglePopupForm}
     onLogoutClick={props.onLogout}
@@ -153,6 +158,7 @@ const handleAssignPin = (savedPin) => {
     onKMLUploadClick={toggleKmlTable}
     onAssignPinClick= {handlePinClick}
     onEditFormOpen = {handleEditClick}
+    onToggleSignUpForm={toggleSignUpForm}
    
     />
      
@@ -189,8 +195,8 @@ const handleAssignPin = (savedPin) => {
           handleShapeClick={handleShapeClick}
           plusCode = {plusCode}
           // polygonId={selectedPolygonDetails.id}
-        onPolygonApproval={handlePolygonApproval}
-        onSearchTitle={handleSearchTitle}
+          onPolygonApproval={handlePolygonApproval}
+          onSearchTitle={handleSearchTitle}
        
   
         
@@ -204,6 +210,7 @@ const handleAssignPin = (savedPin) => {
           
 
           />}
+
     {showPinAssignForm && 
         <AssignPinForm
             polygonDetails={selectedPolygonDetails}
@@ -212,6 +219,12 @@ const handleAssignPin = (savedPin) => {
             handleAssignPin = {handleAssignPin}
           
           />}
+
+        {showSignUpForm && 
+              <SignUpForm 
+              
+              
+                />}
 
       <div className={styles.mapWrapper}>
         <LeafletMap
