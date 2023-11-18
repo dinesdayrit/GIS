@@ -47,7 +47,7 @@ const SignUpForm = () => {
 
   return (
     <div className={styles['popup-form-container']}>
-    <label style={{textAlign: "center"}}>Create Account Type</label>
+    <label style={{textAlign: "center"}}>Create an Account</label>
     <form onSubmit={handleSubmit} className='.LoginForm'>
     <label>User Type: </label>
       <select id="" name="role" onChange={handleChange} value={formData.role} required>

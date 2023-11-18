@@ -24,7 +24,10 @@ const Home = (props) => {
   const [geojsonData, setGeojsonData] = useState('');
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
-  const [pinAssign , setPinAssign] = useState('')
+  const [pinAssign , setPinAssign] = useState('');
+  const [selectedPolygonId, setSelectedPolygonId] = useState(null);
+  const leafletMapRef = useRef();
+  const [showSignUpForm, setShowSignUpForm] = useState('');
  
 
 
@@ -192,8 +195,8 @@ const handleAssignPin = (savedPin) => {
           handleShapeClick={handleShapeClick}
           plusCode = {plusCode}
           // polygonId={selectedPolygonDetails.id}
-        onPolygonApproval={handlePolygonApproval}
-        onSearchTitle={handleSearchTitle}
+          onPolygonApproval={handlePolygonApproval}
+          onSearchTitle={handleSearchTitle}
        
   
         
