@@ -73,7 +73,7 @@ const HomeHeader = (props) => {
         <div className={styles["navbar-left"]}>
             <img src={logoIcon} alt="Logo" className={styles.logo} style={{ height: '50px' }}/>
             
-             <h3>DAVAO CITY</h3>
+             <h3 style={{marginLeft: '10px'}}>TAX MAPPING</h3>
            
           </div>
           <div className={styles["navbar-right"]}>

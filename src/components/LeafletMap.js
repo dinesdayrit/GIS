@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Map, TileLayer } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
@@ -12,6 +12,7 @@ import * as turf from '@turf/turf';
 import MapLegendForm from './MapLegendForm';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+
 
 const LeafletMap = (props) => {
   // const [selectedCoordinates, setSelectedCoordinates] = useState(null);
@@ -45,7 +46,7 @@ mapRef.current = map;
     Identify: false
     };
 
-  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions);
+  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions).addTo(map);
   
   var wmsBrgyOptions = {
     layers: 'Davao:Barangay',
@@ -59,7 +60,7 @@ mapRef.current = map;
     Identify: false
     };
 
-    var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions);
+    var wmsdavBrgy = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsBrgyOptions).addTo(map);
 
     var davParPob = {
       layers: 'Davao:Parcel_Poblacion',
@@ -73,7 +74,7 @@ mapRef.current = map;
       Identify: false
       };
   
-      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob);
+      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob).addTo(map);
 
   
     // OSM
@@ -173,6 +174,7 @@ map.addLayer(pmDrawnItems);
 
 
 
+
 //calculate area in sqm
 function calculatePolygonArea(coordinates) {
           
@@ -215,7 +217,7 @@ return [centerLat, centerLng, centroidPlusCode];
     })
     .then(response => response.data)
     .then(gisDetails => {
-      gisDetails.forEach(gisDetail => {
+        gisDetails.forEach(gisDetail => {
           const geojsonObject = gisDetail.geojson;
           const id = gisDetail.id;
           const title = gisDetail.title;
@@ -236,9 +238,44 @@ return [centerLat, centerLng, centroidPlusCode];
 
           
           
+      
           if (geojsonObject) {
           const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+          
+          ////Function to zoom to a specific polygon fetch start point
+          const polygons = gisDetails.map(gisDetail => {
+            const geojsonObject = gisDetail.geojson;
+            const id = gisDetail.id;
+            const latlngs = geojsonObject.geometry.coordinates[0].map(coord => [coord[1], coord[0]]);
+            const polygon = L.polygon(latlngs, { color: 'violet' });
+            const bounds = polygon.getBounds();
 
+              return { id, bounds};
+            });
+            console.log("bounds", polygons)
+            
+            // Function to zoom to a specific polygon
+           const zoomToPolygon = (polygonId) => {
+            const polygonToZoom = polygons.find(polygon => polygon.id === polygonId);
+
+  
+           
+             if (polygonToZoom) {
+            mapRef.current.fitBounds(polygonToZoom.bounds, { maxZoom: 19 });
+             console.log(`Polygon with ID ${polygonId} is found.`);
+             console.log(`Polygon with IDs ${polygonToZoom.id} is found.`);
+             
+          }  else {
+         console.warn(`Polygon with ID ${polygonId} not found.`);
+          console.log(`Polygon with ID ${polygonId} not found.`);
+    
+               }
+           };
+
+        props.leafletMapRef.current = {
+           zoomToPolygon,
+            };
+            ////////
           let polygonColor;
 
           if (status === 'APPROVED') {
@@ -433,6 +470,7 @@ return [centerLat, centerLng, centroidPlusCode];
       editableLayers.addLayer(polygon);
     }
     drawnLayerRef.current.addTo(map);
+    
     return () => {
       map.remove();
     
@@ -584,7 +622,7 @@ if (props.kmlData) {
     };
 
   
-  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData ]);
+  }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData, props.leafletMapRef, props.selectedPolygonId ]);
 
   console.log("props.isPolygonApproved", props.isPolygonApproved )
 

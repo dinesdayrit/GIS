@@ -27,8 +27,10 @@ const AssignPinForm = (props) => {
     const [selectedParcelCode, setSelectedParcelCode] = useState('');
     const [assignedPins, setAssignedPins] = useState([]);
     const [savedPin, setSavedPin] = useState('');
+    const [pinStatus, setPinStatus] = useState('');
     const [isPinAssigned, setIsPinAssigned] = useState(false);
-   
+    const [isPolygonApproved, setIsPolygonApproved] = useState(false);
+    const [isPinApproved, setIsPinApproved] = useState(false);
     const [isAdmin, setIsAdmin] = useState(true);
     const token =  localStorage.getItem('authToken');
 
@@ -38,6 +40,14 @@ const AssignPinForm = (props) => {
         setIsAdmin(false);
        
       }
+     if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
+      setIsPolygonApproved(true);
+      }else{
+        setIsPolygonApproved(false);
+
+      }
+
+
      
     }, []);
 
@@ -55,8 +65,52 @@ const AssignPinForm = (props) => {
         setOctDate(polygonDetails.octDate);
         setTct(polygonDetails.tct);
         setTctDate(polygonDetails.tctDate);
+
       }
+            
+      if (polygonDetails.status === 'PIN APPROVED'){
+        setIsPinApproved(true);
+      } else {
+        setIsPinApproved(false);
+      }
+
       }, [props.selectedCoordinates]);
+
+      useEffect(() =>{
+        axios.get('/tmod', {
+          headers: {
+            'x-api-key': 'thisIsOurTmodAPIKey',
+          },
+        })
+          .then(response => response.data)
+          .then((data) => {
+            console.log('Fetched tmod:', data);
+            setAssignedPins(data);
+    
+            const matchingPin = assignedPins.find(
+            (targetPin) => targetPin.pluscode === props.plusCode
+            );
+            
+    
+              if (matchingPin) {
+                setPinStatus(matchingPin.status)
+                setSavedPin(matchingPin.pin);
+                setPin(matchingPin.pin);
+                setIsPinAssigned(true);
+              } else if(!matchingPin){
+                setSavedPin("NO ASSIGNED PIN YET");
+                setIsPinAssigned(false);
+              }
+  
+          })
+          .catch((error) => {
+            console.error('Error fetching PINS:', error);
+            alert('Error fetching PINS:', error);
+          });
+  
+          autoPopulateParcelCode();
+       
+      },[props.plusCode, savedPin])
 
     const fecthTmod = () => {
       axios.get('/tmod', {
@@ -72,43 +126,7 @@ const AssignPinForm = (props) => {
         });
 
     }
-      useEffect(() =>{
-        
-        axios.get('/tmod', {
-          headers: {
-            'x-api-key': 'thisIsOurTmodAPIKey',
-          },
-        })
-          .then(response => response.data)
-          .then((data) => {
-            console.log('Fetched tmod:', data);
-            setAssignedPins(data);
-    
-            const matchingPin = assignedPins.find(
-            (targetPin) => targetPin.pluscode === props.plusCode
-            );
-         
-          
-              if (matchingPin) {
-                
-                setSavedPin(matchingPin.pin);
-                setPin(matchingPin.pin);
-                setIsPinAssigned(true);
-              } else if(!matchingPin){
-                // setSavedPin("NO ASSIGNED PIN YET");
-                setIsPinAssigned(false);
-              }
-  
-          })
-          .catch((error) => {
-            console.error('Error fetching PINS:', error);
-            alert('Error fetching PINS:', error);
-          });
-  
-          autoPopulateParcelCode();
-       
-      },[props.plusCode])
-
+      
 
    useEffect(() => {
       
@@ -310,8 +328,7 @@ const AssignPinForm = (props) => {
   const sendDataToSMV = async  () => {
     const formData = {
       rpt_geo_code: props.plusCode,
-      pin : pin,
-      area : area
+      pin : savedPin,
     }
   
     
@@ -344,6 +361,7 @@ const AssignPinForm = (props) => {
             alert('APPROVED ASSIGNED PIN');
             updateStatusOnTitleTable();
             sendDataToSMV();
+            setIsPinApproved(false);
           
             
           })
@@ -352,6 +370,29 @@ const AssignPinForm = (props) => {
           });
 
       };
+
+      //return
+      const handleReturn = () => {
+        fetch(`/approvedpin/${savedPin}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'RETURNED',
+          
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            alert('RETURNED');
+          })
+          .catch((error) => {
+            console.error('Error updating PIN status:', error);
+          });
+
+      }
 
       const handleDeletePin = () => {
       //add function to delete the PIN
@@ -399,10 +440,11 @@ const AssignPinForm = (props) => {
       }
 
     return (
+
     <div className={styles['popup-form-container']}>
-{isPinAssigned &&( 
-<div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
-<p
+      {isPinAssigned &&( 
+      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+      <p
         style={{
           position: 'absolute',
           top: '-10px',
@@ -421,15 +463,23 @@ const AssignPinForm = (props) => {
      />
 
      <div className={styles['button-wrapper']}>
-
-     {isAdmin &&(
-      <>
-     <button onClick={handleApprovePin}>APPROVE</button>
-     <button  style={{ backgroundColor: 'red'}}>return</button>
+        
+     {isAdmin ? (
+       <>
+       {!isPinApproved && (
+         <>
+      <button onClick={handleApprovePin}>APPROVE</button>
+      <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
+      </>
+      )}
      </>
+     ) : (
+      <label>Status: {pinStatus}</label>
     )}
 
+    {!isPinApproved && (
      <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
+    )}
 </div>
   </div>
 )}
