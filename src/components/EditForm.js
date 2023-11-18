@@ -197,7 +197,7 @@ useEffect(() => {
       });
 
    
-  },[props.plusCode])
+  },[pluscode])
   //////////////
   const handleUpdate = (e) => {
     e.preventDefault();
