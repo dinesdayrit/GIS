@@ -50,6 +50,7 @@ const SignUpForm = () => {
     <form onSubmit={handleSubmit} className='.LoginForm'>
     <label>User Type: </label>
       <select id="" name="role" onChange={handleChange} value={formData.role} required>
+      <option></option>
       <option value="admin">Admin</option>
       <option value="user">User</option>
       </select>
