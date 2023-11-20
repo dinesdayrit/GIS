@@ -25,11 +25,15 @@ const Home = (props) => {
   const [plusCodes, setPlusCodes] = useState([]);
   const [isPolygonApproved, setIsPolygonApproved] = useState(false);
   const [pinAssign , setPinAssign] = useState('');
-  const [selectedPolygonId, setSelectedPolygonId] = useState(null);
+  const [selectedPolygonId, setSelectedPolygonId] = useState('');
   const leafletMapRef = useRef();
   const [showSignUpForm, setShowSignUpForm] = useState('');
  
-
+  useEffect(() => {
+    if (selectedPolygonId) {
+        leafletMapRef.current.zoomToPolygon(selectedPolygonId);
+    }
+  }, [selectedPolygonId]);
 
 
 const handleAssignPin = (savedPin) => {
@@ -89,14 +93,15 @@ const handleAssignPin = (savedPin) => {
 
 ;
 
-  const handleEditClick = (polygonDetails) => {
+  const handleEditClick = ()=> {
    
     setShowEditForm(true);
   };
 
   const handleSearchTitle = (polygonId) => {
+    console.log('polygonId', polygonId);
     setSelectedPolygonId(polygonId); 
-    console.log('polygonId', selectedPolygonId);
+    
   };
   
   const parcelDetails = (polygonDetails) => {
