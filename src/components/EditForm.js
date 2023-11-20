@@ -46,6 +46,8 @@ useEffect(() => {
 
 )},[titleSearch])
 
+
+
 const handleSearchTitle = () => {
   const matchingTitleSearch = titleSearchData.find(
     (search) => search.title === titleSearch
@@ -69,6 +71,7 @@ const handleSearchTitle = () => {
   setStatus(matchingTitleSearch.status);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
+  console.log('idmatch', matchingTitleSearch.id)
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
@@ -138,27 +141,7 @@ useEffect(() => {
     setGeoJSON(JSON.stringify(feature, null, 2));
   };
 
-  // const polygonStatus = () => {
-  //   if (
-  //     polygonDetails &&
-  //     ((polygonDetails.status === 'APPROVED' ||
-  //       polygonDetails.status === 'PIN ASSIGNED' ||
-  //       polygonDetails.status === 'PIN APPROVED'))
-  //    ) {
-  //     setTextStatusColor('blue')
-  //     setStatus('APPROVED');
-  //     setIsApproved(true);
-  //   } else if(polygonDetails.status === 'For Approval'){
-  //     setStatus('FOR APPROVAL');
-  //     setTextStatusColor('red');
-  //     setIsApproved(false);
-  //   } else {
-  //     setStatus('RETURNED');
-  //     setTextStatusColor('red');
-  //     setIsApproved(false);
-  //   }
-  // }
-  ///////////////////
+ 
   useEffect(() =>{
     axios.get('/GisDetail', {
       headers: {

@@ -46,7 +46,7 @@ mapRef.current = map;
     Identify: false
     };
 
-  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions).addTo(map);
+  var wmsdavTechDesc = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsTechDescOptions);
   
   var wmsBrgyOptions = {
     layers: 'Davao:Barangay',
@@ -74,7 +74,7 @@ mapRef.current = map;
       Identify: false
       };
   
-      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob).addTo(map);
+      var wmsPobDistTaxmaps = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', davParPob);
 
   
     // OSM
@@ -252,26 +252,24 @@ return [centerLat, centerLng, centroidPlusCode];
 
               return { id, bounds};
             });
-            console.log("bounds", polygons)
+            // console.log("bounds", polygons)
             
             // Function to zoom to a specific polygon
            const zoomToPolygon = (polygonId) => {
             const polygonToZoom = polygons.find(polygon => polygon.id === polygonId);
 
-  
-           
              if (polygonToZoom) {
             mapRef.current.fitBounds(polygonToZoom.bounds, { maxZoom: 19 });
-             console.log(`Polygon with ID ${polygonId} is found.`);
-             console.log(`Polygon with IDs ${polygonToZoom.id} is found.`);
+            //  console.log(`Polygon with ID ${polygonId} is found.`);
+            //  console.log(`Polygon with IDs ${polygonToZoom.id} is found.`);
              
           }  else {
          console.warn(`Polygon with ID ${polygonId} not found.`);
-          console.log(`Polygon with ID ${polygonId} not found.`);
+          // console.log(`Polygon with ID ${polygonId} not found.`);
     
                }
            };
-
+          
         props.leafletMapRef.current = {
            zoomToPolygon,
             };
@@ -422,8 +420,8 @@ return [centerLat, centerLng, centroidPlusCode];
             polygon.addTo(editableLayers);
 
             function updatePolygonInfo() {
-              console.log("updatePolygonInfo function called");
-              console.log("Props:", props);
+              // console.log("updatePolygonInfo function called");
+              // console.log("Props:", props);
 
               const updatedPolygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
               const updatedCenterCoordinate = calculateCenterCoordinate(updatedPolygonCoordinates);
@@ -624,7 +622,7 @@ if (props.kmlData) {
   
   }, [props.isPolygonApproved, props.polygonCoordinates, props.kmlData, props.leafletMapRef, props.selectedPolygonId ]);
 
-  console.log("props.isPolygonApproved", props.isPolygonApproved )
+  // console.log("props.isPolygonApproved", props.isPolygonApproved )
 
   return <div id="leaflet-map" style={{ width: '100%', height: '91.2vh', zIndex: '1', borderRadius: '.7%', border: '2px gray solid'}}></div>;
 };
