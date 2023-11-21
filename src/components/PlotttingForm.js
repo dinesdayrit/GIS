@@ -216,7 +216,6 @@ const handleFileUpload = (e) => {
           );
 
           if (!userConfirmed) {
-            // User canceled the upload
             return;
           }
 
