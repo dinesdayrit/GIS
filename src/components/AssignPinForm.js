@@ -238,6 +238,7 @@ const AssignPinForm = (props) => {
                 brgyCode: selectedBrgyCode,
                 sectionCode: selectedSectionCode,
                 parcelCode: pin.slice(-2),
+                RPTGeoCode:`${selectedDistrictCode}${selectedBrgyCode}-${props.plusCode}-${selectedSectionCode}${pin.slice(-2)}`,
                 plusCode: props.plusCode,
                 title: title,
                 titleDate: titleDate,
