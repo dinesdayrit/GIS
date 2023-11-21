@@ -112,7 +112,7 @@ const HomeHeader = (props) => {
                            ) : (
                               <i className="fa-solid fa-square-check" style={{ marginRight: '8px' }}></i>
                            )}
-                {!isAdmin ? 'Assign PIN' : 'PIN Approval'}
+                {!isAdmin ? 'Assign PIN' : 'PIN Approval/Assign'}
                 </button>
 
                 <button onClick={handleMonument}>

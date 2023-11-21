@@ -209,9 +209,17 @@ const handleFileUpload = (e) => {
       skipEmptyLines: true,
       complete: (result) => {
 
-        const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
-
         if (result.data.length > 0) {
+
+          const userConfirmed = window.confirm(
+            'Please check the CSV data formats before uploading. Are you sure you want to proceed?'
+          );
+
+          if (!userConfirmed) {
+            return;
+          }
+
+          const columnsToFilter = ['LastName', 'FirstName', 'MiddleName', 'Suffix'];
 
           const filteredData = result.data.filter((row, index) => {
           if (index === 0) {
@@ -225,12 +233,12 @@ const handleFileUpload = (e) => {
 
           if (filteredData.length > 0) {
           const headerToData = filteredData[0];
-          const areaValue = parseFloat(headerToData['Area']);
-          const truncatedArea = areaValue.toFixed(3);
+          const areaValue = parseFloat(headerToData['Area'].replace(/,/g, ''));
+          const truncatedArea = isNaN(areaValue) ? '' : areaValue.toFixed(3);
 
           const parseDate = (dateString) => {
             
-            if (!dateString) {
+            if (!dateString) { 
               return null;
             }
            
@@ -288,13 +296,16 @@ const handleFileUpload = (e) => {
           const numberOfPointsValue = headerToData['NumberOfPoints'] || '';
           setNumberOfPoints(numberOfPointsValue);
 
-          const tieLines = result.data.map((row) => ({
-            c14: row['DegreeAngle'] || '',
-            d14: row['Degree'] || '',
-            e14: row['Minutes'] || '',
-            f14: row['MinutesAngle'] || '',
-            g14: row['Distance'] || '',
-          }));
+          const tieLines = result.data
+            .filter(row => !(row['DegreeAngle'] === '' && row['Degree'] === '' && row['Minutes'] === '' && row['MinutesAngle'] === '' && row['Distance'] === ''))
+            .map((row) => ({
+              c14: row['DegreeAngle'] || '',
+              d14: row['Degree'] || '',
+              e14: row['Minutes'] || '',
+              f14: row['MinutesAngle'] || '',
+              g14: row['Distance'] || '',
+            }));
+
 
           setFormData({
             monument: headerToData['Monument'] || '',
