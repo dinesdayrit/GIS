@@ -83,7 +83,7 @@ const handleSearchTitle = () => {
   } else {
     setStatus('RETURNED');
     setTextStatusColor('red');
-    setIsApproved(false);
+    setIsApproved(true);
   }
 
  } else {
@@ -168,9 +168,9 @@ useEffect(() => {
           setStatus('FOR APPROVAL');
           setIsApproved(false);
         } else {
-          setTextStatusColor('violet')
+          setTextStatusColor('red')
           setStatus('RETURNED');
-          setIsApproved(false);
+          setIsApproved(true);
         }
       }
       })
@@ -260,12 +260,29 @@ useEffect(() => {
 
 
   const handleReturn = () => {
-    fetch(`/approved/${id}`, {    
+    fetch(`/GisDetail/${id}`, {    
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
+      title: title,
+      titleDate: titleDate,
+      surveyNumber: surveyNumber,
+      lotNumber: lotNumber,
+      blkNumber: blkNumber,
+      area: area,
+      boundary: boundary,
+      ownerName: ownerName,
+      oct: oct,
+      octDate: octDate,
+      tct: tct,
+      tctDate: tctDate,
+      plusCode: props.plusCode,
+      technicalDescription: polygonDetails.technicalDescription,
+      technicaldescremarks: polygonDetails.technicaldescremarks,
+      geojson: geojson,
         status: 'RETURNED',
       
       }),
@@ -275,7 +292,7 @@ useEffect(() => {
         console.log(data);
         setStatus('RETURNED');
         setTextStatusColor('RED');
-        setIsApproved(false);
+        setIsApproved(true);
       })
       .catch((error) => {
         console.error('Error updating status:', error);
