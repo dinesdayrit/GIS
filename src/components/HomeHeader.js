@@ -108,7 +108,7 @@ const HomeHeader = (props) => {
 
                 <button onClick={handdlePinClick}>
                 {!isAdmin ? (
-                              <i className="fas fa-file-alt" style={{ marginRight: '8px' }}></i>
+                              <i className="fa-solid fa-map-pin" style={{ marginRight: '8px' }}></i>
                            ) : (
                               <i className="fa-solid fa-square-check" style={{ marginRight: '8px' }}></i>
                            )}
