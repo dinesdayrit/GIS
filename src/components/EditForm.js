@@ -83,7 +83,7 @@ const handleSearchTitle = () => {
   } else {
     setStatus('RETURNED');
     setTextStatusColor('red');
-    setIsApproved(false);
+    setIsApproved(true);
   }
 
  } else {
@@ -168,9 +168,9 @@ useEffect(() => {
           setStatus('FOR APPROVAL');
           setIsApproved(false);
         } else {
-          setTextStatusColor('violet')
+          setTextStatusColor('red')
           setStatus('RETURNED');
-          setIsApproved(false);
+          setIsApproved(true);
         }
       }
       })
@@ -275,7 +275,7 @@ useEffect(() => {
         console.log(data);
         setStatus('RETURNED');
         setTextStatusColor('RED');
-        setIsApproved(false);
+        setIsApproved(true);
       })
       .catch((error) => {
         console.error('Error updating status:', error);

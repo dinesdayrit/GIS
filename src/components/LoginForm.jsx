@@ -32,7 +32,7 @@ const LoginForm = ({ onLogin }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, 'userLogin');
+        // console.log(data, 'userLogin');
         if (data.status === 'ok') {
           alert('Login Successful');
            localStorage.setItem('authToken', data.token);
