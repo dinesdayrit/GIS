@@ -260,12 +260,29 @@ useEffect(() => {
 
 
   const handleReturn = () => {
-    fetch(`/approved/${id}`, {    
+    fetch(`/GisDetail/${id}`, {    
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
+      title: title,
+      titleDate: titleDate,
+      surveyNumber: surveyNumber,
+      lotNumber: lotNumber,
+      blkNumber: blkNumber,
+      area: area,
+      boundary: boundary,
+      ownerName: ownerName,
+      oct: oct,
+      octDate: octDate,
+      tct: tct,
+      tctDate: tctDate,
+      plusCode: props.plusCode,
+      technicalDescription: polygonDetails.technicalDescription,
+      technicaldescremarks: polygonDetails.technicaldescremarks,
+      geojson: geojson,
         status: 'RETURNED',
       
       }),
