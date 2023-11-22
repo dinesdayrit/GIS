@@ -724,7 +724,9 @@ const AssignPinForm = (props) => {
         />
         </div>
     <div className={styles['button-wrapper']} style={{marginTop: "10px"}}>
+    {!isPinApproved && !isPinAssigned &&(
         <button type="submit" style={{width: "40%"}}>SAVE</button>
+        )}
     </div>
     </form>
     </>
