@@ -40,12 +40,7 @@ const AssignPinForm = (props) => {
         setIsAdmin(false);
        
       }
-     if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
-      setIsPolygonApproved(true);
-      }else{
-        setIsPolygonApproved(false);
-
-      }
+    
 
 
      
@@ -107,7 +102,12 @@ const AssignPinForm = (props) => {
             console.error('Error fetching PINS:', error);
             alert('Error fetching PINS:', error);
           });
-  
+          if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
+            setIsPolygonApproved(true);
+            }else{
+              setIsPolygonApproved(false);
+      
+            }
           autoPopulateParcelCode();
        
       },[props.plusCode, savedPin])
@@ -441,8 +441,10 @@ const AssignPinForm = (props) => {
       }
 
     return (
-
+    
     <div className={styles['popup-form-container']}>
+    {isPolygonApproved ?( 
+      <>
       {isPinAssigned &&( 
       <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
@@ -482,8 +484,11 @@ const AssignPinForm = (props) => {
      <button onClick={handleDeletePin} style={{ backgroundColor: 'red'}}><i className="fa-solid fa-trash-can"></i></button>
     )}
 </div>
+
   </div>
+  
 )}
+
 
     <form onSubmit={handleSubmit} >
   {!isPinAssigned &&(
@@ -581,7 +586,9 @@ const AssignPinForm = (props) => {
       />
 
     </div>
+    
   )}
+
 
 
     <div style={{ border: '2px gray solid', padding: '10px', marginTop: '15px' }}>
@@ -720,6 +727,13 @@ const AssignPinForm = (props) => {
         <button type="submit" style={{width: "40%"}}>SAVE</button>
     </div>
     </form>
+    </>
+  ) : (
+    // Display this if isPolygonApproved is false
+    <div style={{alignItems: 'center', color: 'red'}}>SELECT AN APPROVED PARCEL</div>
+  )
+    }
+
     </div>
     )
 }
