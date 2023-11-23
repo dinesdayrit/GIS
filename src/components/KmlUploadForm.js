@@ -10,6 +10,7 @@ const KmlTable = (props) => {
     const [tableRows, setTableRows] = useState([]);
     const [extractedData, setExtractedData] = useState(null);
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
+    const [loading, setLoading] = useState(false);
     const token =  localStorage.getItem('authToken');
     const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
@@ -99,12 +100,14 @@ const KmlTable = (props) => {
 
 //Direct Save to Database
   const handleSaveToDatabase = () => {
+    setLoading(true);
     let savedCount = 0;
 
     const handleSaveComplete = () => {
       savedCount++;
       if (savedCount === extractedData.length) {
         alert('KML Data Saved to Database');
+        setLoading(false);
         setKmlDetailsSaved(true);
       }
     };
@@ -178,6 +181,7 @@ const KmlTable = (props) => {
             handleSaveComplete();
           })
           .catch((error) => {
+            setLoading(false);
             alert('Error saving KML Data to the database:', error);
           });
       }
@@ -198,10 +202,12 @@ const KmlTable = (props) => {
                 onChange={handleKMLUpload}
                 style={{ color: 'black', height: '10%' }}
                 />
-                <button onClick={handleSaveToDatabase}>Save to Database</button>
+                <button onClick={handleSaveToDatabase} disabled={loading}>
+                  {loading ? <i className="fa-solid fa-spinner fa-spin fa-spin-reverse"></i> : 'Save to Database'}
+                </button>
                 </div>
 
-                {kmlDetailsSaved && <p style={{fontWeight: 'bold', color: '#4CAF50'}}>KML Data Saved!</p>}
+                  {kmlDetailsSaved && <p style={{fontWeight: 'bold', color: '#4CAF50'}}>KML Data Saved!</p>}
 
                 <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
                   <thead>
