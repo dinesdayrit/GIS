@@ -11,6 +11,7 @@ const KmlTable = (props) => {
     const [extractedData, setExtractedData] = useState(null);
     const [extractedCoordinates, setExtractedCoordinates] = useState([]);
     const token =  localStorage.getItem('authToken');
+    const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
     const handleKMLUpload = (e) => {
       const file = e.target.files[0];
@@ -161,6 +162,7 @@ const KmlTable = (props) => {
           plusCode: plusCodesForData,
           geojson: geojsonString,
           status: 'For Approval',
+          username: storedUserDetails.name,
         };
 
         fetch('/GisDetail', {
