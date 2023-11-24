@@ -19,8 +19,8 @@ const EditForm = (props) => {
   const [tct, setTct] = useState('');
   const [tctDate, setTctDate] = useState('');
   const [pluscode, setPluscode] = useState('');
-  // const [technicalDescription, setTechnicalDescription] = useState('');
-  // const [technicaldescremarks, setTechnicaldescremarks] = useState('');
+  const [technicalDescription, setTechnicalDescription] = useState('');
+  const [technicaldescremarks, setTechnicaldescremarks] = useState('');
   const [status, setStatus] = useState('')
   const [textStatusColor, setTextStatusColor] = useState('');
   const [geojson, setGeoJSON] = useState('');
@@ -69,6 +69,8 @@ const handleSearchTitle = () => {
   setOct(matchingTitleSearch.oct);
   setOctDate(matchingTitleSearch.octdate);
   setStatus(matchingTitleSearch.status);
+  setTechnicalDescription(matchingTitleSearch.technicalDescription);
+  setTechnicaldescremarks(matchingTitleSearch.technicaldescremarks);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
   console.log('idmatch', matchingTitleSearch.id)
@@ -119,8 +121,8 @@ useEffect(() => {
     setTct(polygonDetails.tct);
     setTctDate(polygonDetails.tctDate);
     setPluscode(props.plusCode);
-    // setTechnicalDescription(polygonDetails.technicalDescription);
-    // setTechnicaldescremarks(polygonDetails.technicaldescremarks);
+    setTechnicalDescription(polygonDetails.technicalDescription);
+    setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     }
     // console.log('isadmin', isAdmin);
    
@@ -479,7 +481,7 @@ useEffect(() => {
         </div>
         </div>
         
-{/* 
+
       <label>Technnnical Description*</label>
       <textarea
           rows={6}
@@ -489,9 +491,9 @@ useEffect(() => {
           onChange={(e) => setTechnicalDescription(e.target.value)}
           required 
 
-          /> */}
+          />
 
-      {/* <label>REMARKS</label>
+      <label>Technical Desc. Remarks</label>
       <textarea 
           rows={3}
           type="text"
@@ -500,7 +502,7 @@ useEffect(() => {
           onChange={(e) => {
             setTechnicaldescremarks(e.target.value);
           }}
-        /> */}
+        />
 
 
         <label>Plus Code*</label>
