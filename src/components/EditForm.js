@@ -69,7 +69,7 @@ const handleSearchTitle = () => {
   setOct(matchingTitleSearch.oct);
   setOctDate(matchingTitleSearch.octdate);
   setStatus(matchingTitleSearch.status);
-  setTechnicalDescription(matchingTitleSearch.technicalDescription);
+  setTechnicalDescription(matchingTitleSearch.tecnicaldescription);
   setTechnicaldescremarks(matchingTitleSearch.technicaldescremarks);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
