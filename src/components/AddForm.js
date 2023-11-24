@@ -325,10 +325,10 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       
     };
 
-    if (!geojson || !geojson.coordinates) {
-      alert('No coordinates drawn. Please draw the polygon first.');
-      return; 
-    }
+    // if (!geojson.geometry.coordinates) {
+    //   alert('No coordinates drawn. Please draw the polygon first.');
+    //   return; 
+    // }
 
     fetch('/GisDetail', {
       method: 'POST',
@@ -636,7 +636,6 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           placeholder='Pluscode'
           value={props.plusCode}
           readOnly
-          required
         
         />
 
