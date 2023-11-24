@@ -402,7 +402,6 @@ useEffect(() => {
       name="blkNumber"
       value={blkNumber}
       onChange={(e) => handleInputChange (e.target.value, setBlkNumber)}
-      required
       />
       </div>
       <div>

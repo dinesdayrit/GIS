@@ -438,6 +438,7 @@ useEffect(() => {
          value={tieLine.c14}
          placeholder='N/S'
           onChange={(e) => handleChange(e, index)}
+          required
              >
         <option value={null} placeholder='N/S'></option>
          <option value="N">N</option>
@@ -449,6 +450,7 @@ useEffect(() => {
             name={`tieLines[${index}].d14`}
             value={tieLine.d14}
             onChange={(e) => handleChange(e, index)}
+            required
           />
           <input
             style={{width: '20%'}}
@@ -456,6 +458,7 @@ useEffect(() => {
             name={`tieLines[${index}].e14`}
             value={tieLine.e14}
             onChange={(e) => handleChange(e, index)}
+            required
           />
           <select
             style={{width: '30%'}}
@@ -464,6 +467,7 @@ useEffect(() => {
             placeholder='E/W'
             value={tieLine.f14}
             onChange={(e) => handleChange(e, index)}
+            required
             >
         <option value={null}></option>
          <option value="E">E</option>
@@ -477,6 +481,7 @@ useEffect(() => {
             name={`tieLines[${index}].g14`}
             value={tieLine.g14}
             onChange={(e) => handleChange(e, index)}
+            required
        
           />
           
