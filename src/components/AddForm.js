@@ -277,7 +277,6 @@ useEffect(() => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const formattedTitleDate = titleDate instanceof Date && !isNaN(titleDate)
   ? titleDate.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -324,11 +323,12 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       username: storedUserDetails.name,
       
     };
+   
+    if (props.selectedCoordinates.length === 0) {
+      alert('No coordinates drawn. Please draw the polygon first.');
+     
+    } else {
 
-    // if (!geojson.geometry.coordinates) {
-    //   alert('No coordinates drawn. Please draw the polygon first.');
-    //   return; 
-    // }
 
     fetch('/GisDetail', {
       method: 'POST',
@@ -347,7 +347,9 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       } else {
         alert("Something went wrong");
       }
-    });
+     });
+
+   }
   };
 
   //Extracted Data from CSV file
