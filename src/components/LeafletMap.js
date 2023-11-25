@@ -329,9 +329,13 @@ return [centerLat, centerLng, centroidPlusCode];
             const textMarker = L.marker(polygonCenter, {
               icon: L.divIcon({
                 className: 'text-marker',
-                html: `<span style="font-weight: bold; ">
-                 ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
-                </span>`,
+                html: `<div style="text-align: center;">
+                        <span style="font-weight: bold; ">
+                         ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
+                        </span>
+                           <br/>
+                            Lot:${lotNumber}
+                       </div>`,
               }),
             });
             
