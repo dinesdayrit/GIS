@@ -86,7 +86,11 @@
     /* background-color: #444434; */
    
   }
-  
+  .popup-form-container button:disabled {
+
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   .inputWrapper {
    display: flex;

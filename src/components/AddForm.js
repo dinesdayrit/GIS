@@ -37,10 +37,12 @@ const AddForm = (props) => {
   const [businessName, setBusinessName] = useState('');
   const [remarks, setRemarks] = useState('');
   const [csvData, setCsvData] = useState(null);
+  const [isDrawed, setIsDrawed] = useState(false);
   const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
   const token =  localStorage.getItem('authToken');
 
   
+
   
   //Uppercase Inputs
   const handleInputChange = (value, setStateFunction) => {
@@ -264,15 +266,15 @@ useEffect(() => {
   };
   
 
-  
-  
-
-
   const handleDrawClick = () => {
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
     props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2));
-  
+    // if (!props.drawError) {
+    setIsDrawed(true);
+    // } else {
+    //   setIsDrawed(false);
+    // }
   };
 
   const handleSubmit = (e) => {
@@ -658,11 +660,11 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
           onChange={(e) => setGeoJSON(e.target.value)}
           readOnly
         /> */}
-        
+      
         <div style={{display: 'flex', justifyContent: 'center'}}>
-        <button type="submit" style={{width: '60%'}}>SAVE</button>
-    
+         <button type="submit" disabled={!isDrawed}  style={{width: '60%'}}>SAVE</button>
         </div>
+   
       </form>
 
     </div>

@@ -38,7 +38,7 @@ const Home = (props) => {
 
 const handleAssignPin = (savedPin) => {
   setPinAssign(savedPin);
-  console.log('naClick PIN', savedPin);
+  // console.log('naClick PIN', savedPin);
 }
 
   const handleKMLUpload = (convertedGeoJSON) => {
@@ -74,7 +74,7 @@ const handleAssignPin = (savedPin) => {
 
 
   const handleDraw = (coordinates) => {
-    console.log('click')
+    // console.log('click')
     try {
       const parsedCoordinates = JSON.parse(coordinates);
       if (Array.isArray(parsedCoordinates) && parsedCoordinates.length >= 3) {
@@ -91,7 +91,6 @@ const handleAssignPin = (savedPin) => {
     setShowPopupForm(!showPopupForm);
   };
 
-;
 
   const handleEditClick = ()=> {
    
