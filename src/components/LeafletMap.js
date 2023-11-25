@@ -235,6 +235,7 @@ return [centerLat, centerLng, centroidPlusCode];
           const tct = gisDetail.prevtct;
           const tctDate = gisDetail.tctdate;
           const status = gisDetail.status;
+          const username = gisDetail.username;
 
           
           
@@ -364,6 +365,7 @@ return [centerLat, centerLng, centroidPlusCode];
             boundary,
             technicalDescription,
             technicaldescremarks,
+            username,
             status,
             })
         });

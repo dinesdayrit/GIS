@@ -21,6 +21,7 @@ const EditForm = (props) => {
   const [pluscode, setPluscode] = useState('');
   const [technicalDescription, setTechnicalDescription] = useState('');
   const [technicaldescremarks, setTechnicaldescremarks] = useState('');
+  const [plottedBy, setPlottedBy] = useState('')
   const [status, setStatus] = useState('')
   const [textStatusColor, setTextStatusColor] = useState('');
   const [geojson, setGeoJSON] = useState('');
@@ -71,6 +72,7 @@ const handleSearchTitle = () => {
   setStatus(matchingTitleSearch.status);
   setTechnicalDescription(matchingTitleSearch.tecnicaldescription);
   setTechnicaldescremarks(matchingTitleSearch.technicaldescremarks);
+  setPlottedBy(matchingTitleSearch.username);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
   console.log('idmatch', matchingTitleSearch.id)
@@ -123,6 +125,7 @@ useEffect(() => {
     setPluscode(props.plusCode);
     setTechnicalDescription(polygonDetails.technicalDescription);
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
+    setPlottedBy(polygonDetails.username);
     }
     // console.log('isadmin', isAdmin);
    
@@ -536,7 +539,10 @@ useEffect(() => {
         </div>
         
       </form>
-  
+
+      {isAdmin &&(
+        <p>Plotted by: {plottedBy} </p>)}
+
       <div style={{display: 'flex', marginTop: '3%', alignItems: 'center' }}>
     
       <label style={{color: textStatusColor}}>STATUS: {status}</label>
