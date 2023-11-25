@@ -40,8 +40,8 @@ mapRef.current = map;
     tiled: false,
     format: "image/png",
     opacity: 1,
-    maxZoom: 20,
-    maxNativeZoom: 20,
+    maxZoom: 21,
+    maxNativeZoom: 21,
     crs: L.CRS.EPSG4326,
     Identify: false
     };
@@ -54,8 +54,8 @@ mapRef.current = map;
     tiled: false,
     format: "image/png",
     opacity: 1,
-    maxZoom: 20,
-    maxNativeZoom: 20,
+    maxZoom: 21,
+    maxNativeZoom: 21,
     crs: L.CRS.EPSG4326,
     Identify: false
     };
@@ -68,8 +68,8 @@ mapRef.current = map;
       tiled: false,
       format: "image/png",
       opacity: 1,
-      maxZoom: 20,
-      maxNativeZoom: 20,
+      maxZoom: 21,
+      maxNativeZoom: 21,
       crs: L.CRS.EPSG4326,
       Identify: false
       };
@@ -79,7 +79,7 @@ mapRef.current = map;
   
     // OSM
     const osm = new TileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
+      maxZoom: 21,
     })
 
     // Hybrid View
@@ -96,7 +96,7 @@ mapRef.current = map;
 
       // EsriSat
     const esriSat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19.8,
+      maxZoom: 22,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
     }).addTo(map);
     
