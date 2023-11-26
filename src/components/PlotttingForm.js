@@ -107,14 +107,20 @@ const Plottingform = (props) => {
     const numPointsToAdd = parseInt(numberOfPoints);
   
     if (!isNaN(numPointsToAdd) && numPointsToAdd > 0) {
-      const newTieLines = Array(numPointsToAdd).fill().map(() => createTieLine());
+      const currentTieLines = formData.tieLines;
+      const newTieLines = Array(numPointsToAdd).fill().map((_, index) => {
+          const newIndex = index + currentTieLines.length + 1;
+          return createTieLine(newIndex);
+        });
+  
+      for (let i = 0; i < Math.min(numPointsToAdd, currentTieLines.length); i++) {
+        newTieLines[i] = { ...currentTieLines[i] };
+      }
   
       setFormData({
         ...formData,
         tieLines: newTieLines,
       });
-  
-      // setPointCount(numPointsToAdd);
     }
   };
   
@@ -428,7 +434,7 @@ useEffect(() => {
         <label>
         {index === 0
           ? 'Tie Line*'
-        : `Point ${index}*`
+        : `Point ${index + 1}*`
       }
     </label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
