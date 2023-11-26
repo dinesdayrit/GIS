@@ -218,7 +218,7 @@ const handleFileUpload = (e) => {
         if (result.data.length > 0) {
 
           const userConfirmed = window.confirm(
-            'Please check the CSV data formats before uploading. Are you sure you want to proceed?'
+            'Please double check the CSV data formats before uploading. Are you sure you want to proceed?'
           );
 
           if (!userConfirmed) {
