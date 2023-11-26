@@ -3,6 +3,7 @@ import styles from './EditForm.module.css';
 // import DatePicker from 'react-datepicker';
 import axios from 'axios';
 
+
 const EditForm = (props) => { 
   const [id, setId] = useState('');
   const [titleSearch, setTitleSearch] = useState ('');
@@ -30,6 +31,7 @@ const EditForm = (props) => {
   const { polygonDetails } = props;
   const [titleSearchData, setTitleSearchData] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [plottingForm , setPlottingForm] = useState(false)
   const token =  localStorage.getItem('authToken');
 
 useEffect(() => {
@@ -320,7 +322,9 @@ useEffect(() => {
       setTitleSearch(suggestion.title);
       setFilteredSuggestions([]);
     };
-
+const handleRedraw = () => {
+  setPlottingForm(!plottingForm);
+}
   return (
     <div className={styles['popup-form-container']}>
      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
@@ -484,7 +488,8 @@ useEffect(() => {
         </div>
         </div>
         
-
+      {!plottingForm ? (
+        <>
       <label>Technnnical Description*</label>
       <textarea
           rows={6}
@@ -492,9 +497,29 @@ useEffect(() => {
           name="technicalDescription"
           defaultValue={technicalDescription}
           onChange={(e) => setTechnicalDescription(e.target.value)}
-          required 
-
+          style={{marginBottom: '0px'}}
+          
           />
+        </>
+      ):(
+      <div style={{ border: '2px gray solid', padding: '10px' }}>
+     WIP
+     </div>
+      )}
+      <a 
+      onClick={handleRedraw}
+      style={{display:  'flex', justifyContent: 'flex-end', color: 'blue'}}>
+      {!plottingForm ? 're-draw' : 'cancel'}
+          <style>
+        {`
+        a:hover {
+         text-decoration: underline;
+          font-weight: bold;
+         }
+       `}
+       </style>
+      </a>
+     
 
       <label>Technical Desc. Remarks</label>
       <textarea 
