@@ -519,9 +519,10 @@ const handleRedraw = () => {
       {!plottingForm ? 're-draw' : 'cancel'}
           <style>
         {`
-        a:hover {
+        p:hover {
          text-decoration: underline;
           font-weight: bold;
+          cursor: pointer;
          }
        `}
        </style>
