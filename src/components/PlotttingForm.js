@@ -105,7 +105,7 @@ const Plottingform = (props) => {
   };
 
   const handleAddTieLine = () => {
-    const numPointsToAdd = parseInt(numberOfPoints);
+    const numPointsToAdd = parseInt(numberOfPoints) + 1;
   
     if (!isNaN(numPointsToAdd) && numPointsToAdd > 0) {
       const currentTieLines = formData.tieLines;
