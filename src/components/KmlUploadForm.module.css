@@ -63,9 +63,15 @@
     cursor: pointer;
     align-items: center;
   }
+
+
   
   .popup-form-container button:hover {
     background-color: #3e8e41;
   }
 
+  .popup-form-container button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   

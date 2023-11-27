@@ -202,19 +202,25 @@ const KmlTable = (props) => {
                 onChange={handleKMLUpload}
                 style={{ color: 'black', height: '10%' }}
                 />
-                <button onClick={handleSaveToDatabase} disabled={loading}>
+                <button onClick={handleSaveToDatabase} disabled={loading || kmlDetailsSaved}>
                   {loading ? <i className="fa-solid fa-spinner fa-spin fa-spin-reverse"></i> : 'Save to Database'}
                 </button>
                 </div>
 
                   {kmlDetailsSaved && <p style={{fontWeight: 'bold', color: '#4CAF50'}}>KML Data Saved!</p>}
 
+                  {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30%' }}>
+                        <i className="fa-solid fa-spinner fa-spin fa-spin-reverse" style={{ fontSize: '40px' }}></i>
+                    </div>
+                    ):(
                 <table style={{ width: '100%', marginTop: '1em', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr>{tableRows[0]}</tr>
                   </thead>
                   <tbody>{tableRows.slice(1)}</tbody>
                 </table>
+                )}
                 <br/>
         </div>
       );

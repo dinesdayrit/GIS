@@ -238,7 +238,13 @@ useEffect(() => {
 
 
   const handleApprove = () => {
-    // Send a PUT request to update the status in the backend
+    const isConfirmed = window.confirm('Are you sure you want to approve this parcel?');
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    //if user click "OK" Send a PUT request to update the status in the backend
     fetch(`/approved/${id}`, {  
       method: 'PUT',
       headers: {
@@ -506,7 +512,8 @@ const handleRedraw = () => {
      WIP
      </div>
       )}
-      <a 
+      
+      <p
       onClick={handleRedraw}
       style={{display:  'flex', justifyContent: 'flex-end', color: 'blue'}}>
       {!plottingForm ? 're-draw' : 'cancel'}
@@ -518,7 +525,7 @@ const handleRedraw = () => {
          }
        `}
        </style>
-      </a>
+      </p>
      
 
       <label>Technical Desc. Remarks</label>
