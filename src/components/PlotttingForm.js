@@ -435,7 +435,7 @@ useEffect(() => {
         <label>
         {index === 0
           ? 'Tie Line*'
-        : `Point ${index + 1}*`
+        : `Point ${index}*`
       }
     </label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
