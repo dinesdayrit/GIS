@@ -29,14 +29,15 @@ const Plottingform = (props) => {
   // const [techincalDescription, setTechnicalDescription] = useState("");
 
   useEffect(() => { 
-    calculateTieLine();
     handleCalculate(); 
+    calculateTieLine();
     const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
     props.onGridCoordinatesChange(formattedResults);
-    console.log(formattedResults);
+    // console.log(formattedResults);
     const newTechnicalDescription = generateTechnicalDescription(formData);
     props.onTechnicalDescriptionChange(newTechnicalDescription);
     props.onTieLineCoordinates(drawTieLine);
+
 
     
     setIsInitialRender(true);
@@ -48,7 +49,7 @@ const Plottingform = (props) => {
    });
    setIsInitialRender(false);
   }
-  }, [formData]); 
+  }, [formData, drawTieLine]); 
 
 
   const handleChange = (e, index) => {
@@ -104,17 +105,23 @@ const Plottingform = (props) => {
   };
 
   const handleAddTieLine = () => {
-    const numPointsToAdd = parseInt(numberOfPoints);
+    const numPointsToAdd = parseInt(numberOfPoints) + 1;
   
     if (!isNaN(numPointsToAdd) && numPointsToAdd > 0) {
-      const newTieLines = Array(numPointsToAdd).fill().map(() => createTieLine());
+      const currentTieLines = formData.tieLines;
+      const newTieLines = Array(numPointsToAdd).fill().map((_, index) => {
+          const newIndex = index + currentTieLines.length + 1;
+          return createTieLine(newIndex);
+        });
+  
+      for (let i = 0; i < Math.min(numPointsToAdd, currentTieLines.length); i++) {
+        newTieLines[i] = { ...currentTieLines[i] };
+      }
   
       setFormData({
         ...formData,
         tieLines: newTieLines,
       });
-  
-      // setPointCount(numPointsToAdd);
     }
   };
   
@@ -163,10 +170,10 @@ const Plottingform = (props) => {
     const { eastingCoordinate, northingCoordinate } = firstTieLine;
 
     // Now you have access to these values for drawing
-    console.log('Easting:', eastingValue);
-    console.log('Northing:', northingValue);
-    console.log('Easting Coordinate (First Tie Line):', eastingCoordinate);
-    console.log('Northing Coordinate (First Tie Line):', northingCoordinate);
+    // console.log('Easting:', eastingValue);
+    // console.log('Northing:', northingValue);
+    // console.log('Easting Coordinate (First Tie Line):', eastingCoordinate);
+    // console.log('Northing Coordinate (First Tie Line):', northingCoordinate);
 
     
     
@@ -178,7 +185,7 @@ const Plottingform = (props) => {
 
     
       props.onTieLineCoordinates(drawTieLine);
-      
+      console.log("drawTieLine", drawTieLine);
   } else {
     console.log('No results available to draw.');
   }
@@ -212,7 +219,7 @@ const handleFileUpload = (e) => {
         if (result.data.length > 0) {
 
           const userConfirmed = window.confirm(
-            'Please check the CSV data formats before uploading. Are you sure you want to proceed?'
+            'Please double check the CSV data formats before uploading. Are you sure you want to proceed?'
           );
 
           if (!userConfirmed) {
