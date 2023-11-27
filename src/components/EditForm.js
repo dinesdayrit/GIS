@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
 // import DatePicker from 'react-datepicker';
 import axios from 'axios';
-
+import EditDrawForm from './EditDrawForm';
 
 const EditForm = (props) => { 
   const [id, setId] = useState('');
@@ -508,9 +508,7 @@ const handleRedraw = () => {
           />
         </>
       ):(
-      <div style={{ border: '2px gray solid', padding: '10px' }}>
-     WIP
-     </div>
+        <EditDrawForm />
       )}
       
       <p
