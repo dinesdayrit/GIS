@@ -237,6 +237,11 @@ useEffect(() => {
   };
 
 
+  const handleDrawClick = () => {
+    alert('WIP');
+  }
+
+
   const handleApprove = () => {
     const isConfirmed = window.confirm('Are you sure you want to approve this parcel?');
 
@@ -508,7 +513,14 @@ const handleRedraw = () => {
           />
         </>
       ):(
+        <>
         <EditDrawForm />
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
+        <button type="button" id="drawButton" onClick= {handleDrawClick} style={{width: '35%', opacity: 0.2, cursor: 'not-allowed'}}>
+           DRAW
+        </button> 
+        </div>
+        </>
       )}
       
       <p
