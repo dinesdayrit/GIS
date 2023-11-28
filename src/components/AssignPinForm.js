@@ -398,7 +398,7 @@ const AssignPinForm = (props) => {
       const handleDeletePin = () => {
       //add function to delete the PIN
        if (window.confirm("Are you sure you want to delete this PIN?")) {
-        axios.delete(`/deleteByTitle/${title}`,{
+        axios.delete(`/deletePin/${savedPin}`,{
          headers: {
                'Content-Type': 'application/json',
                Authorization: `Bearer ${token}`,
@@ -414,7 +414,7 @@ const AssignPinForm = (props) => {
         })
         .catch((error) => {
           console.error("Error deleting PIN:", error);
-          alert("Error deleting PIN. Please try again.");
+          alert("Error deleting PIN " + savedPin + ". Please try again.");
         });
     }
         //update the status back to APPROVED on title_table
