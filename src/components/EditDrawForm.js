@@ -10,7 +10,6 @@ const EditDrawForm = (props) => {
           g14: '', // distance
         };
       }
-    
       const [formData, setFormData] = useState({
         monument: '',
         eastingValue: '', 
@@ -18,8 +17,34 @@ const EditDrawForm = (props) => {
         tieLines: [createTieLine()],
       });
       const [monumentData, setMonumentData] = useState(null);
-      // const [drawTieLine, setDrawTieLine] = useState("");
+      const [drawTieLine, setDrawTieLine] = useState("");
+      const [results, setResults] = useState([]);
       const [numberOfPoints, setNumberOfPoints] = useState('');
+      const [isInitialRender, setIsInitialRender] = useState(true);
+
+      useEffect(() => { 
+        handleCalculate(); 
+        calculateTieLine();
+        const formattedResults = results.map(coord => `${coord.eastingCoordinate},${coord.northingCoordinate}`).join('\n'); 
+        props.onGridCoordinatesChange(formattedResults);
+        console.log('formattedResults',formattedResults);
+        const newTechnicalDescription = generateTechnicalDescription(formData);
+        props.onTechnicalDescriptionChange(newTechnicalDescription);
+        props.onTieLineCoordinates(drawTieLine);
+    
+    
+        
+        setIsInitialRender(true);
+    
+        if (isInitialRender) { 
+        setFormData({
+        ...formData,
+        // gridCoordinates: formattedResults,
+       });
+       setIsInitialRender(false);
+      }
+      }, [formData, drawTieLine]); 
+
 
       const handleChange = (e, index) => {
         const { name, value } = e.target;
@@ -46,6 +71,30 @@ const EditDrawForm = (props) => {
           }
         };
 
+        const calculateDecimalBearig = (d14, e14) => {
+          return parseFloat(d14) + parseFloat(e14) / 60;
+        };
+      
+        const calculateAzimuth = (d14, e14, c14, f14) => {
+          const decimalBearing = calculateDecimalBearig(d14, e14);
+          let calculatedCoordinates;
+      
+          if (c14 === 'N' && f14 === 'E') {
+            calculatedCoordinates = decimalBearing + 180;
+          } else if (c14 === 'S' && f14 === 'E') {
+            calculatedCoordinates = decimalBearing * -1 + 360;
+          } else if (c14 === 'S' && f14 === 'W') {
+            calculatedCoordinates = decimalBearing;
+          } else if (c14 === 'N' && f14 === 'W') {
+            calculatedCoordinates = decimalBearing * -1 + 180;
+          } else {
+            calculatedCoordinates = '';
+          }
+      
+          return calculatedCoordinates;
+        };
+
+        
         const handleAddTieLine = () => {
           const numPointsToAdd = parseInt(numberOfPoints) + 1;
         
@@ -75,6 +124,70 @@ const EditDrawForm = (props) => {
             ...formData,
             tieLines: updatedTieLines,
           });
+        };
+
+        const handleCalculate = () => {
+          let cumulativeEasting = parseFloat(formData.eastingValue);
+        let cumulativeNorthing = parseFloat(formData.northingValue);
+      
+      
+          const resultsArray = formData.tieLines.map((tieLine) => {
+            const azimuth = calculateAzimuth(tieLine.d14, tieLine.e14, tieLine.c14, tieLine.f14);
+            const sine = parseFloat(tieLine.g14) * Math.sin(azimuth * (Math.PI / 180)) * -1;
+            const cosine = parseFloat(tieLine.g14) * Math.cos(azimuth * (Math.PI / 180)) * -1;
+            const eastingCoordinate = cumulativeEasting + sine;
+            cumulativeEasting = eastingCoordinate; // Update cumulative Easting
+        
+            const northingCoordinate = cumulativeNorthing + cosine;
+            cumulativeNorthing = northingCoordinate; // Update cumulative Northing
+        
+            return { eastingCoordinate, northingCoordinate };
+         
+          });
+      
+          setResults(resultsArray);
+        };
+      
+        const calculateTieLine = () => {
+          //get the the easting, northing and the first tie line's eastingCoordinate and northingCoordinate
+        const { eastingValue, northingValue } = formData;
+      
+        // Check if there are any results
+        if (results.length > 0) {
+          // Get the eastingCoordinate and northingCoordinate of the first tie line
+          const firstTieLine = results[0];
+          const { eastingCoordinate, northingCoordinate } = firstTieLine;
+      
+          // Now you have access to these values for drawing
+          // console.log('Easting:', eastingValue);
+          // console.log('Northing:', northingValue);
+          // console.log('Easting Coordinate (First Tie Line):', eastingCoordinate);
+          // console.log('Northing Coordinate (First Tie Line):', northingCoordinate);
+      
+          
+          
+      
+          setDrawTieLine(
+            `${eastingValue}, ${northingValue}\n` +
+            `${eastingCoordinate}, ${northingCoordinate}`
+            );
+      
+          
+            // props.onTieLineCoordinates(drawTieLine);
+            console.log("drawTieLine", drawTieLine);
+        } else {
+          console.log('No results available to draw.');
+        }
+        }
+      
+      
+        const generateTechnicalDescription = (formData) => {
+          const tieLineDescriptions = formData.tieLines.map((tieLine, index) => (
+          `${index === 0 ? '[Tie Line]' : `[Point ${index}]`}
+      ${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
+          )).join('\n');
+        
+        return `Monument: ${formData.monument}\nEastingValue: ${formData.eastingValue}\nNorthingValue: ${formData.northingValue}\n\n${tieLineDescriptions}`.trim('');
         };
 
       // Fetch data from /monuments
