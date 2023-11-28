@@ -241,7 +241,7 @@ const handleFileUpload = (e) => {
           if (filteredData.length > 0) {
           const headerToData = filteredData[0];
           const areaValue = parseFloat(headerToData['Area'].replace(/,/g, ''));
-          const truncatedArea = isNaN(areaValue) ? '' : areaValue.toFixed(3);
+          const truncatedArea = isNaN(areaValue) ? '' : areaValue.toFixed(2);
 
           const parseDate = (dateString) => {
             

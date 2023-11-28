@@ -336,6 +336,20 @@ useEffect(() => {
 const handleRedraw = () => {
   setPlottingForm(!plottingForm);
 }
+
+//Area Decimal Points
+const decimalAreaInput = (e) => {
+  const inputValue = e.target.value;
+  const regex = /^[0-9]+(\.[0-9]{0,2})?$/;
+  if (regex.test(inputValue) || inputValue === "") {
+    
+    setArea(inputValue);
+  } else {
+    console.log("Invalid area input.");
+  }
+};
+
+
   return (
     <div className={styles['popup-form-container']}>
      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
@@ -430,7 +444,7 @@ const handleRedraw = () => {
           type="text"
           name="area"
           value={area}
-          onChange={(e) => setArea(e.target.value)}
+          onChange={decimalAreaInput}
           required />
 
       </div>

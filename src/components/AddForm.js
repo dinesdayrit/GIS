@@ -53,14 +53,12 @@ const AddForm = (props) => {
 
   const handleAreaInputChange = (e) => {
     const inputValue = e.target.value;
-    // Use a regular expression to allow only numbers and up to three decimal places
-    const regex = /^[0-9]+(\.[0-9]{0,3})?$/;
+    const regex = /^[0-9]+(\.[0-9]{0,2})?$/;
     if (regex.test(inputValue) || inputValue === "") {
-      // If the input is valid or empty, update the state
+      
       setArea(inputValue);
     } else {
-      // If the input is invalid, don't update the state
-      // You can also show an error message to the user
+      console.log("Invalid area input.");
     }
   };
   
