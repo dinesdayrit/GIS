@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import styles from './EditForm.module.css';
 // import DatePicker from 'react-datepicker';
 import axios from 'axios';
+import EditDrawForm from './EditDrawForm';
+import proj4 from 'proj4';
 
+proj4.defs("EPSG:3125","+proj=tmerc +lat_0=0 +lon_0=125 +k=0.99995 +x_0=500000 +y_0=0 +ellps=clrk66 +towgs84=-127.62,-67.24,-47.04,-3.068,4.903,1.578,-1.06 +units=m +no_defs +type=crs");
 
 const EditForm = (props) => { 
   const [id, setId] = useState('');
@@ -31,7 +34,11 @@ const EditForm = (props) => {
   const { polygonDetails } = props;
   const [titleSearchData, setTitleSearchData] = useState([]);
   const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [plottingForm , setPlottingForm] = useState(false)
+  const [plottingForm , setPlottingForm] = useState(false);
+  const [gridCoordinates, setGridCoordinates] = useState('');
+  const [tieLineCoordinates, setTieLineCoordinates] = useState('');
+  const [prs92Coordinates, setPrs92Coordinates] = useState([]);
+  const [tieLinePrs92Coordinates, setTieLinePrs92Coordinates] = useState([]);
   const token =  localStorage.getItem('authToken');
 
 useEffect(() => {
@@ -129,11 +136,10 @@ useEffect(() => {
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     setPlottedBy(polygonDetails.username);
     }
-    // console.log('isadmin', isAdmin);
-   
+    console.log('selectedCoordinates', props.selectedCoordinates);
   }, [props.selectedCoordinates]);
 
- 
+
 
 
   const generateGeoJSON = () => {
@@ -235,6 +241,86 @@ useEffect(() => {
     
 
   };
+
+  const handleTieLineCoordinatesChange = (bagoTieLineCoordinates) => {
+    setTieLineCoordinates(bagoTieLineCoordinates);
+  };
+
+  const handleGridCoordinatesChange = (newGridCoordinates) => {
+    setGridCoordinates(newGridCoordinates);
+  };
+
+  useEffect(() => {
+    // Automatically call handleConvert whenever gridCoordinates changes
+    handleConvert();
+    console.log("convertCoordinates")
+  }, [gridCoordinates]);
+
+  useEffect(() => {
+    // Automatically call handleConvert whenever gridCoordinates changes
+    handleTieLineConvert();
+  }, [tieLineCoordinates]);
+
+  const handleConvert = () => {
+    const inputLines = gridCoordinates.split('\n').map(line => line.trim());
+    const newCoordinates = [];
+
+
+  
+    try {
+      inputLines.forEach(line => {
+        const [x, y] = line.split(',').map(Number);
+  
+        if (!isFinite(x) || !isFinite(y)) {
+          throw new Error(`Invalid coordinate: ${line}`);
+        }
+  
+        const converted = proj4("EPSG:3125", "EPSG:4326", [x, y]);
+        newCoordinates.push(converted);
+      });
+
+      setPrs92Coordinates(newCoordinates);
+      console.log('Coordinates converted and added:', newCoordinates);
+
+           
+    } catch (error) {
+      // alert(`Error converting coordinates: ${error.message}`);
+
+    }
+
+  };
+
+  const handleTieLineConvert = () => {
+    const tieLine = tieLineCoordinates.split('\n').map(line => line.trim());
+    const newTieLineCoordinates = []; 
+  
+    try {
+      tieLine.forEach(line => {
+        const [x, y] = line.split(',').map(Number);
+  
+        if (!isFinite(x) || !isFinite(y)) {
+          throw new Error(`Invalid tie line coordinate: ${line}`);
+        }
+  
+        const converted = proj4("EPSG:3125", "EPSG:4326", [x, y]);
+        newTieLineCoordinates.push(converted);
+      });
+  
+      setTieLinePrs92Coordinates(newTieLineCoordinates); // Update the state variable here
+      console.log('Tie line coordinates converted and added:', newTieLineCoordinates);
+  
+    } catch (error) {
+      // alert(`Error converting Tie line coordinates: ${error.message}`);
+    }
+  };
+
+  const handleDrawClick = () => {
+    props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
+    props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
+    props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2)); 
+
+    console.log('prs92Coordinates',prs92Coordinates);
+  }
 
 
   const handleApprove = () => {
@@ -508,9 +594,20 @@ const handleRedraw = () => {
           />
         </>
       ):(
-      <div style={{ border: '2px gray solid', padding: '10px' }}>
-     WIP
-     </div>
+        <>
+        <EditDrawForm 
+          onGridCoordinatesChange={handleGridCoordinatesChange}
+          onTieLineCoordinates={handleTieLineCoordinatesChange}
+          onTechnicalDescriptionChange={(newTechnicalDescription) =>
+          setTechnicalDescription(newTechnicalDescription)
+          }
+        />
+        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
+        <button type="button" id="drawButton" onClick= {handleDrawClick} style={{width: '35%', opacity: 0.2, cursor: 'not-allowed'}}>
+           DRAW
+        </button> 
+        </div>
+        </>
       )}
       
       <p
