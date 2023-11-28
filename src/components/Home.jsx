@@ -201,6 +201,9 @@ const handleAssignPin = (savedPin) => {
           // polygonId={selectedPolygonDetails.id}
           onPolygonApproval={handlePolygonApproval}
           onSearchTitle={handleSearchTitle}
+          onDraw={handleDraw}
+          onTieLineDraw={handleTieLineDraw} 
+          
        
   
         
