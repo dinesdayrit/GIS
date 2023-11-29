@@ -66,6 +66,9 @@ const KmlTable = (props) => {
           data.SimpleData[name] = value;
           headerNames.add(name);
         });
+
+        const area = parseFloat(data.SimpleData['area']).toFixed(2);
+        data.SimpleData['area'] = area;
     
         extractedData.push(data);
         // console.log(`Coordinates for Placemark ${index}:`, data.coordinates); //debug
@@ -95,8 +98,6 @@ const KmlTable = (props) => {
     
       return [headerRow, ...bodyRows];
     };
-    
-
 
 //Direct Save to Database
   const handleSaveToDatabase = () => {
