@@ -53,7 +53,6 @@ useEffect(() => {
     setTitleSearchData(data);
   
   }
-
 )},[titleSearch])
 
 
@@ -72,7 +71,7 @@ const handleSearchTitle = () => {
   setBlkNumber(matchingTitleSearch.blknumber);
   setArea(matchingTitleSearch.area);
   setBoundary(matchingTitleSearch.boundary);
-  setGeoJSON(matchingTitleSearch.geojson);
+  setGeoJSON(JSON.stringify(matchingTitleSearch.geojson, null, 2));
   setOwnerName(matchingTitleSearch.ownername);
   setTct(matchingTitleSearch.prevtct);
   setTctDate(matchingTitleSearch.tctdate);
@@ -84,7 +83,6 @@ const handleSearchTitle = () => {
   setPlottedBy(matchingTitleSearch.username);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
-  console.log('idmatch', matchingTitleSearch.id)
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
@@ -136,7 +134,6 @@ useEffect(() => {
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     setPlottedBy(polygonDetails.username);
     }
-    console.log('selectedCoordinates', props.selectedCoordinates);
   }, [props.selectedCoordinates]);
 
 
@@ -214,8 +211,8 @@ useEffect(() => {
       tct: tct,
       tctDate: tctDate,
       plusCode: props.plusCode,
-      technicalDescription: polygonDetails.technicalDescription,
-      technicaldescremarks: polygonDetails.technicaldescremarks,
+      technicalDescription: technicalDescription,
+      technicaldescremarks: technicaldescremarks,
       geojson: geojson,
       status: 'For Approval'
     };
@@ -379,8 +376,8 @@ useEffect(() => {
       tct: tct,
       tctDate: tctDate,
       plusCode: props.plusCode,
-      technicalDescription: polygonDetails.technicalDescription,
-      technicaldescremarks: polygonDetails.technicaldescremarks,
+      technicalDescription: technicalDescription,
+      technicaldescremarks: technicaldescremarks,
       geojson: geojson,
         status: 'RETURNED',
       
@@ -602,9 +599,9 @@ const decimalAreaInput = (e) => {
           type="text"
           name="technicalDescription"
           defaultValue={technicalDescription}
-          onChange={(e) => setTechnicalDescription(e.target.value)}
+          // onChange={(e) => setTechnicalDescription(e.target.value)}
           style={{marginBottom: '0px'}}
-          
+          readOnly
           />
         </>
       ):(
@@ -623,7 +620,7 @@ const decimalAreaInput = (e) => {
         </div>
         </>
       )}
-      
+      {props.selectedCoordinates.length >= 1 && (
       <p
       onClick={handleRedraw}
       style={{display:  'flex', justifyContent: 'flex-end', color: 'blue'}}>
@@ -638,6 +635,7 @@ const decimalAreaInput = (e) => {
        `}
        </style>
       </p>
+      )}
      
 
       <label>Technical Desc. Remarks</label>
@@ -663,7 +661,7 @@ const decimalAreaInput = (e) => {
         
 
 
-        {/* <label>Generate GeoJSON Format:</label>
+        <label>Generate GeoJSON Format:</label>
         <textarea
           
           name="geojson"
@@ -671,7 +669,7 @@ const decimalAreaInput = (e) => {
           defaultValue={geojson}
           onChange={(e) => setGeoJSON(e.target.value)}
           readOnly
-        /> */}
+        />
     
 
 
