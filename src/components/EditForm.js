@@ -710,7 +710,7 @@ const decimalAreaInput = (e) => {
         
 
 
-        <label>Generate GeoJSON Format:</label>
+        {/* <label>Generate GeoJSON Format:</label>
         <textarea
           
           name="geojson"
@@ -718,7 +718,7 @@ const decimalAreaInput = (e) => {
           defaultValue={geojson}
           onChange={(e) => setGeoJSON(e.target.value)}
           readOnly
-        />
+        /> */}
     
 
 
