@@ -24,6 +24,7 @@ const EditForm = (props) => {
   const [tctDate, setTctDate] = useState('');
   const [pluscode, setPluscode] = useState('');
   const [technicalDescription, setTechnicalDescription] = useState('');
+  const [draftTechnicalDesc, setDraftTechnicalDesc] = useState('');
   const [technicaldescremarks, setTechnicaldescremarks] = useState('');
   const [plottedBy, setPlottedBy] = useState('')
   const [status, setStatus] = useState('')
@@ -53,10 +54,55 @@ useEffect(() => {
     setTitleSearchData(data);
   
   }
-
 )},[titleSearch])
 
+///////initialData to be pass to EditDrawForm
+const parseTechnicalDescription = (technicalDescription) => {
+ 
+  if (technicalDescription === null) {
 
+    return {
+      monument: '',
+    };
+  } else {
+  const lines = technicalDescription.split('\n');
+  console.log("lines",lines)
+
+  const monumentLine = lines[0].split(':');
+  const monument = monumentLine.length > 1 ? monumentLine[1].trim() : '';
+  
+  const eastingLine = lines[1].split(':');
+  const eastingValue = eastingLine.length > 1 ? eastingLine[1].trim() : '';
+
+  const northingLine = lines[2].split(':');
+  const northingValue = northingLine.length > 1 ? northingLine[1].trim() : '';
+
+  const numberOfPoints = lines.length /2;
+  const numberOfPointsValue = numberOfPoints - 3;
+
+  const tieLines = [];
+    for (let i = 5; i < lines.length; i +=2) {
+      const lineParts = lines[i].split(' ');
+      const directionAngle = lineParts[0];
+      const degrees = lineParts[1];
+      const minutes = lineParts[2];
+      const minutesAngle = lineParts[3];
+      const distance = lineParts[4];
+      const coordinate = `${directionAngle} ${degrees} ${minutes} ${minutesAngle} ${distance}`;
+      tieLines.push(coordinate);
+    }
+   
+  return {
+    monument,
+    eastingValue,
+    northingValue,
+    numberOfPointsValue,
+    tieLines,
+  };
+}
+};
+
+////////
 
 const handleSearchTitle = () => {
   const matchingTitleSearch = titleSearchData.find(
@@ -72,7 +118,7 @@ const handleSearchTitle = () => {
   setBlkNumber(matchingTitleSearch.blknumber);
   setArea(matchingTitleSearch.area);
   setBoundary(matchingTitleSearch.boundary);
-  setGeoJSON(matchingTitleSearch.geojson);
+  setGeoJSON(JSON.stringify(matchingTitleSearch.geojson, null, 2));
   setOwnerName(matchingTitleSearch.ownername);
   setTct(matchingTitleSearch.prevtct);
   setTctDate(matchingTitleSearch.tctdate);
@@ -84,7 +130,7 @@ const handleSearchTitle = () => {
   setPlottedBy(matchingTitleSearch.username);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
-  console.log('idmatch', matchingTitleSearch.id)
+  setPlottingForm(false);
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
@@ -135,8 +181,8 @@ useEffect(() => {
     setTechnicalDescription(polygonDetails.technicalDescription);
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     setPlottedBy(polygonDetails.username);
+    setPlottingForm(false);
     }
-    console.log('selectedCoordinates', props.selectedCoordinates);
   }, [props.selectedCoordinates]);
 
 
@@ -214,8 +260,8 @@ useEffect(() => {
       tct: tct,
       tctDate: tctDate,
       plusCode: props.plusCode,
-      technicalDescription: polygonDetails.technicalDescription,
-      technicaldescremarks: polygonDetails.technicaldescremarks,
+      technicalDescription: technicalDescription,
+      technicaldescremarks: technicaldescremarks,
       geojson: geojson,
       status: 'For Approval'
     };
@@ -314,14 +360,13 @@ useEffect(() => {
     }
   };
 
+
   const handleDrawClick = () => {
+    setTechnicalDescription(draftTechnicalDesc);
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
     props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2)); 
-
-    console.log('prs92Coordinates',prs92Coordinates);
   }
-
 
   const handleApprove = () => {
     const isConfirmed = window.confirm('Are you sure you want to approve this parcel?');
@@ -379,8 +424,8 @@ useEffect(() => {
       tct: tct,
       tctDate: tctDate,
       plusCode: props.plusCode,
-      technicalDescription: polygonDetails.technicalDescription,
-      technicaldescremarks: polygonDetails.technicaldescremarks,
+      technicalDescription: technicalDescription,
+      technicaldescremarks: technicaldescremarks,
       geojson: geojson,
         status: 'RETURNED',
       
@@ -601,29 +646,30 @@ const decimalAreaInput = (e) => {
           rows={6}
           type="text"
           name="technicalDescription"
-          defaultValue={technicalDescription}
+          value={technicalDescription}
           onChange={(e) => setTechnicalDescription(e.target.value)}
           style={{marginBottom: '0px'}}
-          
+          readOnly
           />
         </>
       ):(
         <>
         <EditDrawForm 
+          initialData={parseTechnicalDescription(technicalDescription)}
           onGridCoordinatesChange={handleGridCoordinatesChange}
           onTieLineCoordinates={handleTieLineCoordinatesChange}
           onTechnicalDescriptionChange={(newTechnicalDescription) =>
-          setTechnicalDescription(newTechnicalDescription)
+          setDraftTechnicalDesc(newTechnicalDescription)
           }
         />
         <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
-        <button type="button" id="drawButton" onClick= {handleDrawClick} style={{width: '35%', opacity: 0.2, cursor: 'not-allowed'}}>
+        <button type="button" id="drawButton" onClick= {handleDrawClick} style={{width: '35%'}}>
            DRAW
         </button> 
         </div>
         </>
       )}
-      
+      {props.selectedCoordinates.length >= 1 && (
       <p
       onClick={handleRedraw}
       style={{display:  'flex', justifyContent: 'flex-end', color: 'blue'}}>
@@ -638,6 +684,7 @@ const decimalAreaInput = (e) => {
        `}
        </style>
       </p>
+      )}
      
 
       <label>Technical Desc. Remarks</label>
@@ -663,7 +710,7 @@ const decimalAreaInput = (e) => {
         
 
 
-        {/* <label>Generate GeoJSON Format:</label>
+        <label>Generate GeoJSON Format:</label>
         <textarea
           
           name="geojson"
@@ -671,7 +718,7 @@ const decimalAreaInput = (e) => {
           defaultValue={geojson}
           onChange={(e) => setGeoJSON(e.target.value)}
           readOnly
-        /> */}
+        />
     
 
 
