@@ -567,7 +567,7 @@ if (props.kmlData) {
     // draw Polygon
     if (props.polygonCoordinates.length > 0) {
       const formattedPolygonCoordinates = props.polygonCoordinates.map(coord => [coord[1], coord[0]]);
-      const polygon = L.polygon(formattedPolygonCoordinates, { color: 'red' }).addTo(drawnLayerRef.current);
+      const polygon = L.polygon(formattedPolygonCoordinates, { color: 'black' }).addTo(drawnLayerRef.current);
       const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
 
       var centerCoordinate = calculateCenterCoordinate(polygonCoordinates);
