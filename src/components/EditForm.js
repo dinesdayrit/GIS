@@ -24,6 +24,7 @@ const EditForm = (props) => {
   const [tctDate, setTctDate] = useState('');
   const [pluscode, setPluscode] = useState('');
   const [technicalDescription, setTechnicalDescription] = useState('');
+  const [draftTechnicalDesc, setDraftTechnicalDesc] = useState('');
   const [technicaldescremarks, setTechnicaldescremarks] = useState('');
   const [plottedBy, setPlottedBy] = useState('')
   const [status, setStatus] = useState('')
@@ -55,7 +56,53 @@ useEffect(() => {
   }
 )},[titleSearch])
 
+///////initialData to be pass to EditDrawForm
+const parseTechnicalDescription = (technicalDescription) => {
+ 
+  if (technicalDescription === null) {
 
+    return {
+      monument: '',
+    };
+  } else {
+  const lines = technicalDescription.split('\n');
+  console.log("lines",lines)
+
+  const monumentLine = lines[0].split(':');
+  const monument = monumentLine.length > 1 ? monumentLine[1].trim() : '';
+  
+  const eastingLine = lines[1].split(':');
+  const eastingValue = eastingLine.length > 1 ? eastingLine[1].trim() : '';
+
+  const northingLine = lines[2].split(':');
+  const northingValue = northingLine.length > 1 ? northingLine[1].trim() : '';
+
+  const numberOfPoints = lines.length /2;
+  const numberOfPointsValue = numberOfPoints - 3;
+
+  const tieLines = [];
+    for (let i = 5; i < lines.length; i +=2) {
+      const lineParts = lines[i].split(' ');
+      const directionAngle = lineParts[0];
+      const degrees = lineParts[1];
+      const minutes = lineParts[2];
+      const minutesAngle = lineParts[3];
+      const distance = lineParts[4];
+      const coordinate = `${directionAngle} ${degrees} ${minutes} ${minutesAngle} ${distance}`;
+      tieLines.push(coordinate);
+    }
+   
+  return {
+    monument,
+    eastingValue,
+    northingValue,
+    numberOfPointsValue,
+    tieLines,
+  };
+}
+};
+
+////////
 
 const handleSearchTitle = () => {
   const matchingTitleSearch = titleSearchData.find(
@@ -83,6 +130,7 @@ const handleSearchTitle = () => {
   setPlottedBy(matchingTitleSearch.username);
   props.onSearchTitle(matchingTitleSearch.id);
   setPluscode(matchingTitleSearch.pluscode);
+  setPlottingForm(false);
   if(matchingTitleSearch.status === 'APPROVED' || matchingTitleSearch.status === 'PIN ASSIGNED' || matchingTitleSearch.status === 'PIN APPROVED'){
     setTextStatusColor('blue')
     setStatus('APPROVED');
@@ -133,6 +181,7 @@ useEffect(() => {
     setTechnicalDescription(polygonDetails.technicalDescription);
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     setPlottedBy(polygonDetails.username);
+    setPlottingForm(false);
     }
   }, [props.selectedCoordinates]);
 
@@ -311,14 +360,13 @@ useEffect(() => {
     }
   };
 
+
   const handleDrawClick = () => {
+    setTechnicalDescription(draftTechnicalDesc);
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
     props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2)); 
-
-    console.log('prs92Coordinates',prs92Coordinates);
   }
-
 
   const handleApprove = () => {
     const isConfirmed = window.confirm('Are you sure you want to approve this parcel?');
@@ -598,8 +646,8 @@ const decimalAreaInput = (e) => {
           rows={6}
           type="text"
           name="technicalDescription"
-          defaultValue={technicalDescription}
-          // onChange={(e) => setTechnicalDescription(e.target.value)}
+          value={technicalDescription}
+          onChange={(e) => setTechnicalDescription(e.target.value)}
           style={{marginBottom: '0px'}}
           readOnly
           />
@@ -607,10 +655,11 @@ const decimalAreaInput = (e) => {
       ):(
         <>
         <EditDrawForm 
+          initialData={parseTechnicalDescription(technicalDescription)}
           onGridCoordinatesChange={handleGridCoordinatesChange}
           onTieLineCoordinates={handleTieLineCoordinatesChange}
           onTechnicalDescriptionChange={(newTechnicalDescription) =>
-          setTechnicalDescription(newTechnicalDescription)
+          setDraftTechnicalDesc(newTechnicalDescription)
           }
         />
         <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '10px'}}>
