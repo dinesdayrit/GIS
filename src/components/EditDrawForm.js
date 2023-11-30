@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 
+
 const EditDrawForm = (props) => {
     function createTieLine() {
         return {
@@ -21,7 +22,51 @@ const EditDrawForm = (props) => {
       const [results, setResults] = useState([]);
       const [numberOfPoints, setNumberOfPoints] = useState('');
       const [isInitialRender, setIsInitialRender] = useState(true);
+      const [isInitialDataRender, setIsInitialDataRender] = useState(true);
 
+      useEffect(() => {
+        if (isInitialDataRender) {
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            monument: props.initialData.monument,
+            eastingValue: props.initialData.eastingValue,
+            northingValue: props.initialData.northingValue, 
+          }));
+          setNumberOfPoints(props.initialData.numberOfPointsValue);
+          handleAddTieLine();
+          
+          if (monumentData) {
+            setFormData({
+              ...formData,
+              eastingValue: monumentData.easting,
+              northingValue: monumentData.northing,
+            });
+            setIsInitialDataRender(false);
+          };
+          if(formData.eastingValue) {
+            setIsInitialDataRender(false);
+          }
+          if(props.initialData && props.initialData.tieLines){
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              monument: props.initialData.monument,
+              eastingValue: props.initialData.eastingValue,
+              northingValue: props.initialData.northingValue, 
+              tieLines: props.initialData.tieLines.map((tieLine) => {
+                const [directionAngle, degrees, minutes, minutesAngle, distance] = tieLine.split(' ');
+                return {
+                  c14: directionAngle,
+                  d14: degrees,
+                  e14: minutes,
+                  f14: minutesAngle,
+                  g14: distance,
+                };
+              }),
+            }));
+          };
+        };
+      }, [props.initialData]);
+      
       useEffect(() => { 
         handleCalculate(); 
         calculateTieLine();
@@ -63,6 +108,7 @@ const EditDrawForm = (props) => {
             });
          
           } else {
+            
             setFormData({
               ...formData,
               [name]: value,
@@ -158,14 +204,6 @@ const EditDrawForm = (props) => {
           const firstTieLine = results[0];
           const { eastingCoordinate, northingCoordinate } = firstTieLine;
       
-          // Now you have access to these values for drawing
-          // console.log('Easting:', eastingValue);
-          // console.log('Northing:', northingValue);
-          // console.log('Easting Coordinate (First Tie Line):', eastingCoordinate);
-          // console.log('Northing Coordinate (First Tie Line):', northingCoordinate);
-      
-          
-          
       
           setDrawTieLine(
             `${eastingValue}, ${northingValue}\n` +
@@ -174,7 +212,6 @@ const EditDrawForm = (props) => {
       
           
             // props.onTieLineCoordinates(drawTieLine);
-            console.log("drawTieLine", drawTieLine);
         } else {
           console.log('No results available to draw.');
         }
@@ -184,7 +221,7 @@ const EditDrawForm = (props) => {
         const generateTechnicalDescription = (formData) => {
           const tieLineDescriptions = formData.tieLines.map((tieLine, index) => (
           `${index === 0 ? '[Tie Line]' : `[Point ${index}]`}
-      ${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
+${tieLine.c14} ${tieLine.d14} ${tieLine.e14} ${tieLine.f14} ${tieLine.g14}`
           )).join('\n');
         
         return `Monument: ${formData.monument}\nEastingValue: ${formData.eastingValue}\nNorthingValue: ${formData.northingValue}\n\n${tieLineDescriptions}`.trim('');
@@ -211,6 +248,7 @@ const EditDrawForm = (props) => {
     });
    }, [formData.monument]);
 
+
 useEffect(() => {
   if (monumentData) {
     setFormData({
@@ -220,8 +258,9 @@ useEffect(() => {
     });
   }
 }, [monumentData]);
+
     return(
-    <div style={{ border: '2px gray solid', padding: '10px', opacity: 0.2}}>
+    <div style={{ border: '2px gray solid', padding: '10px'}}>
             WIP
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%', marginBottom: '10px' }}>
             <div>
