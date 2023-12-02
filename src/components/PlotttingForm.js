@@ -292,9 +292,11 @@ const handleFileUpload = (e) => {
             suffix: suffixArray,
             businessName: headerToData['BusinessName'].toUpperCase(),
             oct: headerToData['OCT'].toUpperCase(),
-            octDate: parseDate(headerToData['OCTDate']),
+            // octDate: parseDate(headerToData['OCTDate']),
+            octDate: headerToData['OCTDate'].toUpperCase(),
             prevTct: headerToData['PrevTCT'].toUpperCase(),
-            tctDate: parseDate(headerToData['TCTDate']),
+            // tctDate: parseDate(headerToData['TCTDate']),
+            tctDate: headerToData['TCTDate'].toUpperCase(),
             remarks: headerToData['Remarks'].toUpperCase(),
           };
 
