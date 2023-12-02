@@ -26,6 +26,7 @@ const EditForm = (props) => {
   const [technicalDescription, setTechnicalDescription] = useState('');
   const [draftTechnicalDesc, setDraftTechnicalDesc] = useState('');
   const [technicaldescremarks, setTechnicaldescremarks] = useState('');
+  const [isTechnicalDescChange, setIsTechnicalDescChange] = useState(false);
   const [plottedBy, setPlottedBy] = useState('')
   const [status, setStatus] = useState('')
   const [textStatusColor, setTextStatusColor] = useState('');
@@ -59,7 +60,7 @@ useEffect(() => {
 ///////initialData to be pass to EditDrawForm
 const parseTechnicalDescription = (technicalDescription) => {
  
-  if (technicalDescription === null) {
+  if (technicalDescription === null || technicalDescription === '') {
 
     return {
       monument: '',
@@ -360,9 +361,15 @@ useEffect(() => {
     }
   };
 
+  useEffect (() => {
+    if (isTechnicalDescChange) {
+      setTechnicalDescription(draftTechnicalDesc);
+    };
+    setIsTechnicalDescChange(false);
+  },[props.plusCode])
 
   const handleDrawClick = () => {
-    setTechnicalDescription(draftTechnicalDesc);
+    setIsTechnicalDescChange(true);
     props.onTieLineDraw(JSON.stringify(tieLinePrs92Coordinates, null, 2));
     props.onDraw(JSON.stringify(prs92Coordinates, null, 2));
     props.handleShapeClick(JSON.stringify(prs92Coordinates, null, 2)); 
