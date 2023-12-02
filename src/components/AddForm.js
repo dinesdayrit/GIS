@@ -88,34 +88,34 @@ const AddForm = (props) => {
       setArea(csvData.area || '');
       setBoundary(csvData.boundary || '');
       setOct(csvData.oct || '');
-
-      if (csvData.octDate) {
-        const octDateFromCSV = new Date(csvData.octDate);
+      setOctDate(csvData.octDate || '');
+      // if (csvData.octDate) {
+      //   const octDateFromCSV = new Date(csvData.octDate);
   
-        if (!isNaN(octDateFromCSV)) {
-          setOctDate(octDateFromCSV);
-        } else {
-          alert('Invalid date format in octDate');
-          setOctDate('');
-        }
-      } else {
-        setOctDate('');
-      }
+      //   if (!isNaN(octDateFromCSV)) {
+      //     setOctDate(octDateFromCSV);
+      //   } else {
+      //     alert('Invalid date format in octDate');
+      //     setOctDate('');
+      //   }
+      // } else {
+      //   setOctDate('');
+      // }
 
       setPrevTct(csvData.prevTct || '');
-
-      if (csvData.tctDate) {
-        const tctDateFromCSV = new Date(csvData.tctDate);
+      setTctDate(csvData.tctDate || '');
+      // if (csvData.tctDate) {
+      //   const tctDateFromCSV = new Date(csvData.tctDate);
   
-        if (!isNaN(tctDateFromCSV)) {
-          setTctDate(tctDateFromCSV);
-        } else {
-          alert('Invalid date format in tctDate');
-          setTctDate('');
-        }
-      } else {
-        setTctDate('');
-      }
+      //   if (!isNaN(tctDateFromCSV)) {
+      //     setTctDate(tctDateFromCSV);
+      //   } else {
+      //     alert('Invalid date format in tctDate');
+      //     setTctDate('');
+      //   }
+      // } else {
+      //   setTctDate('');
+      // }
 
       const ownerNamesArray = csvData.lName.map((_, index) => ({
         lName: csvData.lName[index] || '',
@@ -278,28 +278,24 @@ useEffect(() => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formattedTitleDate = titleDate instanceof Date && !isNaN(titleDate)
-  ? titleDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  : null;
+    ? `${titleDate.getFullYear()}/${(titleDate.getMonth() + 1).toString().padStart(2, '0')}/${titleDate.getDate().toString().padStart(2, '0')}`
+    : null;
 
-const formattedOctDate = octDate instanceof Date && !isNaN(octDate)
-  ? octDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  : null;
+// const formattedOctDate = octDate instanceof Date && !isNaN(octDate)
+//   ? octDate.toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'short',
+//       day: 'numeric',
+//     })
+//   : null;
 
-const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
-  ? tctDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-  : null;
+// const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
+//   ? tctDate.toLocaleDateString('en-US', {
+//       year: 'numeric',
+//       month: 'short',
+//       day: 'numeric',
+//     })
+//   : null;
 
 
     const formData = {
@@ -312,9 +308,9 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
       boundary: boundary,
       ownerName: combinedOwnerName,
       oct: oct,
-      octDate: formattedOctDate,
+      octDate: octDate,
       tct: prevTct,
-      tctDate: formattedTctDate,
+      tctDate: tctDate,
       technicalDescription: technicalDescriptionValue,
       technicaldescremarks: remarks,
       plusCode: props.plusCode,
@@ -551,11 +547,16 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
 
         <div>
         <label>Date</label>
-        <DatePicker 
+        {/* <DatePicker 
         selected={octDate} 
         placeholderText='YYYY/MM/DD'
         onChange={(octDate) => setOctDate(octDate)}
         dateFormat="yyyy/MM/dd"
+        /> */}
+        <input
+        selected={octDate} 
+        placeholder='YYYY/MM/DD'
+        onChange={(e) => handleInputChange (e.target.value, setOctDate)}
         />
         </div>
         </div>
@@ -574,11 +575,16 @@ const formattedTctDate = tctDate instanceof Date && !isNaN(tctDate)
 
         <div>
         <label>Date</label>
-        <DatePicker 
+        {/* <DatePicker 
         selected={tctDate} 
         placeholderText='YYYY/MM/DD'  
         onChange={(tctDate) => setTctDate(tctDate)}
         dateFormat="yyyy/MM/dd"
+        /> */}
+        <input
+        selected={tctDate} 
+        placeholder='YYYY/MM/DD'
+        onChange={(e) => handleInputChange (e.target.value, setTctDate)}
         />
         </div>
         </div>
