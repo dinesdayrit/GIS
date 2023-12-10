@@ -15,6 +15,8 @@ const ListofMonuments = (props) => {
 
   return (
     <div className={styles['popup-form-container']}>
+      <h3 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>List of Monuments</h3>
+      <br/>
       {/* <div style={{marginBottom: '10px', gap: '5px'}}>
         <label>Search Monument: </label>
         <input />
