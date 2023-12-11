@@ -443,6 +443,9 @@ const AssignPinForm = (props) => {
     return (
     
     <div className={styles['popup-form-container']}>
+      <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Pin Approval/Assign</h2>
+      <br/>
+
     {isPolygonApproved ?( 
       <>
       {isPinAssigned &&( 
