@@ -8,13 +8,14 @@ import ListofMonuments from "./ListOfMonuments";
 import KmlUploadForm from "./KmlUploadForm";
 import AssignPinForm from "./AssignPinForm";
 import SignUpForm from "./SignUpForm";
-
+import AssignedPinApproval from "./AssignedPinApproval";
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [showMonumentForm, setShowMonumentForm] = useState(false);
   const [showPinAssignForm, setShowPinAssignForm] = useState(false);
+  const [showPinApprovalForm, setShowPinApprovalForm] = useState(false);
   const [selectedCoordinates, setSelectedCoordinates] = useState([]);
   const [tieLineCoordinates, setTieLineCoordinates] = useState([]);
   const [polygonCoordinates, setPolygonCoordinates] = useState([]);
@@ -114,8 +115,12 @@ const handleAssignPin = (savedPin) => {
 
   const handlePinClick = () => {
     setShowPinAssignForm(true);
-    console.log("click PIN");
   };
+
+  const handlePinApprovalClick = () => {
+    setShowPinApprovalForm(true);
+  };
+
 
 
   
@@ -127,6 +132,7 @@ const handleAssignPin = (savedPin) => {
     setShowKmlForm(false);
     setShowEditForm(false);
     setShowSignUpForm(false);
+    setShowPinApprovalForm(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
@@ -163,6 +169,7 @@ const handleAssignPin = (savedPin) => {
     onAssignPinClick= {handlePinClick}
     onEditFormOpen = {handleEditClick}
     onToggleSignUpForm={toggleSignUpForm}
+    onPinApprovalFormOpen= {handlePinApprovalClick}
    
     />
      
@@ -227,11 +234,15 @@ const handleAssignPin = (savedPin) => {
           
           />}
 
-        {showSignUpForm && 
-              <SignUpForm 
-              
-              
-                />}
+      {showPinApprovalForm &&
+       <AssignedPinApproval 
+
+       />
+      }
+
+      {showSignUpForm && 
+      <SignUpForm 
+      />}
 
       <div className={styles.mapWrapper}>
         <LeafletMap

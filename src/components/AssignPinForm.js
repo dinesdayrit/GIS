@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import styles from "./AssignPinForm.module.css"
 import axios from "axios";
+import CancelPinForSub from "./CancelPinForSub";
+
 
 const AssignPinForm = (props) => {
     const { polygonDetails } = props;
@@ -32,7 +34,12 @@ const AssignPinForm = (props) => {
     const [isPolygonApproved, setIsPolygonApproved] = useState(false);
     const [isPinApproved, setIsPinApproved] = useState(false);
     const [isAdmin, setIsAdmin] = useState(true);
+    const [type, setType] = useState('');
+    const [isForSub, setIsforSub] = useState(false);
+    const [prevPinToCancel, setPrevPinToCancel] = useState('');
     const token =  localStorage.getItem('authToken');
+    const [isLoading, setIsLoading] = useState(false);
+    const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
     useEffect(() => {
       const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -79,7 +86,6 @@ const AssignPinForm = (props) => {
         })
           .then(response => response.data)
           .then((data) => {
-            console.log('Fetched tmod:', data);
             setAssignedPins(data);
     
             const matchingPin = assignedPins.find(
@@ -92,6 +98,34 @@ const AssignPinForm = (props) => {
                 setSavedPin(matchingPin.pin);
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
+
+                if(matchingPin.type === "Subdivide") {
+                  setIsforSub(true);
+                  setIsLoading(true);
+                  axios.get('/pintable')
+                    .then(response => response.data)
+                    .then((data) => {
+                      
+                      const matchingPinToCancel = data.find(
+                        (targetPin) => targetPin.newpin === savedPin
+                        
+                      );
+                      if (matchingPinToCancel) {
+                        setIsLoading(false);
+                        setPrevPinToCancel(matchingPinToCancel.prevpin);
+                        console.log('isloading', isLoading);
+                        
+                      }
+                      
+                   })
+                     .catch(error => {
+                      console.error("Error fetching pintable:", error);
+                   });
+                } else {
+                  setIsforSub(false);
+                  setPrevPinToCancel('');
+                }
+
               } else if(!matchingPin){
                 setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
@@ -253,6 +287,8 @@ const AssignPinForm = (props) => {
                 tct: tct,
                 tctDate: tctDate,
                 status: 'For Approval',
+                username: storedUserDetails.name,
+                type: type,
               };
       
               // Save to rptas table
@@ -283,6 +319,7 @@ const AssignPinForm = (props) => {
                       .then((response) => response.json())
                       .then((data) => {
                         console.log(data);
+                        sendDataToPinTable();
                         alert('PIN ASSIGNED');
                         // window.location.href = "/home";
                         fecthTmod();
@@ -372,7 +409,7 @@ const AssignPinForm = (props) => {
 
       };
 
-      //return
+      //handle Pin Return
       const handleReturn = () => {
         fetch(`/approvedpin/${savedPin}`, {
           method: 'PUT',
@@ -440,11 +477,138 @@ const AssignPinForm = (props) => {
         
       }
 
+      const handleRadioChange = (e) => {
+        const selectedValue = e.target.value;
+    
+        if (selectedValue === 'Subdivide') {
+          setIsforSub(true);
+          setType('Subdivide')
+        } else if (selectedValue === 'NewDec'){
+          setIsforSub(false);
+          setType('NewDec');
+          setPinToCancel('NewDec');
+          setPluscodeToCancel('NewDec');
+        } else if (selectedValue === 'Consolidate'){
+          setIsforSub(false);
+          setType('Consolidate');
+        }
+      };
+
+      const [pinToCancel, setPinToCancel] = useState ('')
+      const [pluscodeToCancel, setPluscodeToCancel] = useState ('')
+
+      const handlePinToCancelChange = (pinToCancel) => {
+        setPinToCancel(pinToCancel);
+      };
+
+      const handlePluscodeToCancelChange = (plusCodeToCancel) => {
+        setPluscodeToCancel(plusCodeToCancel);
+      };
+     
+      const sendDataToPinTable = async () => {
+
+        const formData = {
+          newpin: pin,
+          pluscode : props.plusCode,
+          prevpin: pinToCancel,
+          prevpluscode: pluscodeToCancel,
+          status: 'FOR APPROVAL'
+        }
+      
+        
+        try {
+          const response = await axios.post('/pintable', formData);
+          console.log(response.data);
+        } catch (error) {
+        
+          console.error('Error sending data to SMV:', error);
+       
+        }
+      };
+
     return (
     
     <div className={styles['popup-form-container']}>
-    {isPolygonApproved ?( 
-      <>
+    {isPolygonApproved ?(
+    <>
+    {!isPinApproved && (
+    <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+    <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+        }}
+      >
+      SELECT TYPE:
+      </p>
+
+      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+
+ 
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '10%'}}>
+        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange}/>
+        New Discovery
+      </label>
+
+
+ 
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '40%' }}>
+        <input type="radio" value="Subdivide" name="pinningType" onChange={handleRadioChange}/>
+        Subdivide
+      </label>
+
+
+  
+      <label  style={{display: 'flex', flexDirection: 'row', marginLeft: '40%'}}>
+        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange}/>
+        Consolidate
+      </label>
+  
+    </div>
+   
+    </div>
+    )}
+    {isForSub && (
+    <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+      <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+          color: 'red',
+        }}
+      >
+      PIN TO CANCEL
+      </p>
+
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30%' }}>
+      <i className="fa-solid fa-spinner fa-spin fa-spin-reverse" style={{ fontSize: '40px' }}></i>
+      </div>
+    
+    ): ( 
+      <CancelPinForSub 
+      PinToBeCancel = {handlePinToCancelChange}
+      pluscodeToBeCancel = {handlePluscodeToCancelChange}
+      prevPintoCancel = {prevPinToCancel}
+      isLoading = {isLoading}
+    />
+      )}
+    </div>
+    )}
+
+
+    
+      
       {isPinAssigned &&( 
       <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
@@ -502,9 +666,10 @@ const AssignPinForm = (props) => {
           padding: '0 5px',
           marginBottom: '10px',
           fontSize:  '14px',
+          color: 'green',
         }}
       >
-      PIN
+      PIN TO ASSIGN
       </p>
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
