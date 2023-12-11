@@ -194,6 +194,9 @@ const KmlTable = (props) => {
 
       return (
         <div className={styles['popup-form-container']}>
+          <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Upload KML</h2>
+          <br/>
+
             <label style={{fontSize: '16px'}}>Upload KML File:</label>    
                 <div style={{display: 'flex', flexWrap: 'nowrap'}}>
                 <input

@@ -357,7 +357,9 @@ useEffect(() => {
   return (
     
     <div className={styles['popup-form-container']}>
-   
+
+      <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Plot Parcel</h2>
+      
       <form onSubmit={handleSubmit}>
 
       <div style={{border: '2px gray solid', borderRadius: '%', padding: '10px', marginBottom: '20px'}}>

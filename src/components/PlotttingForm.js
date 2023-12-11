@@ -436,8 +436,10 @@ useEffect(() => {
         <div key={index} >
         <label>
         {index === 0
-          ? 'Tie Line*'
-        : `Point ${index}*`
+        ? 'Tie Line - 1*'
+        : index === formData.tieLines.length - 1
+          ? `Point ${index} - Origin*`
+          : `Point ${index} - ${index + 1}*`
       }
     </label>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

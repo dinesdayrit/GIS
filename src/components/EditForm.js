@@ -485,6 +485,9 @@ const decimalAreaInput = (e) => {
 
   return (
     <div className={styles['popup-form-container']}>
+      <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Plot Approval/Edit</h2>
+      <br/>
+
      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', position: 'relative' }}>
       <p style={{fontSize: '.9em'}}>Search Title:</p>
       <input 
