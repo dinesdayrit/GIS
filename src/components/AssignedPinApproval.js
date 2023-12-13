@@ -9,6 +9,9 @@ const AssignedPinApproval = (props) => {
     const [newPinsToApprove, setNewPinsToApprove] = useState([]);
     const [matchingPins, setMatchingPins] = useState([]);
     const [approveButton, setApproveButton] = useState(false);
+    const [searchDataToZoom, setSearchDataTozoom] = useState('');
+    const [pluscodeToCancel, setPluscodeToCancel] = useState('');
+    const token =  localStorage.getItem('authToken');
 
     // const handleRadioChange = (e) => {
     //     const selectedValue = e.target.value;
@@ -22,7 +25,7 @@ const AssignedPinApproval = (props) => {
     //     }
     //   };
 
-    useEffect(() => {
+  useEffect(() => {
         axios.get('/pintable')
         .then(response => response.data)
         .then((data) => {
@@ -33,14 +36,54 @@ const AssignedPinApproval = (props) => {
     .catch(error => {
         console.error("Error fetching pintable:", error);
     });
-    },[]);
+
+    
+    const matchingOldPinSearch = newPinsToApprove.find(
+    (search) => search.prevpin === oldPin
+    );
+
+    if(matchingOldPinSearch) {
+      setPluscodeToCancel(matchingOldPinSearch.prevpluscode)
+    }
+
+    },[oldPin]);
+
+  useEffect(() => {
+      axios.get('/gisDetail', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => response.data)
+      .then((data) => {
+        setSearchDataTozoom(data);
+  })
+  .catch(error => {
+      console.error("Error fetching pintable:", error);
+  });
+
+
+  },[oldPin]);
 
 
     const handlePrevPinSearch = () => {
-        const matchingPinToCancel = newPinsToApprove.filter(
+      //zoom to parcel
+      const matchingSearch = searchDataToZoom.find(
+        (search) => search.pluscode === pluscodeToCancel
+
+      );
+
+      if(matchingSearch){
+        props.onSearchTitle(matchingSearch.id)
+      }else {
+        alert('NO PARCEL TO ZOOM');
+      }
+
+
+      const matchingPinToCancel = newPinsToApprove.filter(
             (targetPin) => targetPin.prevpin === oldPin
         )
-        console.log('matchingPinToCancel', newPinsToApprove)
+        // console.log('matchingPinToCancel', newPinsToApprove)
       if(matchingPinToCancel) {
         setMatchingPins(matchingPinToCancel);
         setApproveButton(true);

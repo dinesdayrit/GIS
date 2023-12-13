@@ -236,7 +236,7 @@ const handleAssignPin = (savedPin) => {
 
       {showPinApprovalForm &&
        <AssignedPinApproval 
-
+          onSearchTitle={handleSearchTitle}
        />
       }
 
