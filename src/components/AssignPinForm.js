@@ -76,13 +76,6 @@ const AssignPinForm = (props) => {
         setIsPinApproved(false);
       }
 
-      if(isForNewDec){
-        setType('NewDec');
-      } else if(isForSub) {
-        setType('Subdivide');
-      } else {
-        setType('');
-      }
 
       }, [props.selectedCoordinates]);
 
@@ -229,7 +222,7 @@ const AssignPinForm = (props) => {
                 } 
 
           }
-
+          
     
               const generatedPin = `172-${selectedDistrictCode}-${selectedBrgyCode}-${selectedSectionCode}-${selectedParcelCode}`.trim();
               setPin(generatedPin);
