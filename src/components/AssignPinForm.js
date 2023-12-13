@@ -19,6 +19,7 @@ const AssignPinForm = (props) => {
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
     const [pin, setPin] = useState('');
+    const [origPin, setOrigPin] = useState('');
     const [districts, setDistricts] = useState([]);
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
@@ -47,8 +48,6 @@ const AssignPinForm = (props) => {
         setIsAdmin(false);
        
       }
-    
-
 
      
     }, []);
@@ -113,7 +112,7 @@ const AssignPinForm = (props) => {
                       if (matchingPinToCancel) {
                         setIsLoading(false);
                         setPrevPinToCancel(matchingPinToCancel.prevpin);
-                        console.log('isloading', isLoading);
+                       
                         
                       }
                       
@@ -145,6 +144,35 @@ const AssignPinForm = (props) => {
           autoPopulateParcelCode();
        
       },[props.plusCode, savedPin])
+
+      useEffect(() =>{
+        axios.get('/GisDetail', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        })
+          .then(response => response.data)
+          .then((data) => {
+    
+            const matchingPluscode = data.find(
+              (targetPluscode) => targetPluscode.pluscode === props.plusCode
+            )
+    
+            if (matchingPluscode){
+              if(matchingPluscode.status === 'PIN APPROVED'){
+                setIsPinApproved(true)
+            } else {
+              setIsPinApproved(false)
+            }
+          }
+          })
+          .catch((error) => {
+            console.error('Error fetching PINS:', error);
+            alert('Error fetching PINS:', error);
+          });
+    
+       
+      },[props.plusCode])
 
     const fecthTmod = () => {
       axios.get('/tmod', {
@@ -221,7 +249,7 @@ const AssignPinForm = (props) => {
       };
       
       const autoPopulateParcelCode = () => {
-        const inputPrefix = pin.substring(0, 15);
+        const inputPrefix = pin.substring(0, 16);
       
         const matchingPins = assignedPins.filter((pinParcel) =>
           pinParcel.pin.startsWith(inputPrefix)
@@ -229,7 +257,7 @@ const AssignPinForm = (props) => {
       
         if (matchingPins.length > 0) {
           const maxLastTwoDigits = matchingPins.reduce((max, pinParcel) => {
-            const lastTwoDigits = parseInt(pinParcel.pin.substring(15, 17), 10);
+            const lastTwoDigits = parseInt(pinParcel.pin.substring(16, 18), 10);
 
             return lastTwoDigits > max ? lastTwoDigits : max;
           }, 0);
@@ -399,9 +427,7 @@ const AssignPinForm = (props) => {
             alert('APPROVED ASSIGNED PIN');
             updateStatusOnTitleTable();
             sendDataToSMV();
-            setIsPinApproved(false);
-          
-            
+            setIsPinApproved(true);
           })
           .catch((error) => {
             console.error('Error updating PIN status:', error);
@@ -552,23 +578,23 @@ const AssignPinForm = (props) => {
       <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
 
  
-      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '10%'}}>
-        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange}/>
-        New Discovery
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '5%'}}>
+        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange} checked={!isForSub}/>
+        NEW DISCOVERY
       </label>
 
 
  
-      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '40%' }}>
-        <input type="radio" value="Subdivide" name="pinningType" onChange={handleRadioChange}/>
-        Subdivide
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '20%' }}>
+        <input type="radio" value="Subdivide" name="pinningType" onChange={handleRadioChange} checked={isForSub}/>
+        SUBDIVIDE
       </label>
 
 
   
-      <label  style={{display: 'flex', flexDirection: 'row', marginLeft: '40%'}}>
-        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange}/>
-        Consolidate
+      <label  style={{display: 'flex', flexDirection: 'row', marginLeft: '20%'}}>
+        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange} disabled={true}/>
+        CONSOLIDATE
       </label>
   
     </div>
@@ -635,12 +661,16 @@ const AssignPinForm = (props) => {
         
      {isAdmin ? (
        <>
-       {!isPinApproved && (
+
+       {!isPinApproved && !isForSub ? (
          <>
       <button onClick={handleApprovePin}>APPROVE</button>
       <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
       </>
+      ) : (
+        <p style={{color: 'red'}}>USE PIN APPROVAL(SUBDIVIDE) MENU TO APPROVE</p>
       )}
+
      </>
      ) : (
       <label>Status: {pinStatus}</label>
@@ -671,7 +701,7 @@ const AssignPinForm = (props) => {
           color: 'green',
         }}
       >
-      PIN TO ASSIGN
+      NEW PIN
       </p>
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
@@ -749,6 +779,15 @@ const AssignPinForm = (props) => {
           value={pin} 
           onChange={(e) => {
             setPin(e.target.value);
+          }}
+      />
+
+      <label>Original PIN(amellar PIN)</label>
+      <input
+          name='origPin'
+          value={origPin}
+          onChange={(e) => {
+            setOrigPin(e.target.value)
           }}
       />
 

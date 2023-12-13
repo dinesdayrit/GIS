@@ -123,7 +123,7 @@ const HomeHeader = (props) => {
                   {isAdmin && (
                     <button onClick={handlePinApprovalClick}>
                     <i className="fa-sharp fa-solid fa-list-check" style={{ marginRight: '8px' }}></i>
-                    PIN Approval (Sub./Consolidate)
+                    PIN Approval (SUBDIVIDE)
                     </button>
                   )}
                   

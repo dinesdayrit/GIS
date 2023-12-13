@@ -56,7 +56,7 @@ return (
           <label>PIN*</label>
           <input 
             value ={pin}
-            onChange={(e) => setPin(e.target.value)}
+           
           />
         </div>
 
