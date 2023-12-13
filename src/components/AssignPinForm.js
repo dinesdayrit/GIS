@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
 import styles from "./AssignPinForm.module.css"
 import axios from "axios";
+import CancelPinForSub from "./CancelPinForSub";
+
 
 const AssignPinForm = (props) => {
     const { polygonDetails } = props;
@@ -17,6 +19,7 @@ const AssignPinForm = (props) => {
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
     const [pin, setPin] = useState('');
+    const [origPin, setOrigPin] = useState('');
     const [districts, setDistricts] = useState([]);
     const [brgycodes, setBrgycodes] = useState([]);
     const [selectedBrgy, setSelectedBrgy] = useState('');
@@ -32,7 +35,13 @@ const AssignPinForm = (props) => {
     const [isPolygonApproved, setIsPolygonApproved] = useState(false);
     const [isPinApproved, setIsPinApproved] = useState(false);
     const [isAdmin, setIsAdmin] = useState(true);
+    const [type, setType] = useState('');
+    const [isForSub, setIsforSub] = useState(false);
+    const [isForNewDec, setIsForNewDec] = useState(true);
+    const [prevPinToCancel, setPrevPinToCancel] = useState('');
     const token =  localStorage.getItem('authToken');
+    const [isLoading, setIsLoading] = useState(false);
+    const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
 
     useEffect(() => {
       const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -40,8 +49,6 @@ const AssignPinForm = (props) => {
         setIsAdmin(false);
        
       }
-    
-
 
      
     }, []);
@@ -69,6 +76,14 @@ const AssignPinForm = (props) => {
         setIsPinApproved(false);
       }
 
+      if(isForNewDec){
+        setType('NewDec');
+      } else if(isForSub) {
+        setType('Subdivide');
+      } else {
+        setType('');
+      }
+
       }, [props.selectedCoordinates]);
 
       useEffect(() =>{
@@ -79,7 +94,6 @@ const AssignPinForm = (props) => {
         })
           .then(response => response.data)
           .then((data) => {
-            console.log('Fetched tmod:', data);
             setAssignedPins(data);
     
             const matchingPin = assignedPins.find(
@@ -92,6 +106,34 @@ const AssignPinForm = (props) => {
                 setSavedPin(matchingPin.pin);
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
+
+                if(matchingPin.type === "Subdivide") {
+                  setIsforSub(true);
+                  setIsLoading(true);
+                  axios.get('/pintable')
+                    .then(response => response.data)
+                    .then((data) => {
+                      
+                      const matchingPinToCancel = data.find(
+                        (targetPin) => targetPin.newpin === savedPin
+                        
+                      );
+                      if (matchingPinToCancel) {
+                        setIsLoading(false);
+                        setPrevPinToCancel(matchingPinToCancel.prevpin);
+                       
+                        
+                      }
+                      
+                   })
+                     .catch(error => {
+                      console.error("Error fetching pintable:", error);
+                   });
+                } else {
+                  setIsforSub(false);
+                  setPrevPinToCancel('');
+                }
+
               } else if(!matchingPin){
                 setSavedPin("NO ASSIGNED PIN YET");
                 setIsPinAssigned(false);
@@ -111,6 +153,35 @@ const AssignPinForm = (props) => {
           autoPopulateParcelCode();
        
       },[props.plusCode, savedPin])
+
+      useEffect(() =>{
+        axios.get('/GisDetail', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+        })
+          .then(response => response.data)
+          .then((data) => {
+    
+            const matchingPluscode = data.find(
+              (targetPluscode) => targetPluscode.pluscode === props.plusCode
+            )
+    
+            if (matchingPluscode){
+              if(matchingPluscode.status === 'PIN APPROVED'){
+                setIsPinApproved(true)
+            } else {
+              setIsPinApproved(false)
+            }
+          }
+          })
+          .catch((error) => {
+            console.error('Error fetching PINS:', error);
+            alert('Error fetching PINS:', error);
+          });
+    
+       
+      },[props.plusCode])
 
     const fecthTmod = () => {
       axios.get('/tmod', {
@@ -187,7 +258,7 @@ const AssignPinForm = (props) => {
       };
       
       const autoPopulateParcelCode = () => {
-        const inputPrefix = pin.substring(0, 15);
+        const inputPrefix = pin.substring(0, 16);
       
         const matchingPins = assignedPins.filter((pinParcel) =>
           pinParcel.pin.startsWith(inputPrefix)
@@ -195,7 +266,7 @@ const AssignPinForm = (props) => {
       
         if (matchingPins.length > 0) {
           const maxLastTwoDigits = matchingPins.reduce((max, pinParcel) => {
-            const lastTwoDigits = parseInt(pinParcel.pin.substring(15, 17), 10);
+            const lastTwoDigits = parseInt(pinParcel.pin.substring(16, 18), 10);
 
             return lastTwoDigits > max ? lastTwoDigits : max;
           }, 0);
@@ -253,6 +324,8 @@ const AssignPinForm = (props) => {
                 tct: tct,
                 tctDate: tctDate,
                 status: 'For Approval',
+                username: storedUserDetails.name,
+                type: type,
               };
       
               // Save to rptas table
@@ -283,6 +356,7 @@ const AssignPinForm = (props) => {
                       .then((response) => response.json())
                       .then((data) => {
                         console.log(data);
+                        sendDataToPinTable();
                         alert('PIN ASSIGNED');
                         // window.location.href = "/home";
                         fecthTmod();
@@ -362,9 +436,7 @@ const AssignPinForm = (props) => {
             alert('APPROVED ASSIGNED PIN');
             updateStatusOnTitleTable();
             sendDataToSMV();
-            setIsPinApproved(false);
-          
-            
+            setIsPinApproved(true);
           })
           .catch((error) => {
             console.error('Error updating PIN status:', error);
@@ -372,7 +444,7 @@ const AssignPinForm = (props) => {
 
       };
 
-      //return
+      //handle Pin Return
       const handleReturn = () => {
         fetch(`/approvedpin/${savedPin}`, {
           method: 'PUT',
@@ -440,14 +512,141 @@ const AssignPinForm = (props) => {
         
       }
 
+      const handleRadioChange = (e) => {
+        const selectedValue = e.target.value;
+    
+        if (selectedValue === 'Subdivide') {
+          setIsforSub(true);
+          setType('Subdivide')
+        } else if (selectedValue === 'NewDec'){
+          setIsforSub(false);
+          setIsForNewDec(true)
+          setType('NewDec');
+          setPinToCancel('NewDec');
+          setPluscodeToCancel('NewDec');
+        } else if (selectedValue === 'Consolidate'){
+          setIsforSub(false);
+          setType('Consolidate');
+        }
+      };
+
+      const [pinToCancel, setPinToCancel] = useState ('')
+      const [pluscodeToCancel, setPluscodeToCancel] = useState ('')
+
+      const handlePinToCancelChange = (pinToCancel) => {
+        setPinToCancel(pinToCancel);
+      };
+
+      const handlePluscodeToCancelChange = (plusCodeToCancel) => {
+        setPluscodeToCancel(plusCodeToCancel);
+      };
+     
+      const sendDataToPinTable = async () => {
+
+        const formData = {
+          newpin: pin,
+          pluscode : props.plusCode,
+          prevpin: pinToCancel,
+          prevpluscode: pluscodeToCancel,
+          status: 'FOR APPROVAL'
+        }
+      
+        
+        try {
+          const response = await axios.post('/pintable', formData);
+          console.log(response.data);
+        } catch (error) {
+        
+          console.error('Error sending data to SMV:', error);
+       
+        }
+      };
+
     return (
     
     <div className={styles['popup-form-container']}>
-      <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Pin Approval/Assign</h2>
-      <br/>
+    
+    <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Pin Approval/Assign</h2>
+    {isPolygonApproved ?(
+    <>
+    {!isPinApproved && (
+    <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+    <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+        }}
+      >
+      SELECT TYPE:
+      </p>
 
-    {isPolygonApproved ?( 
-      <>
+      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+
+ 
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '5%'}}>
+        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange} checked={isForNewDec}/>
+        NEW DISCOVERY
+      </label>
+
+
+ 
+      <label style={{display: 'flex', flexDirection: 'row', marginLeft: '20%' }}>
+        <input type="radio" value="Subdivide" name="pinningType" onChange={handleRadioChange} checked={isForSub}/>
+        SUBDIVIDE
+      </label>
+
+
+  
+      <label  style={{display: 'flex', flexDirection: 'row', marginLeft: '20%'}}>
+        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange} disabled={true}/>
+        CONSOLIDATE
+      </label>
+  
+    </div>
+   
+    </div>
+    )}
+    {isForSub && !isPinApproved &&( 
+    <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+      <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+          color: 'red',
+        }}
+      >
+      PIN TO CANCEL
+      </p>
+
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30%' }}>
+      <i className="fa-solid fa-spinner fa-spin fa-spin-reverse" style={{ fontSize: '40px' }}></i>
+      </div>
+    
+    ): ( 
+      <CancelPinForSub 
+      PinToBeCancel = {handlePinToCancelChange}
+      pluscodeToBeCancel = {handlePluscodeToCancelChange}
+      prevPintoCancel = {prevPinToCancel}
+      isLoading = {isLoading}
+    />
+      )}
+    </div>
+    )}
+
+
+    
+      
       {isPinAssigned &&( 
       <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
@@ -472,12 +671,16 @@ const AssignPinForm = (props) => {
         
      {isAdmin ? (
        <>
-       {!isPinApproved && (
+
+       {!isPinApproved && !isForSub ? (
          <>
       <button onClick={handleApprovePin}>APPROVE</button>
       <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
       </>
+      ) : !isPinApproved &&(
+        <p style={{color: 'red'}}>USE PIN APPROVAL(SUBDIVIDE) MENU TO APPROVE</p>
       )}
+
      </>
      ) : (
       <label>Status: {pinStatus}</label>
@@ -505,9 +708,10 @@ const AssignPinForm = (props) => {
           padding: '0 5px',
           marginBottom: '10px',
           fontSize:  '14px',
+          color: 'green',
         }}
       >
-      PIN
+      NEW PIN
       </p>
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>    
@@ -585,6 +789,15 @@ const AssignPinForm = (props) => {
           value={pin} 
           onChange={(e) => {
             setPin(e.target.value);
+          }}
+      />
+
+      <label>Original PIN(amellar PIN)</label>
+      <input
+          name='origPin'
+          value={origPin}
+          onChange={(e) => {
+            setOrigPin(e.target.value)
           }}
       />
 
@@ -740,6 +953,8 @@ const AssignPinForm = (props) => {
     }
 
     </div>
+
+  
     )
 }
 

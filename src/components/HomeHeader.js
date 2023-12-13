@@ -69,7 +69,11 @@ const HomeHeader = (props) => {
       props.onEditFormOpen();
       setIsDropdownOpen(true);
     }
-
+    
+    const handlePinApprovalClick = () => {
+      props.onPinApprovalFormOpen();
+      setIsDropdownOpen(true);
+    }
   return (
     <Fragment>
       <header>
@@ -114,6 +118,16 @@ const HomeHeader = (props) => {
                            )}
                 {!isAdmin ? 'Assign PIN' : 'PIN Approval/Assign'}
                 </button>
+
+                
+                  {isAdmin && (
+                    <button onClick={handlePinApprovalClick}>
+                    <i className="fa-sharp fa-solid fa-list-check" style={{ marginRight: '8px' }}></i>
+                    PIN Approval (SUBDIVIDE)
+                    </button>
+                  )}
+                  
+               
 
                 <button onClick={handleMonument}>
                 <i className="fas fa-list-alt" style={{ marginRight: '8px' }}></i>

@@ -283,9 +283,13 @@ return [centerLat, centerLng, centroidPlusCode];
           polygonColor = 'yellow';
             } else if (status === 'PIN APPROVED') {
          polygonColor = 'green';
-          } else {
+          } else if (status === "For Approval") {
             polygonColor = 'red';
+          } else {
+            return;
           }
+        
+
              const polygon = L.polygon(latlngs, { color: polygonColor });
 
           if (props.isPolygonApproved && geojsonObject) {
