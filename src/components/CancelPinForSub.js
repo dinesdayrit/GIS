@@ -55,8 +55,9 @@ return (
         <div style={{width: '50%'}}>
           <label>PIN*</label>
           <input 
+            type='text'
             value ={pin}
-           
+            onChange={(e) => setPin(e.target.value)}
           />
         </div>
 
