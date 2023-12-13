@@ -398,7 +398,6 @@ useEffect(() => {
         console.log(data);
         // alert('APPROVED');
         // props.onPolygonApproval();
-        console.log('isApproved',isApproved);
         setStatus('APPROVED');
         setTextStatusColor('blue');
         setIsApproved(true);
