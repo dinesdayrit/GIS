@@ -37,6 +37,7 @@ const AssignPinForm = (props) => {
     const [isAdmin, setIsAdmin] = useState(true);
     const [type, setType] = useState('');
     const [isForSub, setIsforSub] = useState(false);
+    const [isForNewDec, setIsForNewDec] = useState(true);
     const [prevPinToCancel, setPrevPinToCancel] = useState('');
     const token =  localStorage.getItem('authToken');
     const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +74,14 @@ const AssignPinForm = (props) => {
         setIsPinApproved(true);
       } else {
         setIsPinApproved(false);
+      }
+
+      if(isForNewDec){
+        setType('NewDec');
+      } else if(isForSub) {
+        setType('Subdivide');
+      } else {
+        setType('');
       }
 
       }, [props.selectedCoordinates]);
@@ -511,6 +520,7 @@ const AssignPinForm = (props) => {
           setType('Subdivide')
         } else if (selectedValue === 'NewDec'){
           setIsforSub(false);
+          setIsForNewDec(true)
           setType('NewDec');
           setPinToCancel('NewDec');
           setPluscodeToCancel('NewDec');
@@ -579,7 +589,7 @@ const AssignPinForm = (props) => {
 
  
       <label style={{display: 'flex', flexDirection: 'row', marginLeft: '5%'}}>
-        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange} checked={!isForSub}/>
+        <input type="radio" value="NewDec" name="pinningType" onChange={handleRadioChange} checked={isForNewDec}/>
         NEW DISCOVERY
       </label>
 
@@ -601,7 +611,7 @@ const AssignPinForm = (props) => {
    
     </div>
     )}
-    {isForSub && (
+    {isForSub && !isPinApproved &&( 
     <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
       <p
         style={{
@@ -667,7 +677,7 @@ const AssignPinForm = (props) => {
       <button onClick={handleApprovePin}>APPROVE</button>
       <button  style={{ backgroundColor: 'red'}} onClick={handleReturn}>return</button>
       </>
-      ) : (
+      ) : !isPinApproved &&(
         <p style={{color: 'red'}}>USE PIN APPROVAL(SUBDIVIDE) MENU TO APPROVE</p>
       )}
 
