@@ -103,6 +103,7 @@ const AssignPinForm = (props) => {
                 if(matchingPin.type === "Subdivide") {
                   setIsforSub(true);
                   setIsLoading(true);
+                  setType('Subdivide');
                   axios.get('/pintable')
                     .then(response => response.data)
                     .then((data) => {
@@ -125,6 +126,7 @@ const AssignPinForm = (props) => {
                 } else {
                   setIsforSub(false);
                   setPrevPinToCancel('');
+                  setType('');
                 }
 
               } else if(!matchingPin){
