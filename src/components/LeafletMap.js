@@ -33,6 +33,36 @@ L.control.zoom({ position: 'topright' }).addTo(map);
 
 mapRef.current = map;
 
+var wmsApprovedPin = {
+  layers: 'Davao:title_rptas',
+  transparent: true,
+  tiled: false,
+  format: "image/png",
+  opacity: 1,
+  maxZoom: 22,
+  maxNativeZoom: 22,
+  crs: L.CRS.EPSG4326,
+  Identify: false,
+  cql_filter : "status = 'APPROVED'",
+  };
+
+var wmsApprovedPins = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsApprovedPin).addTo(map);
+
+var wmsCancelledPin = {
+  layers: 'Davao:title_rptas',
+  transparent: true,
+  tiled: false,
+  format: "image/png",
+  opacity: 1,
+  maxZoom: 22,
+  maxNativeZoom: 22,
+  crs: L.CRS.EPSG4326,
+  Identify: false,
+  cql_filter : "status = 'CANCELLED'",
+  };
+
+var wmsCancelledPins = L.tileLayer.wms('http://map.davaocity.gov.ph:8080/geoserver/wms?', wmsCancelledPin);
+
 
   var wmsTechDescOptions = {
     layers: 'Davao:TechDesc',
@@ -40,8 +70,8 @@ mapRef.current = map;
     tiled: false,
     format: "image/png",
     opacity: 1,
-    maxZoom: 21,
-    maxNativeZoom: 21,
+    maxZoom: 22,
+    maxNativeZoom: 22,
     crs: L.CRS.EPSG4326,
     Identify: false
     };
@@ -54,8 +84,8 @@ mapRef.current = map;
     tiled: false,
     format: "image/png",
     opacity: 1,
-    maxZoom: 21,
-    maxNativeZoom: 21,
+    maxZoom: 22,
+    maxNativeZoom: 22,
     crs: L.CRS.EPSG4326,
     Identify: false
     };
@@ -115,7 +145,8 @@ mapRef.current = map;
 
 
     let overlayMaps = {
-      
+      'Approved PINS' :wmsApprovedPins,
+       'Cancelled PINS': wmsCancelledPins,
       'Plotted TDs': wmsdavTechDesc,
       'Barangays': wmsdavBrgy,
       'PobDistTaxmaps' :wmsPobDistTaxmaps
@@ -346,12 +377,11 @@ return [centerLat, centerLng, centroidPlusCode];
               icon: L.divIcon({
                 className: 'text-marker',
                 html: `<div style="text-align: center;">
-                        <span style="font-weight: bold; ">
-                         ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? 'Loading...' : title}
-                        </span>
-                           <br/>
-                            Lot:${lotNumber}
-                       </div>`,
+                ${status === 'PIN ASSIGNED' || status === 'PIN APPROVED' ? '' : `
+                  <span style="font-weight: bold; ">${title}</span>
+                  <br/>
+                  Lot:${lotNumber}`}
+              </div>`,
               }),
             });
             
@@ -404,7 +434,7 @@ return [centerLat, centerLng, centroidPlusCode];
               }
             });
 
-            if (status === 'PIN ASSIGNED' || status === 'PIN APPROVED') {
+            if (status === 'PIN ASSIGNED') {
               // Fetch the PIN from the "/tmod" endpoint using the centroidPlusCode
               axios.get(`/tmod?pluscode=${centroidPlusCode}`, {
                 headers: {
