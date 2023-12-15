@@ -277,20 +277,31 @@ return [centerLat, centerLng, centroidPlusCode];
             ////////
           let polygonColor;
 
-          if (status === 'APPROVED') {
-          polygonColor = 'blue';
+          if (status === 'PIN APPROVED') {
+          polygonColor = 'green';
            } else if (status === 'PIN ASSIGNED') {
           polygonColor = 'yellow';
-            } else if (status === 'PIN APPROVED') {
-         polygonColor = 'green';
+            } else if (status === 'APPROVED') {
+         polygonColor = 'blue';
           } else if (status === "For Approval") {
             polygonColor = 'red';
           } else {
             return;
           }
-        
+      
 
-             const polygon = L.polygon(latlngs, { color: polygonColor });
+            let polygon;
+
+            if (status === 'PIN APPROVED') {
+              polygon = L.polygon(latlngs, { color: polygonColor });
+              // Bring the PIN APPROVED polygon to the back
+              polygon.addTo(map).bringToBack();
+            } else if (status === 'PIN ASSIGNED' || status === 'APPROVED' || status === 'For Approval') {
+              polygon = L.polygon(latlngs, { color: polygonColor });
+             // Bring other polygons to the front
+              polygon.addTo(map).bringToFront();
+            }
+            
 
           if (props.isPolygonApproved && geojsonObject) {
             //  map.fitBounds(polygon.getBounds(), { maxZoom: 19});
@@ -302,8 +313,8 @@ return [centerLat, centerLng, centroidPlusCode];
           }
 
             
-          polygon.addTo(map);
-          polygon.addTo(editableLayers);
+          // polygon.addTo(map);
+          // polygon.addTo(editableLayers);
 
           const polygonCoordinates = polygon.getLatLngs()[0].map(coord => [coord.lng, coord.lat]);
             
