@@ -11,6 +11,7 @@ const AssignedPinApproval = (props) => {
     const [approveButton, setApproveButton] = useState(false);
     const [searchDataToZoom, setSearchDataTozoom] = useState('');
     const [pluscodeToCancel, setPluscodeToCancel] = useState('');
+    const [status, setStatus] = useState('');
     const token =  localStorage.getItem('authToken');
 
     // const handleRadioChange = (e) => {
@@ -29,7 +30,7 @@ const AssignedPinApproval = (props) => {
         axios.get('/pintable')
         .then(response => response.data)
         .then((data) => {
-          const pinsToApprove = data.filter(pin => pin.status === 'FOR APPROVAL');
+          const pinsToApprove = data.filter(pin => pin.status === 'FOR APPROVAL' || pin.status === 'RETURNED');
           setNewPinsToApprove(pinsToApprove);
 
     })
@@ -45,6 +46,8 @@ const AssignedPinApproval = (props) => {
     if(matchingOldPinSearch) {
       setPluscodeToCancel(matchingOldPinSearch.prevpluscode)
     }
+
+    
 
     },[oldPin]);
 
@@ -75,8 +78,10 @@ const AssignedPinApproval = (props) => {
 
       if(matchingSearch){
         props.onSearchTitle(matchingSearch.id)
+
       }else {
         alert('NO PARCEL TO ZOOM');
+        setApproveButton(false);
       }
 
 
@@ -87,9 +92,10 @@ const AssignedPinApproval = (props) => {
       if(matchingPinToCancel) {
         setMatchingPins(matchingPinToCancel);
         setApproveButton(true);
-      } else if (matchingPinToCancel){
-        alert('NO DATA FOUND');
+      } else {
         setApproveButton(false);
+        alert('NO DATA FOUND');
+        
       }
     };
   
@@ -154,6 +160,8 @@ const updateTitleToCancelOnTitleTable = () => {
       pintoCancel();
       updateStatusOnTitleTable();
       updateTitleToCancelOnTitleTable();
+      setApproveButton(false);
+      setStatus('APPROVED');
       alert('APPROVED PINS');
     })
     .catch((error) => {
@@ -161,6 +169,22 @@ const updateTitleToCancelOnTitleTable = () => {
     });
     };
 
+    const handleReturn = () => {
+
+      const pinsToReturn = matchingPins.map((matchingPin) => matchingPin.newpin);
+
+      // Send the list of pins to the backend
+      axios.put('/returnPins', { pinsToReturn})
+        .then((response) => {
+          console.log(response.data);
+          setApproveButton(false);
+          alert('RETURNED');
+          setStatus('RETURNED');
+        })
+        .catch((error) => {
+          console.error('Error returning pins:', error);
+        });
+        };
 
     return (
      <div className={styles['popup-form-container']}>
@@ -215,23 +239,34 @@ const updateTitleToCancelOnTitleTable = () => {
               <thead>
                 <tr>
                   <th>PINS to Approve</th>
+                  <th>STATUS</th>
                 </tr>
               </thead>
               <tbody>
                 {matchingPins.map((matchingPin, index) => (
                   <tr key={index}>
                     <td>{matchingPin.newpin}</td>
+                    <td>{matchingPin.status}</td>
                   </tr>
                 ))}
               </tbody>
+
              
         </table>
         
-        {approveButton && (
+        {approveButton ? (
         <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>
-        <button onClick={handleApproveClick}>APPROVE</button>
-        {/* <button style={{backgroundColor: 'red', marginLeft: '5px'}}>RETURN</button> */}
+        <button 
+          onClick={handleApproveClick}
+        >APPROVE</button>
+
+        <button 
+          style={{backgroundColor: 'red', marginLeft: '5px'}}
+          onClick={handleReturn}
+        >RETURN</button>
         </div>
+        ):(
+          <label style={{display: 'flex', justifyContent: 'flex-end', marginTop: '5px'}}>{status}</label>
         )}
 
         </div>

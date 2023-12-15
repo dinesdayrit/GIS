@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import styles from "./AssignPinForm.module.css"
 import axios from "axios";
 import CancelPinForSub from "./CancelPinForSub";
-
+import CancelPinForConsolidate from "./CancelPinForConsolidate";
 
 const AssignPinForm = (props) => {
     const { polygonDetails } = props;
@@ -37,6 +37,7 @@ const AssignPinForm = (props) => {
     const [isAdmin, setIsAdmin] = useState(true);
     const [type, setType] = useState('');
     const [isForSub, setIsforSub] = useState(false);
+    const [isForConsolidate, setIsForConsolidate]  = useState(false);
     const [isForNewDec, setIsForNewDec] = useState(true);
     const [prevPinToCancel, setPrevPinToCancel] = useState('');
     const token =  localStorage.getItem('authToken');
@@ -103,6 +104,7 @@ const AssignPinForm = (props) => {
                 if(matchingPin.type === "Subdivide") {
                   setIsforSub(true);
                   setIsLoading(true);
+                  setType('Subdivide');
                   axios.get('/pintable')
                     .then(response => response.data)
                     .then((data) => {
@@ -125,6 +127,7 @@ const AssignPinForm = (props) => {
                 } else {
                   setIsforSub(false);
                   setPrevPinToCancel('');
+                  setType('');
                 }
 
               } else if(!matchingPin){
@@ -510,15 +513,20 @@ const AssignPinForm = (props) => {
     
         if (selectedValue === 'Subdivide') {
           setIsforSub(true);
+          setIsForNewDec(false);
+          setIsForConsolidate(false);
           setType('Subdivide')
         } else if (selectedValue === 'NewDec'){
           setIsforSub(false);
-          setIsForNewDec(true)
+          setIsForConsolidate(false);
+          setIsForNewDec(true);
           setType('NewDec');
           setPinToCancel('NewDec');
           setPluscodeToCancel('NewDec');
         } else if (selectedValue === 'Consolidate'){
           setIsforSub(false);
+          setIsForNewDec(false);
+          setIsForConsolidate(true);
           setType('Consolidate');
         }
       };
@@ -596,7 +604,7 @@ const AssignPinForm = (props) => {
 
   
       <label  style={{display: 'flex', flexDirection: 'row', marginLeft: '20%'}}>
-        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange} disabled={true}/>
+        <input type="radio" value="Consolidate" name="pinningType" onChange={handleRadioChange} checked={isForConsolidate}/>
         CONSOLIDATE
       </label>
   
@@ -637,6 +645,26 @@ const AssignPinForm = (props) => {
     </div>
     )}
 
+    {isForConsolidate && (
+      <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
+      <p
+        style={{
+          position: 'absolute',
+          top: '-10px',
+          left: '10px',
+          backgroundColor: 'whitesmoke',
+          padding: '0 5px',
+          marginBottom: '10px',
+          fontSize:  '14px',
+          color: 'red',
+        }}
+      >
+      PINS TO CANCEL
+      </p>
+      <CancelPinForConsolidate />
+
+      </div>
+    )}
 
     
       
