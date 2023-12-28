@@ -188,11 +188,23 @@ const AddForm = (props) => {
     handleTieLineConvert();
   }, [tieLineCoordinates]);
 
+//getcurrent date and time and convert to interger to add it on pluscode
+function getCurrentDateTimeAsInteger() {
+  const currentDate = new Date();
+  
+  const formattedDate = currentDate
+    .toLocaleDateString('en-US')
+    .replace(/\//g, '');
 
+  const formattedTime = currentDate
+    .toLocaleTimeString('en-US', { hour12: false })
+    .replace(/:/g, '');
+
+  return parseInt(formattedDate + formattedTime);
+}
 
 useEffect(() => {
     generateGeoJSON();
-   
   }, [props.selectedCoordinates]);
   
 
@@ -313,7 +325,7 @@ useEffect(() => {
       tctDate: tctDate,
       technicalDescription: technicalDescriptionValue,
       technicaldescremarks: remarks,
-      plusCode: props.plusCode,
+      plusCode: `${props.plusCode}+${getCurrentDateTimeAsInteger()}`,
       geojson: geojson,
       status: 'For Approval',
       username: storedUserDetails.name,

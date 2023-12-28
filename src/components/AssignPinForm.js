@@ -18,6 +18,7 @@ const AssignPinForm = (props) => {
     const [octDate, setOctDate] = useState('');
     const [tct, setTct] = useState('');
     const [tctDate, setTctDate] = useState('');
+    const [pluscode, setPluscode] = useState('');
     const [pin, setPin] = useState('');
     const [origPin, setOrigPin] = useState('');
     const [districts, setDistricts] = useState([]);
@@ -39,7 +40,8 @@ const AssignPinForm = (props) => {
     const [isForSub, setIsforSub] = useState(false);
     const [isForConsolidate, setIsForConsolidate]  = useState(false);
     const [isForNewDec, setIsForNewDec] = useState(true);
-    const [prevPinToCancel, setPrevPinToCancel] = useState('');
+    const [prevPinToCancel, setPrevPinToCancel] = useState([]);
+    const [pluscodeToCancelForConsolidation,setPluscodeToCancelForConsolidation] = useState([]);
     const token =  localStorage.getItem('authToken');
     const [isLoading, setIsLoading] = useState(false);
     const storedUserDetails = JSON.parse(localStorage.getItem('userDetails'));
@@ -68,6 +70,7 @@ const AssignPinForm = (props) => {
         setOctDate(polygonDetails.octDate);
         setTct(polygonDetails.tct);
         setTctDate(polygonDetails.tctDate);
+        setPluscode(polygonDetails.modifiedPluscode);
 
       }
             
@@ -88,13 +91,14 @@ const AssignPinForm = (props) => {
         })
           .then(response => response.data)
           .then((data) => {
-            setAssignedPins(data);
-    
+            const pins = data.filter(pin => pin.status !== 'CANCELLED' );
+            setAssignedPins(pins);
+
             const matchingPin = assignedPins.find(
-            (targetPin) => targetPin.pluscode === props.plusCode
+            (targetPin) => targetPin.pluscode.substring(0, 13) === props.plusCode
             );
             
-    
+            
               if (matchingPin) {
                 setPinStatus(matchingPin.status)
                 setSavedPin(matchingPin.pin);
@@ -117,15 +121,42 @@ const AssignPinForm = (props) => {
                         setIsLoading(false);
                         setPrevPinToCancel(matchingPinToCancel.prevpin);
                        
-                        
                       }
                       
                    })
                      .catch(error => {
                       console.error("Error fetching pintable:", error);
                    });
+
+                } else if(matchingPin.type === "Consolidate") {
+                  setIsForConsolidate(true);
+                  setIsLoading(true);
+                  setType('Consolidate');
+                
+                  axios.get('/pintable')
+                   .then(response => response.data)
+                   .then((data) => {
+                    
+                    const matchingPinToCancel = data.filter(
+                      (targetPin) => targetPin.newpin === savedPin
+                    );
+  
+                    if (matchingPinToCancel.length > 0) {
+                      setIsLoading(false);
+                      setPrevPinToCancel(matchingPinToCancel.map(pinToCancel => pinToCancel.prevpin));
+                      setPluscodeToCancelForConsolidation(matchingPinToCancel.map(pinToCancel => pinToCancel.prevpluscode));
+                      
+                    }
+                   
+                   })
+                    .catch(error => {
+                      console.error('Error Fetching pintale:', error);
+                    });
+                   
+
                 } else {
                   setIsforSub(false);
+                  setIsForConsolidate(false);
                   setPrevPinToCancel('');
                   setType('');
                 }
@@ -160,7 +191,7 @@ const AssignPinForm = (props) => {
           .then((data) => {
     
             const matchingPluscode = data.find(
-              (targetPluscode) => targetPluscode.pluscode === props.plusCode
+              (targetPluscode) => targetPluscode.pluscode.substring(0, 13) === props.plusCode
             )
     
             if (matchingPluscode){
@@ -306,7 +337,7 @@ const AssignPinForm = (props) => {
                 sectionCode: selectedSectionCode,
                 parcelCode: pin.slice(-2),
                 RPTGeoCode:`${selectedDistrictCode}${selectedBrgyCode}-${props.plusCode}-${selectedSectionCode}${pin.slice(-2)}`,
-                plusCode: props.plusCode,
+                plusCode: pluscode,
                 title: title,
                 titleDate: titleDate,
                 surveyNumber: surveyNumber,
@@ -431,6 +462,9 @@ const AssignPinForm = (props) => {
             console.log(data);
             alert('APPROVED ASSIGNED PIN');
             updateStatusOnTitleTable();
+            if(type === 'Consolidate') {
+            pinsToCancel();
+            }
             sendDataToSMV();
             setIsPinApproved(true);
           })
@@ -462,6 +496,49 @@ const AssignPinForm = (props) => {
           });
 
       }
+      //pins to cancel (consolidation)
+      const pinsToCancel = () => {
+        if (type === 'Consolidate') {
+          prevPinToCancel.forEach((pin) => {
+          fetch(`/approvedpin/${pin}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              status: 'CANCELLED',
+            
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+              updateTitleToCancelOnTitleTable();
+            })
+            .catch((error) => {
+              console.error('Error updating PIN status:', error);
+            });
+          });
+      
+        } else{
+          return
+        }
+      }
+
+    const updateTitleToCancelOnTitleTable = () => {
+
+     const titleToCancel = pluscodeToCancelForConsolidation ;
+
+      axios.put('/cancelTitleForConsolidate', { titleToCancel})
+     .then((response) => {
+      console.log('Cancellation successful:', response.data);
+      })
+      .catch((error) => {
+       console.error('Error cancelling titles:', error);
+     });
+    
+   };
+
 
       const handleDeletePin = () => {
       //add function to delete the PIN
@@ -481,8 +558,8 @@ const AssignPinForm = (props) => {
           }
         })
         .catch((error) => {
-          console.error("Error deleting PIN:", error);
-          alert("Error deleting PIN " + savedPin + ". Please try again.");
+          console.error("Error deleting PIN:" + savedPin, error);
+          // alert("Error deleting PIN " + savedPin + ". Please try again.");
         });
     }
         //update the status back to APPROVED on title_table
@@ -531,8 +608,9 @@ const AssignPinForm = (props) => {
         }
       };
 
-      const [pinToCancel, setPinToCancel] = useState ('')
-      const [pluscodeToCancel, setPluscodeToCancel] = useState ('')
+      const [pinToCancel, setPinToCancel] = useState ([]);
+      const [pluscodeToCancel, setPluscodeToCancel] = useState ([]);
+
 
       const handlePinToCancelChange = (pinToCancel) => {
         setPinToCancel(pinToCancel);
@@ -543,10 +621,28 @@ const AssignPinForm = (props) => {
       };
      
       const sendDataToPinTable = async () => {
-
+        if (type === 'Consolidate') {
+          const formDataArray = pinToCancel.map((oldPin, index) => ({
+            newpin: pin,
+            pluscode: pluscode,
+            prevpin: oldPin,
+            prevpluscode: pluscodeToCancel[index],
+            status: 'FOR APPROVAL'
+          }));
+        
+          try {
+            const responses = await Promise.all(
+              formDataArray.map(formData => axios.post('/pintable', formData))
+            );
+        
+            responses.forEach(response => console.log(response.data));
+          } catch (error) {
+            console.error('Error sending data to pintable:', error);
+          }
+        } else {
         const formData = {
           newpin: pin,
-          pluscode : props.plusCode,
+          pluscode : pluscode,
           prevpin: pinToCancel,
           prevpluscode: pluscodeToCancel,
           status: 'FOR APPROVAL'
@@ -561,8 +657,9 @@ const AssignPinForm = (props) => {
           console.error('Error sending data to SMV:', error);
        
         }
+      }
       };
-
+      
     return (
     
     <div className={styles['popup-form-container']}>
@@ -661,8 +758,20 @@ const AssignPinForm = (props) => {
       >
       PINS TO CANCEL
       </p>
-      <CancelPinForConsolidate />
-
+      {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30%' }}>
+      <i className="fa-solid fa-spinner fa-spin fa-spin-reverse" style={{ fontSize: '40px' }}></i>
+      </div>
+    
+    ):( 
+      <CancelPinForConsolidate 
+        PinToBeCancel = {handlePinToCancelChange}
+        pluscodeToBeCancel = {handlePluscodeToCancelChange}
+        prevPintoCancel = {prevPinToCancel}
+        isLoading = {isLoading}
+      />
+    )}
+      
       </div>
     )}
 
@@ -955,7 +1064,7 @@ const AssignPinForm = (props) => {
         <input
           type="text"
           name="plusCode"
-          value={props.plusCode}
+          value={pluscode}
           readOnly
 
         />
