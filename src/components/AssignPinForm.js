@@ -558,8 +558,8 @@ const AssignPinForm = (props) => {
           }
         })
         .catch((error) => {
-          console.error("Error deleting PIN:", error);
-          alert("Error deleting PIN " + savedPin + ". Please try again.");
+          console.error("Error deleting PIN:" + savedPin, error);
+          // alert("Error deleting PIN " + savedPin + ". Please try again.");
         });
     }
         //update the status back to APPROVED on title_table
