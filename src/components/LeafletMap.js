@@ -265,8 +265,10 @@ return [centerLat, centerLng, centroidPlusCode];
           const octDate = gisDetail.octdate;
           const tct = gisDetail.prevtct;
           const tctDate = gisDetail.tctdate;
+          const modifiedPluscode = gisDetail.pluscode;
           const status = gisDetail.status;
           const username = gisDetail.username;
+          
 
           
           
@@ -410,6 +412,7 @@ return [centerLat, centerLng, centroidPlusCode];
             boundary,
             technicalDescription,
             technicaldescremarks,
+            modifiedPluscode,
             username,
             status,
             })
@@ -445,7 +448,7 @@ return [centerLat, centerLng, centroidPlusCode];
               
                   if (response.status === 200) {
                       const matchingPin = response.data.find(
-                      (targetPin) => targetPin.pluscode === centroidPlusCode
+                      (targetPin) => targetPin.pluscode.substring(0, 13) === centroidPlusCode
                       );
 
                       if (matchingPin){

@@ -113,11 +113,38 @@ const KmlTable = (props) => {
       }
     };
 
+    ///TESTING LANG SA
+
+    let lastTimestamp = 0;
+ function getCurrentDateTimeAsInteger() {
+  const currentDate = new Date();
+  
+  const formattedDate = currentDate
+    .toLocaleDateString('en-US')
+    .replace(/\//g, '');
+
+  const formattedTime = currentDate
+  .toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  .replace(/:/g, '');
+
+
+ let currentTimestamp = parseInt(formattedDate + formattedTime);
+  if (currentTimestamp <= lastTimestamp) {
+    currentTimestamp = lastTimestamp + 1;
+  }
+
+  lastTimestamp = currentTimestamp;
+
+  return currentTimestamp;
+
+}
+////////TESTING LANG SA
+
     if (extractedData.length > 0 && extractedCoordinates.length > 0) {
       for (let r = 0; r < extractedData.length; r++) {
         const placemarkData = extractedData[r];
         const placemarkCoordinates = extractedCoordinates[r];
-        const plusCodesForData = props.plusCodes[r];
+        const plusCodesForData = `${props.plusCodes[r]}+${getCurrentDateTimeAsInteger()}`;
     
       const cleanedData = placemarkCoordinates.filter(item => item.trim() !== "");
       const coordinatePairs = cleanedData.map(pair => {
