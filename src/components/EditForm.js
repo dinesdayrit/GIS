@@ -178,7 +178,8 @@ useEffect(() => {
     setOctDate(polygonDetails.octDate);
     setTct(polygonDetails.tct);
     setTctDate(polygonDetails.tctDate);
-    setPluscode(props.plusCode);
+    const modifiedPluscode = props.plusCode + polygonDetails.modifiedPluscode.substring(13);
+    setPluscode(modifiedPluscode);
     setTechnicalDescription(polygonDetails.technicalDescription);
     setTechnicaldescremarks(polygonDetails.technicaldescremarks);
     setPlottedBy(polygonDetails.username);
