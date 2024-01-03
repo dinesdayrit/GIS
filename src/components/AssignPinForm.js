@@ -667,7 +667,8 @@ const AssignPinForm = (props) => {
     <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Pin Approval/Assign</h2>
     {isPolygonApproved ?(
     <>
-    {!isPinApproved && (
+    {!isPinApproved && !isPinAssigned && (
+
     <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
     <p
         style={{
@@ -706,8 +707,9 @@ const AssignPinForm = (props) => {
       </label>
   
     </div>
-   
+  
     </div>
+    
     )}
     {isForSub && !isPinApproved &&( 
     <div style={{ border: '2px gray solid', padding: '10px', position: 'relative', marginTop: '30px' }}>
