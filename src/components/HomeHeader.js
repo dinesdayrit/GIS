@@ -41,7 +41,7 @@ const HomeHeader = (props) => {
     const handleKmlFileUpload = () => {
        props.onKMLUploadClick();
        setIsDropdownOpen(true);
-    }; 
+    };
 
     const signUpForm = () => {
       if (isAdmin === true) {
@@ -51,6 +51,11 @@ const HomeHeader = (props) => {
         setIsDropdownOpen(false);
       }
     };
+
+    const handleUserLog = () => {
+      props.onToggleUserLogs();
+      setIsDropdownOpen(true);
+    }
 
     const handleMenuClick = () => {
       setIsDropdownOpen(false);
@@ -136,6 +141,8 @@ const HomeHeader = (props) => {
                 {userDetails && <button onClick={signUpForm}>
                 <i className="fas fa-user-alt" style={{ marginRight: '8px' }}></i>
                 {userDetails.name} {userDetails.role}</button>}
+
+                <button onClick = {handleUserLog}>User Logs</button>
 
                 <button onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt" style={{ marginRight: '8px' }}></i>
