@@ -9,6 +9,7 @@ import KmlUploadForm from "./KmlUploadForm";
 import AssignPinForm from "./AssignPinForm";
 import SignUpForm from "./SignUpForm";
 import AssignedPinApproval from "./AssignedPinApproval";
+import UserLogs from "./UserLogs";
 
 const Home = (props) => {
   const [showPopupForm, setShowPopupForm] = useState(false);
@@ -29,6 +30,7 @@ const Home = (props) => {
   const [selectedPolygonId, setSelectedPolygonId] = useState('');
   const leafletMapRef = useRef();
   const [showSignUpForm, setShowSignUpForm] = useState('');
+  const [showUserLogs, setShowUserLogs] = useState(false);
  
   useEffect(() => {
     if (selectedPolygonId) {
@@ -133,6 +135,7 @@ const handleAssignPin = (savedPin) => {
     setShowEditForm(false);
     setShowSignUpForm(false);
     setShowPinApprovalForm(false);
+    setShowUserLogs(false);
   };
 
   const handleShapeClick = (clickedCoordinates) => {
@@ -148,6 +151,10 @@ const handleAssignPin = (savedPin) => {
 
   const showMonument = () =>{
     setShowMonumentForm(true);
+  }
+
+  const handleUserLogs = () => {
+    setShowUserLogs(true);
   }
 
   const handlePolygonApproval = () => {
@@ -170,6 +177,7 @@ const handleAssignPin = (savedPin) => {
     onEditFormOpen = {handleEditClick}
     onToggleSignUpForm={toggleSignUpForm}
     onPinApprovalFormOpen= {handlePinApprovalClick}
+    onToggleUserLogs = {handleUserLogs}
    
     />
      
@@ -223,6 +231,11 @@ const handleAssignPin = (savedPin) => {
         <ListofMonuments
           
 
+          />}
+
+          {showUserLogs &&
+          <UserLogs
+          
           />}
 
     {showPinAssignForm && 

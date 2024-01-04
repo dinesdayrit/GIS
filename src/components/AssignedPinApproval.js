@@ -160,6 +160,7 @@ const updateTitleToCancelOnTitleTable = () => {
       pintoCancel();
       updateStatusOnTitleTable();
       updateTitleToCancelOnTitleTable();
+      sendDataToSMV();
       setApproveButton(false);
       setStatus('APPROVED');
       alert('APPROVED PINS');
@@ -184,6 +185,31 @@ const updateTitleToCancelOnTitleTable = () => {
         .catch((error) => {
           console.error('Error returning pins:', error);
         });
+        };
+
+
+        const sendDataToSMV = async () => {
+          const pinsToApprove = matchingPins.map((matchingPin) => matchingPin.newpin);
+          const pluscodesToApprove = matchingPins.map((matchingPin) => matchingPin.pluscode);
+        
+          if (pinsToApprove.length !== pluscodesToApprove.length) {
+            console.error('Error: pinsToApprove and pluscodesToApprove arrays must have the same length.');
+            return;
+          }
+        
+          for (let i = 0; i < pinsToApprove.length; i++) {
+            const formData = {
+              rpt_geo_code: pluscodesToApprove[i],
+              pin: pinsToApprove[i],
+            };
+        
+            try {
+              const response = await axios.post('/insertSMV', formData);
+              console.log(response.data);
+            } catch (error) {
+              console.error('Error sending data to SMV:', error);
+            }
+          }
         };
 
     return (
