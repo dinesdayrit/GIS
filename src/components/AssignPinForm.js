@@ -170,7 +170,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
-            alert('Error fetching PINS:', error);
+            // alert('Error fetching PINS:', error);
           });
           if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
             setIsPolygonApproved(true);
@@ -205,7 +205,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
-            alert('Error fetching PINS:', error);
+            // alert('Error fetching PINS:', error);
           });
     
        
@@ -266,7 +266,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
-            alert('Error fetching brgycodes:', error);
+            // alert('Error fetching brgycodes:', error);
           });
         
       
