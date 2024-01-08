@@ -84,6 +84,7 @@ const AssignPinForm = (props) => {
       }, [props.selectedCoordinates]);
 
       useEffect(() =>{
+        setIsLoading(true);
         axios.get('/tmod', {
           headers: {
             'x-api-key': 'thisIsOurTmodAPIKey',
@@ -93,7 +94,7 @@ const AssignPinForm = (props) => {
           .then((data) => {
             const pins = data.filter(pin => pin.status !== 'CANCELLED' );
             setAssignedPins(pins);
-
+            setIsLoading(false);
             const matchingPin = assignedPins.find(
             (targetPin) => targetPin.pluscode.substring(0, 13) === props.plusCode
             );
@@ -104,7 +105,7 @@ const AssignPinForm = (props) => {
                 setSavedPin(matchingPin.pin);
                 setPin(matchingPin.pin);
                 setIsPinAssigned(true);
-
+                setIsLoading(false);
                 if(matchingPin.type === "Subdivide") {
                   setIsforSub(true);
                   setIsLoading(true);
@@ -169,7 +170,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
-            alert('Error fetching PINS:', error);
+            // alert('Error fetching PINS:', error);
           });
           if (polygonDetails.status === 'APPROVED' || polygonDetails.status === 'PIN ASSIGNED' || polygonDetails.status === 'PIN APPROVED') {
             setIsPolygonApproved(true);
@@ -204,7 +205,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching PINS:', error);
-            alert('Error fetching PINS:', error);
+            // alert('Error fetching PINS:', error);
           });
     
        
@@ -265,7 +266,7 @@ const AssignPinForm = (props) => {
           })
           .catch((error) => {
             console.error('Error fetching brgycodes:', error);
-            alert('Error fetching brgycodes:', error);
+            // alert('Error fetching brgycodes:', error);
           });
         
       
@@ -445,7 +446,7 @@ const AssignPinForm = (props) => {
   }
 
       const handleApprovePin = () => {
-        
+
         //update status on rptas table
         fetch(`/approvedpin/${savedPin}`, {
           method: 'PUT',
@@ -663,7 +664,13 @@ const AssignPinForm = (props) => {
     return (
     
     <div className={styles['popup-form-container']}>
+    {isLoading ? (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30%' }}>
+      <i className="fa-solid fa-spinner fa-spin fa-spin-reverse" style={{ fontSize: '40px' }}></i>
+      </div>
     
+    ): ( 
+      <>
     <h2 style={{marginBottom: '1rem', fontWeight: 'bold', color: '#3e8e41'}}>Pin Approval/Assign</h2>
     {isPolygonApproved ?(
     <>
@@ -1083,7 +1090,8 @@ const AssignPinForm = (props) => {
     <div style={{alignItems: 'center', color: 'red'}}>SELECT AN APPROVED PARCEL</div>
   )
     }
-
+</>
+    )}
     </div>
 
   
